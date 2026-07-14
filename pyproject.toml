@@ -1,7 +1,7 @@
 [project]
-name = "python-project-template"
+name = "Hypervariorum_Project"
 version = "0.1.0"
-description = "Python project template"
+description = "LLM-assisted annotation project"
 authors = [
     {name = "Cliff Wulfman", email = "cwulfman@princeton.edu"},
 ]
