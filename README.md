@@ -1,8 +1,13 @@
-# python-project-template
-Template for Python projects
+# Hypervariorum
 
-Select "Use this Template" and follow directions to create a new repository.
+## Installation
+- Clone this repository to your local machine.
+- Cd into the repository and run `pdm install -d`.
 
-Clone the repository to your local machine.
+## Contents
+    - **bin**: scripts
 
-Cd into the repository and run `pdm install -d`.
+## Processing Critical Commentary
+    `make shake.var.lear.annot.xml`
+    
+    
