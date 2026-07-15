@@ -1,0 +1,101 @@
+#+TITLE: Hypervariorum Forum
+#+SUBTITLE: Deliberative record — design, research, decisions
+#+STARTUP: overview logdrawer
+#+FILETAGS: :hypervariorum:
+
+See =.claude/collaboration-protocol.org= for how this file is used.
+Implementation detail (fix counts, file names, function-level
+walkthroughs) belongs in code or =doc/= reports, not here — link to
+it instead. Tasks belong in =agenda.org=, cross-linked by CUSTOM_ID.
+
+* Discussions
+
+** Establishing the collaboration protocol
+:PROPERTIES:
+:CUSTOM_ID: process/collaboration-protocol-v2
+:ASSIGNEES: Cliff, Claude Chat
+:SOURCE: chat/2026-07-15
+:DISPOSITION: adopt
+:END:
+
+The Minimum Viable Perseus protocol assumed Claude Chat had no
+direct repo access and put Claude Code and Cliff-in-Emacs as the
+only direct writers of =forum.org=. That's no longer true — Claude
+Chat now has Filesystem access. Hypervariorum is also a
+sole-researcher project (no Charles, no Peter), which removes the
+concurrent-edit risk that access change would otherwise raise, and
+it's broader/more research-oriented than MVP, with real design
+weight on the AI-assisted classifiers.
+
+**** Decision
+[2026-07-15] Adopt symmetric read/write access for all three
+participants, scoped to =forum.org= and =agenda.org= (not blanket
+repo access for Claude Chat). Split the old single-file convention
+into two files: =forum.org= for deliberation, =agenda.org= (repo
+root) for tracked tasks, cross-linked via =CUSTOM_ID= and org
+file-links. Full rationale and structure in
+=.claude/collaboration-protocol.org=.
+
+** Ingestion vs. model: where NVS-specific code ends
+:PROPERTIES:
+:CUSTOM_ID: architecture/ingestion-model-classifier-split
+:ASSIGNEES: Cliff
+:SOURCE: chat/2026-07-15
+:DEPENDS: packaging/src-layout-split
+:END:
+
+Proposed while queuing the =bin/= → =src/= packaging task: does the
+project need an architectural seam between code that is specific to
+parsing the NVS transcriptions and code that operates on the
+annotation model generally (graph construction, the AI-assisted edge
+classifiers)? Renaming the repo/package to =hypervariorum= (see
+=process/collaboration-protocol-v2= above) already signals that the
+project is meant to outgrow any one source corpus; this question asks
+whether the code layout should say so too.
+
+**** Research
+[2026-07-15] Parsing is inherently tied to the idiosyncrasies of one
+source format — =parse_annotations_to_xml= is built entirely around
+this transcription's =<HE>=/=<CC>= tag conventions, with regex tuned
+to how this editor marked up acts, scenes, and lemma ranges. That
+code will always be NVS-shaped. Classification and graph operations
+are, in principle, source-agnostic: a classifier deciding that one
+annotation glosses a particular passage doesn't need to know whether
+the annotation arrived via NVS markup or some other encoding. This is
+the same seam as MVP's Corpus → Annotations → Views layering:
+source-specific ingestion feeding a format-independent model, with
+higher layers unaware of provenance.
+
+Proposed layout:
+
+#+begin_example
+src/hypervariorum/
+  nvs/                  <- NVS-specific: markup parsing, entity conversion
+    entities.py
+    parsing.py
+  model/  (or graph/)   <- source-agnostic: Annotation, the dependency graph
+    annotation.py
+  classifiers/          <- source-agnostic: the AI-assisted edge classifiers
+#+end_example
+
+=nvs/= stays as parochial as the source material demands; =model/=
+and =classifiers/= are where the project's actual research claim to
+Greg/Perseus lives — "a source-agnostic annotation-graph-and-
+classifier engine, currently fed by an NVS parser" rather than
+"some NVS-specific code."
+
+Open question, not resolved here: is the ingestion layer meant to
+stay singular (=nvs/= just documents provenance, permanently the only
+source), or is a second source corpus genuinely anticipated (another
+variorum edition, or non-Shakespeare material) — in which case =nvs/=
+is the first of a =sources/= family rather than a fixture. Cheap to
+decide now; expensive to restructure into later. Does not need to be
+answered by building a second parser today, just by naming the
+likelihood.
+
+Actionable for Claude Code (once Decision is recorded):
+- Fold this layout into the =packaging/src-layout-split= task in
+  =agenda.org= rather than treating it as a second refactor.
+
+**** Decision
+[to be recorded]

@@ -1,0 +1,86 @@
+#+TITLE: Hypervariorum Agenda
+#+SUBTITLE: Tracked tasks — see doc/forum.org for design rationale
+#+STARTUP: overview logdrawer
+#+FILETAGS: :hypervariorum:
+#+TODO: TODO ACTIVE | DONE
+
+See =.claude/collaboration-protocol.org= for how this file relates
+to =doc/forum.org=. Most tasks here need no forum link at all — only
+add one when a real design decision preceded the task.
+
+* Process
+
+** TODO Review forum.org with Claude Chat
+SCHEDULED: <2026-07-28 Tue +2w>
+:PROPERTIES:
+:CUSTOM_ID: process/forum-review
+:END:
+Read forum entries since the last review. Flag anything that should
+move to Decision, anything stale enough to archive
+(=org-archive-subtree=), anything needing a Review section before
+being considered settled. Feeds the Greg report below.
+
+Completion criterion: a Review section or timestamped note actually
+exists in the forum from this pass — not just "I looked it over."
+
+** TODO Prepare report for Greg
+:PROPERTIES:
+:CUSTOM_ID: process/greg-report
+:DEPENDS: process/forum-review
+:END:
+Depends on the forum review above: the report should be written
+from a reviewed record, not an unreviewed one.
+
+* Bibliography
+
+** TODO Write script to parse bibliography
+:PROPERTIES:
+:CUSTOM_ID: bibliography/parser
+:END:
+Convert the bibliography embedded in the NVS transcriptions into
+machine-readable form. (Migrated from the =doc/project.org= draft,
+2026-07-07.)
+
+* Packaging
+
+** TODO Split bin/ scripts into src/hypervariorum package + thin wrappers
+:PROPERTIES:
+:CUSTOM_ID: packaging/src-layout-split
+:DEPENDS: architecture/ingestion-model-classifier-split
+:END:
+Blocked on the forum decision at
+[[file:doc/forum.org::#architecture/ingestion-model-classifier-split][#architecture/ingestion-model-classifier-split]] — don't build the
+flat =src/hypervariorum/= layout below until that's settled, since
+the answer determines whether this is =nvs/= + =model/= +
+=classifiers/= or something flatter. Once decided:
+
+Create =src/hypervariorum/= as the real package. Move the pure
+logic out of =bin/parse_annotations.py= and =bin/convert_entities.py=
+into =src/hypervariorum/annotations.py= and
+=src/hypervariorum/entities.py= respectively; leave =bin/= holding
+only the stdin/stdout wiring (the =if __name__ == "__main__":=
+block), so the scripts stay usable as Makefile filter targets.
+
+Also needed:
+- Replace leftover =my_python_project= placeholders in
+  =pyproject.toml= (=[tool.pdm.scripts]=, =[tool.pytest.ini_options]=)
+  with =hypervariorum=.
+- Add the new =src/hypervariorum/*.py= files as prerequisites on the
+  relevant Makefile rules, so edits to the real logic trigger a
+  rebuild, not just edits to the =bin/= wrapper.
+- Add unit tests in =tests/= for =roman_to_int=,
+  =parse_annotations_to_xml=, =convert_entities=, and =process_line=
+  now that they're importable.
+
+Completion criterion: =pdm run pytest= passes with real tests
+against the moved functions, and =make= still produces identical
+output from =raw/= as before the split.
+
+* Annotations Pipeline
+
+** TODO Process raw XML transcriptions into annotations
+:PROPERTIES:
+:CUSTOM_ID: annotations/xml-to-annotations
+:END:
+Already underway per prior conversation — formalize current state
+here once the shape of the pipeline is clearer.
