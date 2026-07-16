@@ -1,0 +1,221 @@
+# -*- lexical-binding: t; -*-
+#+TITLE: Collaboration Protocol
+#+SUBTITLE: Cliff + Claude Chat + Claude Code
+#+DATE: [2026-07-15 Wed]
+
+* Overview
+
+This document defines how Cliff, Claude Chat, and Claude Code work
+together on the Hypervariorum project, using two org-mode files as
+the coordination medium. It supersedes the two-paragraph stub
+written on 2026-07-14.
+
+** Participants and Roles
+
+- Cliff :: Sole researcher and decision-maker. Reviews all
+  proposals, sets dispositions, writes Decisions. The only
+  participant who commits to project direction.
+
+- Claude Chat :: Research, design, and review. Explores tradeoffs,
+  drafts design documents, thinks through the reasoning behind the
+  classifiers. Has direct read/write access to both =forum.org= and
+  =agenda.org= via Filesystem tools, scoped to those files (and other
+  =doc/= content) rather than the whole repository.
+
+- Claude Code :: Implementation and codebase analysis. Lives in the
+  repo. Performs code review, testing, and implementation. Writes
+  Analysis and Implementation sections grounded in actual code.
+
+This is a two-person-equivalent role split, not a headcount split.
+There is one human. The division between "thinking about the
+classifiers" and "implementing the pipeline" still holds, and the
+Review pattern below still matters even with no other humans in the
+loop, because it gives the classifiers — where the project's actual
+research risk lives — a second epistemic angle before a decision is
+treated as settled.
+
+** Key Principle: Cliff Decides
+
+Neither AI participant acts without Cliff's sign-off. Claude Chat
+proposes; Claude Code implements; Cliff approves, modifies, or
+rejects. The org files are the decision record — not a courtesy
+copy of one kept elsewhere.
+
+* Two Files, Two Jobs
+
+** =doc/forum.org= — deliberation
+
+A place for the exchange of ideas: design questions, research
+findings, decisions, and their rationale. Not a task queue. An item
+here does not need a TODO keyword, a due date, or a completion
+state — its value is as a record of *why*, preserved even after the
+matter is settled.
+
+Keep implementation detail *out* of this file. Fix counts, corpus
+file names, function-level walkthroughs, and test results belong in
+code comments, docstrings, commit messages, or =doc/= reports next to
+the code they describe — with at most a one-line pointer from the
+forum entry ("see =src/bibliography_parser.py=, commit abc123").
+The forum bloating with implementation reports was the specific
+failure mode of the previous project's convention; this is the fix.
+
+** =agenda.org= — tasks
+
+Lives at the repo root, next to =pyproject.toml= and the =Makefile=,
+where Claude Code will naturally find it. Ordinary org TODO
+workflow: keywords, =SCHEDULED=/=DEADLINE=, priorities, done states.
+Every item here should have a clear completion criterion. Most tasks
+(bug fixes, tests, refactors) need no forum entry at all — only link
+back to =forum.org= when a real design decision preceded the task.
+
+** Cross-linking
+
+No new property is needed. Both files already use =CUSTOM_ID= as a
+stable slug; org's file-link syntax addresses it directly from
+either direction:
+
+#+begin_example
+[[file:doc/forum.org::#tei-graph/edge-classifier-design]]
+[[file:agenda.org::#bibliography-parser/fix-name-splitting]]
+#+end_example
+
+A forum entry that spawned tasks lists links forward to them. An
+agenda item that came out of a real decision links back to the
+forum entry. Reserve this for tasks with actual deliberation behind
+them — linking every trivial task back to the forum just relocates
+the bloat problem instead of solving it.
+
+* Structure of a Forum Item
+
+The basic unit is an org headline, not necessarily actionable.
+
+#+begin_example
+,*** Short description of the item
+:PROPERTIES:
+:CUSTOM_ID: category/slug
+:ASSIGNEES: Claude Code, Cliff, Claude Chat
+:SOURCE: chat/2026-07-15
+:DISPOSITION: adopt
+:END:
+Brief statement of the problem, question, or goal.
+
+,**** Research
+Background research, options analysis, design reasoning. Prose,
+not instructions. Answers "what should we do and why?"
+
+,**** Analysis
+What the code actually does, grounded in the repo. Answers "what
+does the code say and what would change?"
+
+,**** Decision
+[2026-07-15] Cliff's call. Short is fine.
+
+,**** Review
+Design conformance check, written after implementation, before the
+matter is considered settled. Ends with an explicit disposition.
+#+end_example
+
+Not every item needs every section. A settled research question may
+have only Research + Decision. A pure reference note may have only
+the headline and a paragraph. Timestamp only the Decision line as a
+matter of course; timestamp others when the date itself matters.
+
+** Properties
+
+| Property    | Purpose                          | Values                                  |
+|-------------+-----------------------------------+------------------------------------------|
+| CUSTOM_ID   | Stable cross-reference slug        | =category/short-slug=                    |
+| ASSIGNEES   | Who owns the next action           | =Cliff=, =Claude Code=, =Claude Chat=    |
+| SOURCE      | Where the item originated          | =chat/YYYY-MM-DD=, =adhoc=               |
+| DISPOSITION | Outcome of the Decision            | =adopt=, =defer=, =document=, =wontfix=  |
+
+* Bloat Control
+
+** Volume: archive on close
+
+Once a forum item reaches a terminal state — Decision recorded,
+nothing further expected — archive it with =org-archive-subtree= to
+=forum.org_archive=. Still in git, still searchable, just out of the
+file you read day to day. Do this as part of closing out a thread,
+not as a periodic cleanup chore.
+
+** Density: pointers, not reports
+
+Covered above. If a forum entry starts accumulating file names, line
+counts, or per-corpus results, that content should move to code or a
+=doc/= report, leaving a pointer behind.
+
+** Periodic review
+
+Tied to Cliff's monthly/semi-monthly reporting to Greg Crane — a
+natural, already-existing rhythm rather than an arbitrary one. A
+repeating scheduled task in =agenda.org= drives it:
+
+#+begin_example
+,** TODO Review forum.org with Claude Chat
+SCHEDULED: <2026-07-28 Tue +2w>
+:PROPERTIES:
+:CUSTOM_ID: process/forum-review
+:END:
+Read entries since the last review. Flag anything that should move
+to Decision, anything stale enough to archive, anything needing a
+Review section before being settled. Feeds the Greg report.
+
+,** TODO Prepare report for Greg
+:PROPERTIES:
+:CUSTOM_ID: process/greg-report
+:DEPENDS: process/forum-review
+:END:
+#+end_example
+
+The repeater means the review reappears on the agenda without
+depending on memory. The =DEPENDS= link on the report task names the
+actual precondition, so skipping the review isn't just skipping a
+chore — it's writing the report on an unreviewed record. Completion
+criterion for the review task: a Review section or a timestamped
+note actually exists in the forum from this pass. "I looked it over"
+with no trace behind it does not count as done.
+
+* Workflow Patterns
+
+** Research flows to Implementation
+
+1. Claude Chat writes a Research section in =forum.org=
+2. Cliff writes the Decision
+3. Cliff (or Claude Chat) creates linked task(s) in =agenda.org=
+4. Claude Code implements, writes Analysis/Implementation, closes
+   the task
+
+** Cliff brings a question
+
+1. Cliff opens a forum item with a problem statement
+2. Assigned participant(s) fill in Research/Analysis
+3. Cliff decides
+4. If actionable, spin off task(s) into =agenda.org=
+
+** Review-gated decisions (classifiers especially)
+
+For anything touching the interpretive/AI-assisted classifiers:
+
+1. Claude Code implements on a feature branch, writes Implementation
+2. Claude Chat reads the branch directly (Filesystem access) and
+   writes a Review section in the linked forum entry
+3. Cliff reads the Review, decides whether to merge or request
+   changes
+
+* Git Conventions
+
+Implementation work happens on a feature branch, never directly on
+=main=. Branch names follow =feature/CUSTOM_ID-short-description=.
+Claude Code checks for an existing branch (=git branch -a=) before
+assuming it needs to create one — Cliff sometimes cuts it in advance.
+
+* What This Protocol Does Not Cover
+
+- *Automatic syncing*: no tooling pushes changes between
+  participants; each edits the files directly, in place.
+- *Access control*: all participants can read and write both files.
+  The discipline is social, not technical — same as before.
+- *Long-term memory*: Claude Chat's memory across sessions is
+  imperfect. Anything that needs to persist belongs in the files,
+  not assumed to survive in chat history.

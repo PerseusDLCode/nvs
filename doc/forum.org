@@ -42,6 +42,7 @@ file-links. Full rationale and structure in
 :ASSIGNEES: Cliff
 :SOURCE: chat/2026-07-15
 :DEPENDS: packaging/src-layout-split
+:DISPOSITION: adopt
 :END:
 
 Proposed while queuing the =bin/= → =src/= packaging task: does the
@@ -52,6 +53,7 @@ classifiers)? Renaming the repo/package to =hypervariorum= (see
 =process/collaboration-protocol-v2= above) already signals that the
 project is meant to outgrow any one source corpus; this question asks
 whether the code layout should say so too.
+
 
 **** Research
 [2026-07-15] Parsing is inherently tied to the idiosyncrasies of one
@@ -97,5 +99,56 @@ Actionable for Claude Code (once Decision is recorded):
 - Fold this layout into the =packaging/src-layout-split= task in
   =agenda.org= rather than treating it as a second refactor.
 
+**** Decision
+<2026-07-15 Wed 13:26> I had been wondering if there should be an
+entirely separate package, in its own repo, for the code that
+interfaces with raw files, and then another repo for higher-level code
+that works with annotation objects.  And I'm answering my own
+question: that's getting too complex for this stage of the project.
+
+So at the beginning of the project we will assume that we will be
+using the Furness editions of the NVS as source texts. Explicitly,
+then: ingestion stays singular for now — =nvs/= names the one source
+and documents its provenance, rather than being built out as a
+=sources/= family. Revisit only if a second source corpus actually
+materializes.
+
+The Furness editions don't have to live in this repository, though;
+see =external/raw-corpus-dependency= below for that question.
+
+** External raw-corpus dependency: raw/ symlink
+:PROPERTIES:
+:CUSTOM_ID: external/raw-corpus-dependency
+:ASSIGNEES: Cliff
+:SOURCE: chat/2026-07-15
+:DEPENDS: bootstrap/document-raw-symlink
+:END:
+
+Split out from =architecture/ingestion-model-classifier-split=: the
+source corpus doesn't live in this repository. Cliff forked
+https://github.com/gregorycrane/NVS_Shakespeare.git to
+https://github.com/PerseusDLCode/NVS_Shakespeare and symlinked it to
+=raw/=. The Makefile treats =raw/%.txt= as an ordinary prerequisite,
+with no indication anywhere that =raw/= is actually an external
+dependency requiring a separate clone.
+
+**** Research
+[2026-07-15] Two distinct issues, worth keeping separate:
+
+1. /Portability of the symlink itself/ — if it points to an absolute
+   path, it works on this machine and breaks for anyone else
+   (including future-Cliff on different hardware). A relative path
+   (=../NVS_Shakespeare=) survives as long as the sibling-repo layout
+   under =PerseusDLCode/= holds. Worth checking with =readlink raw=
+   and fixing if absolute.
+
+2. /Bootstrapping is undocumented/ — nothing in the repo currently
+   tells a fresh clone "go fetch =PerseusDLCode/NVS_Shakespeare= as a
+   sibling and symlink it to =raw/=." This doesn't need to wait on the
+   harder project-config question (output artifact paths, secrets,
+   etc. — deliberately deferred, per Cliff, to a separate discussion).
+   A paragraph in =README.md= documenting the symlink and its target
+   is a minimal, independent fix.
+   
 **** Decision
 [to be recorded]

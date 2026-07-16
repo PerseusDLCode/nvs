@@ -43,18 +43,19 @@ machine-readable form. (Migrated from the =doc/project.org= draft,
 
 * Packaging
 
-** TODO Split bin/ scripts into src/hypervariorum package + thin wrappers
+** DONE Split bin/ scripts into src/hypervariorum package + thin wrappers
 :PROPERTIES:
 :CUSTOM_ID: packaging/src-layout-split
-:DEPENDS: architecture/ingestion-model-classifier-split
 :END:
-Blocked on the forum decision at
-[[file:doc/forum.org::#architecture/ingestion-model-classifier-split][#architecture/ingestion-model-classifier-split]] — don't build the
-flat =src/hypervariorum/= layout below until that's settled, since
-the answer determines whether this is =nvs/= + =model/= +
-=classifiers/= or something flatter. Once decided:
+Settled per
+[[file:doc/forum.org::#architecture/ingestion-model-classifier-split][#architecture/ingestion-model-classifier-split]]: =src/hypervariorum/=
+splits into =nvs/= (NVS-specific: markup parsing, entity conversion),
+=model/= (source-agnostic: Annotation, the dependency graph), and
+=classifiers/= (source-agnostic: the AI-assisted edge classifiers).
+=nvs/= stays singular for now — no =sources/= family until a second
+source corpus actually appears.
 
-Create =src/hypervariorum/= as the real package. Move the pure
+Create that layout under =src/hypervariorum/=. Move the pure
 logic out of =bin/parse_annotations.py= and =bin/convert_entities.py=
 into =src/hypervariorum/annotations.py= and
 =src/hypervariorum/entities.py= respectively; leave =bin/= holding
@@ -84,3 +85,26 @@ output from =raw/= as before the split.
 :END:
 Already underway per prior conversation — formalize current state
 here once the shape of the pipeline is clearer.
+
+* Bootstrap
+
+** DONE Document the raw/ external-corpus symlink
+:PROPERTIES:
+:CUSTOM_ID: bootstrap/document-raw-symlink
+:END:
+See
+[[file:doc/forum.org::#external/raw-corpus-dependency][#external/raw-corpus-dependency]]
+for the full context. Two parts:
+
+- Check =readlink raw= — if the symlink target is an absolute path,
+  replace it with a relative one (=../NVS_Shakespeare=) so it survives
+  on a different machine.
+- Add a paragraph to =README.md= explaining that =raw/= is a symlink
+  to a sibling clone of
+  https://github.com/PerseusDLCode/NVS_Shakespeare (a fork of
+  https://github.com/gregorycrane/NVS_Shakespeare.git), with the
+  clone-and-symlink steps needed to bootstrap a fresh checkout.
+
+Does not require deciding the project-config question (output
+paths, secrets, etc.) — that's deliberately deferred to a separate
+discussion.
