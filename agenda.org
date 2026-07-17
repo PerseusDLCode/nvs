@@ -273,8 +273,10 @@ Disposition: adopt.
 ** TODO Fix malformed XML output from parse_annotations_to_xml
 :PROPERTIES:
 :CUSTOM_ID: nvs/parser-malformed-xml-output
-:DEPENDS: parsing-raw-xml-vs-plain-text, nvs/parser-refactor-lxml
 :END:
+Unblocked — =parsing-raw-xml-vs-plain-text= is decided and
+=nvs/parser-refactor-lxml= is merged to =main=. Ready for a fresh
+Claude Code session.
 Discovered while verifying =annotations/xml-to-annotations= against
 real corpus data (=make out/shake.var.lear.annot.xml=):
 =parse_annotations_to_xml= (=src/hypervariorum/nvs/parsing.py=) never
