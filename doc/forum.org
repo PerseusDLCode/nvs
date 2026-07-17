@@ -132,7 +132,7 @@ https://github.com/PerseusDLCode/NVS_Shakespeare and symlinked it to
 with no indication anywhere that =raw/= is actually an external
 dependency requiring a separate clone.
 
-**** Research
+*** Research
 [2026-07-15] Two distinct issues, worth keeping separate:
 
 1. /Portability of the symlink itself/ — if it points to an absolute
@@ -150,5 +150,89 @@ dependency requiring a separate clone.
    A paragraph in =README.md= documenting the symlink and its target
    is a minimal, independent fix.
    
-**** Decision
+*** Decision
 [to be recorded]
+** Parsing raw XML vs treating it as literal text
+:PROPERTIES:
+:CUSTOM_ID: parsing-raw-xml-vs-plain-text
+:ASSIGNEES: Cliff, Claude Chat
+:DEPENDS: nvs/parser-malformed-xml-output
+:DISPOSITION: adopt
+:END:
+
+<2026-07-17 Fri 12:34> Claude Code surfaced a problem in [[file:../src/hypervariorum/nvs/parsing.py][parsing.py]]
+(see [[file:../agenda.org::#nvs/parser-malformed-xml-output][the agenda]]). The current implementation treats the input as plain
+text and manipulates it with regular expressions; Claude Code is
+trying to parse it into XML.  Should we continue to treat the Critical
+Commentary sections as plain text or should we try to parse them?
+
+*** Research
+I don't think it is possible to parse the input as XML, because it
+simply isn't valid XML.  One example: line 2813 in [[file:../raw/shake.var.lear.txt][shake.var.lear.txt]]
+begins a comment that extends over a page break. The starting <P> tag
+isn't matched with a closing </P> before the <PB>; on line 2837, the
+comment continues on the next page with an opening <P>. And there is
+no closing </P> for this comment.  In fact, these <P> tags are
+actually milestones, not containing elements.
+
+My thought is that we should continue to treat the raw input as text,
+not XML.  However, we should attend to the errors Claude Code surfaced
+here and verify that our regexes are working properly.
+
+*** Decision
+[2026-07-17] Confirmed: treat Critical Commentary as text, not XML,
+for the reasons above — =<P>= is a milestone, not a container; this
+was never well-formed XML and never will be. Consequences:
+
+1. /Scope/: applies to the eight =shake.var.*= files (the NVS
+   variorum editions). =titus.f1.txt= is a different source entirely
+   — a First Folio base-text transcription (=<DIV1>=/=<DIV2>=/
+   =<HEAD>=/=<STAGE>=/=<LB>=, attributed =<PB>=), not variorum
+   commentary, evidently placed in Greg's =raw/= repository for lack
+   of a better home. Out of scope for =nvs/parsing.py=; if it's ever
+   needed, it wants its own ingestion path, not a stretch of this one.
+
+2. /Milestones/: identify real milestone tags (=P=, =PB=, possibly
+   others) explicitly, as a named classification rather than implicit
+   regex behavior, so the parser stops expecting close tags for them.
+   Inventory tags occurring *inside* =<CC>...</CC>= spans across the
+   eight =shake.var.*= files (=extract_elements= already discards
+   everything outside =HE=/=CC=, so front-matter tags — =C=, =SHL=
+   ("short horizontal line"), and its companions =LHL=/=FHL= ("long/
+   full horizontal line") — never reach the parser and aren't
+   actionable here) rather than continuing to discover tags one crash
+   at a time.
+
+3. /Inline formatting/ (=B=, =I=, =SC=, =G=, =SUB=): escape as literal
+   text for now, not modeled as real XML structure. Deliberately
+   provisional, not a verdict on the formatting's value — the plan is
+   to use exactly this typography (smallcaps, bold, italic) later to
+   help identify author names, book titles, and similar bibliographic
+   entities within commentary text, which is real interpretive signal,
+   not just display styling. Deferring is safe specifically because
+   the lxml-based escaping (queued in =nvs/parser-refactor-lxml=) is
+   reversible: parse the stored XML, unescape the text, and the
+   original transcription codes are recoverable exactly, so nothing is
+   lost by waiting.
+
+   Revisit trigger, not left open-ended: when work begins on using
+   typographic markers to identify bibliographic entities in
+   commentary (connects directly to =bibliography/parser= in
+   =agenda.org=), or once real classifier requirements for
+   =commentary= content exist — whichever comes first. Until then,
+   keep =B=/=I=/=SC=/=G=/=SUB= as an explicit "known, deferred,
+   escape" category in the same tag-classification registry used for
+   the milestone fix, not lumped in with genuinely unclassified tags.
+
+4. /Addendum, found verifying =nvs/parser-refactor-lxml=/: of the
+   eight =shake.var.*= files, =ham2.txt= has zero =<CC>= tags (410
+   =<HE>= tags, none of them wrapping commentary). It's the NVS
+   Hamlet appendix volume — bibliography, actor interpretations,
+   table of contents, essays — marked up with =<C>=, =<T>=, =<R>=,
+   =<CE>=, =<SHL>=, etc. Not out of scope the way =titus.f1.txt= is
+   (the parser runs on it correctly and produces valid, trivially
+   empty output), but structurally a different kind of document from
+   the other seven, in the same family as =titus.f1.txt='s mismatch.
+   Likely relevant to =bibliography/parser=: if this genuinely is the
+   NVS Hamlet bibliography volume, its content — not scattered =CC=
+   commentary — may be that task's real source material.

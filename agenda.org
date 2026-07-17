@@ -36,10 +36,28 @@ from a reviewed record, not an unreviewed one.
 ** TODO Write script to parse bibliography
 :PROPERTIES:
 :CUSTOM_ID: bibliography/parser
+:DEPENDS: parsing-raw-xml-vs-plain-text
 :END:
 Convert the bibliography embedded in the NVS transcriptions into
 machine-readable form. (Migrated from the =doc/project.org= draft,
 2026-07-07.)
+
+Named revisit trigger for
+[[file:doc/forum.org::#parsing-raw-xml-vs-plain-text][#parsing-raw-xml-vs-plain-text]]:
+when this work begins, it's expected to use inline typography
+(smallcaps, bold, italic — currently escaped as literal text, see
+=nvs/parser-malformed-xml-output=) as a signal for identifying author
+names, book titles, and similar bibliographic entities in commentary
+text. That's the point to reconsider whether formatting needs to be
+modeled as real structure rather than literal escaped text.
+
+Worth checking first: =raw/shake.var.ham2.txt= (410 =<HE>= tags, zero
+=<CC>=) looks like the actual NVS Hamlet appendix/bibliography volume
+— see the addendum in
+[[file:doc/forum.org::#parsing-raw-xml-vs-plain-text][#parsing-raw-xml-vs-plain-text]].
+Its =<C>=/=<T>=/=<R>=/=<CE>= markup is unrelated to =<HE>=/=<CC>=, so
+this task likely needs its own extraction logic for that file rather
+than reusing =nvs/parsing.py='s commentary parser.
 
 * Packaging
 
@@ -104,9 +122,158 @@ real-corpus =out/*.annot.xml= files — see
 =nvs/parser-malformed-xml-output= below, a separate pre-existing bug
 in the producer, not the loader.
 
+**** Review (retrospective)
+[2026-07-17, written after merge to =main= — the Review-gated step
+was skipped before merging this round; doing it after the fact
+rather than not at all]
+
+Read the merged code directly: =model/annotation.py=,
+=tests/test_annotation.py=, =nvs/entities.py=, =nvs/parsing.py=.
+
+Conformance to the architecture decision is good — =Annotation= has
+no NVS-specific fields or imports, and =load_annotations()= only
+knows the =<annotations>/<annotation>= interchange schema, not
+=<HE>=/=<CC>=/=<P>=. The test suite matches its own claimed coverage
+exactly, including the end-to-end parser-into-loader test, which is
+the one that actually proves the interchange contract rather than
+just asserting it.
+
+One finding beyond what's already tracked: =parse_annotations_to_xml=
+writes =lemma= and =commentary= into the output via plain f-strings,
+with no XML escaping at all. Broader than the known inline-tag issue
+already logged — a literal =&= in the source (a bibliographic "Rowe &
+Pope" is exactly the kind of text that shows up in variorum
+commentary) or a stray =<=/=>= that isn't a recognized tag would also
+produce malformed output. Folded into =nvs/parser-malformed-xml-output='s
+scope below rather than opening a separate task, since the fix is the
+same shape: escape literal text content on the way out.
+
+Disposition: adopt.
+
+** TODO Refactor parse_annotations_to_xml: lxml construction + function decomposition
+:PROPERTIES:
+:CUSTOM_ID: nvs/parser-refactor-lxml
+:END:
+Structural refactor only — behavior-preserving, no change to lemma/
+commentary parsing logic. Precedes =nvs/parser-malformed-xml-output=
+below; that task builds on this one rather than patching the current
+monolithic function further.
+
+**** Build XML with lxml instead of f-strings
+- Add =lxml= as a real dependency: run =pdm add lxml= (updates
+  =pyproject.toml= and =pdm.lock= together — don't hand-edit the
+  dependency list).
+- Construct the tree with =lxml.etree.Element=/=SubElement=, set
+  =.text= on lemma/commentary rather than interpolating into an
+  f-string, then serialize once with =lxml.etree.tostring(...,
+  xml_declaration=True, encoding="utf-8", pretty_print=True)=.
+- This fixes the escaping gap from the retrospective review
+  (=&=/=<=/=>= in text content) as a side effect of using =.text=
+  correctly — no separate escaping code needed.
+- =model/annotation.py= keeps reading with stdlib
+  =xml.etree.ElementTree=; no need to add =lxml= there too.
+
+**** Decompose parse_annotations_to_xml
+Split the current single function along its existing (unnamed) seams:
+#+begin_example
+extract_elements(content) -> Iterator[str]              # <HE>/<CC> regex split
+parse_running_head(text) -> tuple[str|None, str|None]   # act/scene from <HE>
+split_annotation_chunks(cc_inner) -> list[str]          # <P>-boundary splitting
+parse_lemma(chunk) -> tuple[str, str]                   # 3-pattern fallback -> (lemma, commentary)
+extract_line_info(lemma) -> dict                        # line / line-from / line-to
+build_annotation_element(lemma, commentary, act, scene, line_info) -> lxml.etree._Element
+parse_annotations_to_xml(in_file, out)                   # orchestrator only
+#+end_example
+=parse_lemma= is the one most worth isolating — it's where the
+three-pattern fallback (=pattern_a=/=pattern_b=/=pattern_c=) lives,
+and it should be directly unit-testable against tricky lemma strings
+rather than only reachable through a full annotation round-trip.
+
+**** Migrate the existing tests
+=tests/test_parsing.py= currently asserts on literal serialized
+output, e.g.:
+#+begin_example
+assert xml.startswith('<?xml version="1.0" encoding="utf-8"?>\n<annotations>\n')
+#+end_example
+This will break under lxml's serialization (different whitespace/
+attribute formatting) regardless of whether the logic is correct.
+Rewrite these to parse the output and assert on structure (element
+attributes, text content) instead of matching strings — more robust
+regardless of the lxml change, and it should happen alongside the
+refactor, not as a follow-up once something breaks. Add direct unit
+tests for =parse_lemma= and =split_annotation_chunks= now that they're
+named, importable functions.
+
+Completion criterion: =pdm run pytest= passes; =make= output is
+byte-for-byte unchanged in content (element structure, attributes,
+text) even if whitespace/formatting differs; no test asserts on raw
+serialized-string output.
+
+**** Review
+[2026-07-17, read directly from =feature/nvs-parser-refactor-lxml=
+before merge]
+
+Read =nvs/parsing.py=, =tests/test_parsing.py=, =pyproject.toml=, and
+=pdm.lock= directly on the branch.
+
+Conformance is exact: all seven functions from the spec
+(=extract_elements=, =parse_running_head=, =split_annotation_chunks=,
+=parse_lemma=, =extract_line_info=, =build_annotation_element=, plus
+the =parse_annotations_to_xml= orchestrator) are present with matching
+signatures. =lxml= landed as a real dependency (=dependencies =
+["lxml>=6.1.1"]= in =pyproject.toml=, a corresponding =[[package]]=
+block in =pdm.lock=) rather than a hand-edit — =pdm add= was actually
+used. =model/annotation.py= was correctly left on stdlib =ElementTree=,
+not switched to =lxml=, matching the "no need to add =lxml= there too"
+note in the task.
+
+The test migration is done properly, not just enough to pass: every
+rewritten test parses the output via =ET.fromstring= and asserts on
+elements/attributes, none assert on raw serialized strings. Direct
+unit tests were added for =parse_lemma= (six cases, including the
+previously-opaque three-pattern fallback) and
+=split_annotation_chunks=. Best sign: there's a dedicated
+=test_parse_annotations_to_xml_escapes_special_characters= test using
+almost exactly the "Rowe & Pope" example from the retrospective
+review, plus a stray =<stray>= tag — the escaping fix isn't just true
+as a side effect of using lxml, it's actually tested.
+
+One thing to verify with Claude Code before merging, not a code
+problem: its summary says the pipeline now runs cleanly on "all seven
+plays," but =raw/= has eight =shake.var.*= files.
+
+[2026-07-17, resolved] Confirmed with Claude Code, verified by grep:
+=shake.var.ham2.txt= has 410 =<HE>= tags and zero =<CC>= tags. It's
+the NVS Hamlet appendix volume (bibliography, actor interpretations,
+table of contents, essays), marked up with =<C>=, =<T>=, =<R>=,
+=<CE>=, =<SHL>=, etc. — not the =<HE>=/=<CC>= running-head/commentary
+structure this parser extracts. Both old and new code correctly
+produce an empty =<annotations>= root for it (old:
+=<annotations>\n</annotations>\n=; new: self-closing
+=<annotations/>=; structurally identical, zero children either way),
+so it's a real pass, not a skipped file — there's just nothing in it
+for this parser to find. So: 8 files, 7 with =<CC>= content that were
+meaningfully diffed (10,369 annotations, 0 mismatches), 1 (=ham2=)
+correctly and trivially empty. Nothing about the verification result
+changes; "seven plays" was just imprecise phrasing for "seven with
+content to compare."
+
+Worth flagging forward, not a blocker here: =ham2='s markup is a
+SHL/LHL/FHL/C-style vocabulary, the same family of tags as
+=titus.f1.txt='s front matter, not =B=/=I=/=SC=/=G=/=SUB=. It isn't
+out of scope the way =titus.f1.txt= is — the parser runs on it
+correctly, it just has nothing to extract — but it's likely relevant
+to =bibliography/parser=: if =ham2= is genuinely the NVS Hamlet
+bibliography/appendix volume, that content may be exactly what that
+task needs to parse, structured completely differently from
+commentary text. Noted in =doc/forum.org= for that task to pick up.
+
+Disposition: adopt.
+
 ** TODO Fix malformed XML output from parse_annotations_to_xml
 :PROPERTIES:
 :CUSTOM_ID: nvs/parser-malformed-xml-output
+:DEPENDS: parsing-raw-xml-vs-plain-text, nvs/parser-refactor-lxml
 :END:
 Discovered while verifying =annotations/xml-to-annotations= against
 real corpus data (=make out/shake.var.lear.annot.xml=):
@@ -135,11 +302,36 @@ the design weight, consider a =doc/forum.org= entry before
 implementing, per the collaboration protocol's guidance to link back
 to a real design decision.
 
+Settled per
+[[file:doc/forum.org::#parsing-raw-xml-vs-plain-text][#parsing-raw-xml-vs-plain-text]]:
+- Scope is the eight =shake.var.*= files. =titus.f1.txt= is a
+  different source format entirely (First Folio base text, not
+  variorum commentary) and is explicitly out of scope — don't include
+  it when checking the completion criterion below.
+- Build an explicit tag-classification registry (milestone /
+  container / inline-formatting-deferred), populated by inventorying
+  tags occurring inside =<CC>...</CC>= spans across the eight files
+  (not the whole file — =extract_elements= already discards
+  everything outside =HE=/=CC=).
+- Inline formatting tags (=B=, =I=, =SC=, =G=, =SUB=) are escaped as
+  literal text, not modeled as XML structure — deliberately
+  provisional; see the Decision for the revisit trigger (tied to
+  =bibliography/parser= below).
+
 Completion criterion: =make out/<play>.annot.xml= produces
 well-formed XML (=xml.etree.ElementTree.parse= succeeds without
-error) for every play in =raw/=, and
+error) for each of the eight =shake.var.*= plays (=titus.f1.txt=
+excluded, out of scope), and
 =hypervariorum.model.annotation.load_annotations()= successfully
-loads the result.
+loads each result.
+
+Also in scope, found during retrospective review of
+=annotations/xml-to-annotations= (see the Review section above):
+=lemma= and =commentary= are written into the output via plain
+f-strings with no XML escaping. Any literal =&=, stray =<=, or =>=
+in source text — not just the known inline-formatting tags — will
+also produce malformed output. Same fix shape as the tag question:
+escape literal text content on the way out.
 
 * Bootstrap
 

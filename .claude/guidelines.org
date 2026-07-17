@@ -19,6 +19,11 @@ Cliff, Claude Chat, and Claude Code coordinate across sessions.
   Don't force OOP onto small, single-purpose scripts just for
   consistency — see =CLAUDE.md='s Simplicity First principle, which
   takes precedence for anything that small.
+- Use a feature branch per task (=feature/CUSTOM_ID-short-description=);
+  never commit implementation work directly to =main=. Full
+  convention, including the Review-gated pattern for
+  classifier-adjacent work, is in =.claude/collaboration-protocol.org=
+  (Git Conventions).
 
 * Documentation
 
