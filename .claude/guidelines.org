@@ -2,13 +2,24 @@
 #+date: <2026-07-07 Tue>
 
 * Overview
-This document specifies
+
+Project-specific technical conventions for Hypervariorum,
+supplementing the general coding-discipline principles in =CLAUDE.md=
+(imported automatically alongside this file). This file is about
+*what* conventions to follow; =CLAUDE.md= is about *how* to approach
+any task carefully; =.claude/collaboration-protocol.org= is about how
+Cliff, Claude Chat, and Claude Code coordinate across sessions.
 
 * Programming
-- Prefer Python.
 
+- Prefer Python. Target the current stable release (3.14.6 as of
+  this writing) rather than an older one, absent a stated reason to
+  do otherwise.
+- Prefer Object-Oriented design where it fits the problem's shape.
+  Don't force OOP onto small, single-purpose scripts just for
+  consistency — see =CLAUDE.md='s Simplicity First principle, which
+  takes precedence for anything that small.
 
 * Documentation
-- Prefer emacs org mode for documentation.
 
-* Project Management
+- Prefer Emacs org mode for documentation.

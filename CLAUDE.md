@@ -3,6 +3,11 @@ ls: CLAUDE.md: No such file or directory
 
 Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
+## Project Coordination
+
+@.claude/collaboration-protocol.org
+@.claude/guidelines.org
+
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
 ## 1. Think Before Coding
