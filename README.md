@@ -19,6 +19,6 @@
     - **bin**: scripts
 
 ## Processing Critical Commentary
-    `make shake.var.lear.annot.xml`
+    `make out/shake.var.lear.annot.xml`
     
     

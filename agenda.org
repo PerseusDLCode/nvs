@@ -79,12 +79,67 @@ output from =raw/= as before the split.
 
 * Annotations Pipeline
 
-** TODO Process raw XML transcriptions into annotations
+** DONE Process raw XML transcriptions into annotations
 :PROPERTIES:
 :CUSTOM_ID: annotations/xml-to-annotations
 :END:
-Already underway per prior conversation — formalize current state
-here once the shape of the pipeline is clearer.
+Per
+[[file:doc/forum.org::#architecture/ingestion-model-classifier-split][#architecture/ingestion-model-classifier-split]]:
+built the source-agnostic =Annotation= dataclass and an XML loader
+in =src/hypervariorum/model/annotation.py=, consuming the
+=<annotations>/<annotation>= schema =nvs/parsing.py= already emits.
+Dependency graph and classifiers are explicitly out of scope here.
+
+Completion criterion: =pdm run pytest= passes with
+=tests/test_annotation.py= covering a single-line annotation, a
+line-range annotation, an annotation missing =act=/=scene=, and the
+quirky =1. [Foo= lemma case unchanged; =load_annotations()= accepts
+both a file path and a file-like object; and one test chains
+=parse_annotations_to_xml= output directly into =load_annotations()=
+to prove the interchange-format contract holds end-to-end. Met.
+
+Note: =load_annotations()= is verified against synthetic fixtures
+and the parser's own output shape, but not yet against full
+real-corpus =out/*.annot.xml= files — see
+=nvs/parser-malformed-xml-output= below, a separate pre-existing bug
+in the producer, not the loader.
+
+** TODO Fix malformed XML output from parse_annotations_to_xml
+:PROPERTIES:
+:CUSTOM_ID: nvs/parser-malformed-xml-output
+:END:
+Discovered while verifying =annotations/xml-to-annotations= against
+real corpus data (=make out/shake.var.lear.annot.xml=):
+=parse_annotations_to_xml= (=src/hypervariorum/nvs/parsing.py=) never
+escapes inline formatting tags (=<B>=, =<I>=, =<SC>=, =<G>=, =<SUB>=,
+=<P>=) from the source transcription — they're written straight into
+the generated XML as literal, unescaped markup.
+
+Two distinct failure modes found in =raw/shake.var.lear.txt= alone:
+- Numeric/illegible-text codes (=<01>=, =<03>=, =<*>=) — fixed
+  separately by converting them to real characters/=<unclear/>= in
+  =nvs/entities.py= (this pass).
+- =<P>= paragraph breaks that don't match the chunk-splitter's
+  lookahead pattern in =parse_annotations_to_xml= (expects a
+  digit-lemma or bracketed lemma right after =<P>=) are left
+  embedded as literal, unclosed tags inside =<commentary>= — 21
+  occurrences in King Lear alone, causing
+  =xml.etree.ElementTree.ParseError: mismatched tag=.
+
+Needs design thought before implementation: should inline formatting
+tags be escaped as literal text (simplest, loses the formatting
+distinction), or modeled as real nested XML content within
+=<lemma>=/=<commentary>= (preserves structure, bigger change to both
+the writer and to =model/annotation.py='s consumption of it)? Given
+the design weight, consider a =doc/forum.org= entry before
+implementing, per the collaboration protocol's guidance to link back
+to a real design decision.
+
+Completion criterion: =make out/<play>.annot.xml= produces
+well-formed XML (=xml.etree.ElementTree.parse= succeeds without
+error) for every play in =raw/=, and
+=hypervariorum.model.annotation.load_annotations()= successfully
+loads the result.
 
 * Bootstrap
 

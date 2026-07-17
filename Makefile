@@ -18,8 +18,8 @@ $(OUT_DIR):
 	mkdir -p $(OUT_DIR)
 
 # Rule to generate annotation document
-%.annot.xml: $(OUT_DIR)/%.cleaned $(BIN_DIR)/parse_annotations.py $(SRC_DIR)/nvs/parsing.py | $(OUT_DIR)
-	pdm run python $(BIN_DIR)/parse_annotations.py < $< > $(OUT_DIR)/$@
+$(OUT_DIR)/%.annot.xml: $(OUT_DIR)/%.cleaned $(BIN_DIR)/parse_annotations.py $(SRC_DIR)/nvs/parsing.py | $(OUT_DIR)
+	pdm run python $(BIN_DIR)/parse_annotations.py < $< > $@
 
 # Clean
 $(OUT_DIR)/%.cleaned: $(RAW_DIR)/%.txt $(BIN_DIR)/convert_entities.py $(SRC_DIR)/nvs/entities.py pdm_check | $(OUT_DIR)

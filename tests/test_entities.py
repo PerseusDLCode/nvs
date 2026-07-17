@@ -17,3 +17,12 @@ def test_convert_entities_nbsp_becomes_space():
 
 def test_process_line_strips_and_converts():
     assert process_line("  caf&eacute;  \n") == "café"
+
+
+def test_convert_entities_numeric_codes():
+    assert convert_entities("<01>e wandryng") == "þe wandryng"
+    assert convert_entities("<03>10") == "£10"
+
+
+def test_convert_entities_illegible_marker():
+    assert convert_entities("H<*> childed") == "H<unclear/> childed"

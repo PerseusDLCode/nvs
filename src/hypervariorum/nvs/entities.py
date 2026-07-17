@@ -83,6 +83,15 @@ def convert_entities(line):
     line = line.replace('&frac12;', u"\u00BD")
     line = line.replace('&frac14;', u"\u00BC")
     line = line.replace('&frac34;', u"\u00BE")
+
+    # numeric character codes (transcribers' own convention, distinct from
+    # the &name; entities above)
+    line = line.replace('<01>', u"\u00FE")  # lower-case thorn
+    line = line.replace('<03>', u"\u00A3")  # pound sign
+
+    # illegible-text marker
+    line = line.replace('<*>', '<unclear/>')
+
     return line
 
 
