@@ -210,6 +210,16 @@ Implementation work happens on a feature branch, never directly on
 Claude Code checks for an existing branch (=git branch -a=) before
 assuming it needs to create one — Cliff sometimes cuts it in advance.
 
+Coordination-file changes (=agenda.org=, =doc/forum.org=,
+=.claude/guidelines.org=) commit directly to =main=, not on feature
+branches. They're the continuous cross-task record, not a
+deliverable of any one task, so tying their history to a branch
+that gets merged and deleted is a mismatch — and it avoids merge
+conflicts in the coordination files themselves if more than one
+feature branch is ever in flight at once. In practice: commit
+coordination-file edits to =main= first, merge the feature branch
+afterward.
+
 * What This Protocol Does Not Cover
 
 - *Automatic syncing*: no tooling pushes changes between
