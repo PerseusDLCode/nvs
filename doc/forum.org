@@ -236,3 +236,318 @@ was never well-formed XML and never will be. Consequences:
    Likely relevant to =bibliography/parser=: if this genuinely is the
    NVS Hamlet bibliography volume, its content — not scattered =CC=
    commentary — may be that task's real source material.
+** Escaped tag litter in commentary text may signal unrecognized structure
+:PROPERTIES:
+:CUSTOM_ID: nvs/commentary-tag-litter-signals-structure
+:ASSIGNEES: Claude Chat, Cliff
+:SOURCE: adhoc
+:DEPENDS: nvs/parser-malformed-xml-output, parsing-raw-xml-vs-plain-text
+:END:
+
+While starting implementation of
+[[file:../agenda.org::#nvs/parser-malformed-xml-output][nvs/parser-malformed-xml-output]],
+found that the escaped tag remnants surviving in generated commentary
+text are not just cosmetic litter — at least one instance is a real,
+unrecognized structural pattern. Raises the question of whether
+others are hiding the same way, and whether this is a regression from
+moving away from ad-hoc string matching.
+
+**** Research
+[2026-07-27] Empirically, the literal crash described in
+=nvs/parser-malformed-xml-output= (=ParseError: mismatched tag= from
+stray =<P>= tags) no longer reproduces: all eight
+=raw/shake.var.*.txt= files (=titus.f1.txt= excluded, per the existing
+scope decision) currently produce well-formed XML that
+=load_annotations()= loads successfully on =main=, today. This
+appears to be a side effect of =nvs/parser-refactor-lxml=:
+=build_annotation_element= writes =lemma=/=commentary= via lxml
+=.text=, which auto-escapes =<=/=>=/=&= on serialization — so a stray
+unrecognized tag no longer breaks well-formedness, it just survives as
+harmless-looking escaped text (e.g. literal =&lt;LB N=96&gt;=
+mid-sentence in a =<commentary>= element).
+
+Traced one concrete case in =raw/shake.var.ac.txt=: a bracketed lemma
+wrapped in =<C>[...]</C>= (e.g. =<C>[32. <B>Cleopatra</B>]</C>=),
+immediately followed by =<P>=, is not an unrecognized *new-annotation*
+lemma format the way it first appeared. Checked against the digitized
+facsimile of this edition of *Antony and Cleopatra* at the Internet
+Archive
+([[https://archive.org/details/in.ernet.dli.2015.226433/page/n29/mode/2up][page
+8]]): the centered, bracketed lemma repeats the lemma from the
+previous page, signaling that the commentary on it continues rather
+than starting fresh. Frequency check across the seven
+commentary-bearing files: 184 occurrences total (ac 14, coriol 114,
+ham 30, lear 1, macb 7, oth 18, rj 0); 179 of 184 (97%) immediately
+followed by =<P>=, the remaining 5 by =<BQ>= (a quoted passage
+resuming before prose). The parser currently has no way to recognize
+this pattern — the continuation text either becomes a garbled orphan
+annotation or is silently absorbed into whichever chunk follows,
+rather than being correctly appended to the annotation whose lemma it
+repeats.
+
+Not yet established: whether the *other* escaped-tag litter (bare
+=<P>=, =<LB>=, =<FIG>=, =<FHL>= not preceded by a =<C>[...]</C>=
+continuation marker — i.e., ordinary paragraphs simply resuming after
+a page or line break with no annotation boundary crossed) is uniformly
+benign, or whether some of it hides other unrecognized patterns of the
+same kind as the continuation marker. That inventory work — and the
+judgment call on whether the shift away from ad-hoc string matching
+(toward the current regex-plus-lxml-construction approach) is itself
+what let this go unnoticed — is what's being handed to Claude Chat
+here, rather than guessed at from the Claude Code side.
+
+Stakes: this directly blocks the current actual goal, processing
+citations within commentary text — citation extraction needs
+commentary text with trustworthy annotation boundaries first.
+
+**** Decision
+[to be recorded]
+
+** Citation Resolution
+:PROPERTIES:
+:CUSTOM_ID: citation-resolution
+:ASSIGNEES: Cliff, Claude Chat
+:SOURCE: chat/2026-07-21
+:DISPOSITION: defer
+:END:
+
+Attempting to link citations in Furness's commentary (the =<SC>=
+apparatus) to bibliographic sources, ultimately to check them against
+Harvard's IDI holdings. Started as a request to parse the English
+bibliography into TEI =<bibl>=; ended up somewhere quite different.
+
+**** Research
+[2026-07-21] The bibliography itself resists a parser — inconsistent
+author-signaling (=AUTHOR:=, =Edited by=, anonymous), continuation
+notes parasitic on head entries, ditto-marks, date ranges — but the
+real finding came from sampling actual =<annotation>= commentary
+rather than the bibliography alone: citations there aren't just
+varied in locator form (bare name / titled / page-only / section-§ /
+s.v.), they're varied in *syntactic role* (source, cross-reference,
+co-citation, editorial voice), and role isn't recoverable from
+adjacent punctuation. This is the Schmidt-Sciences-relevant finding:
+this material needs actual reading comprehension, not pattern
+matching. Full argument in [[file:concepts.org][concepts.org]] (Attribution Principle,
+edge taxonomy), distilled from the 2026-07-06 conversation.
+
+Drafted an Edge-3 (Argument) classification task spec informed by
+that framework, then stepped back from it: premature. What's still
+open is Edge 2 (Citation) — genuinely less mechanical than assumed,
+but a different kind of judgment than Edge 3's argument-relation
+classification. Edge 2 mostly resolves to *period knowledge*
+(recognizing that bare "Wright:" means W. Aldis Wright's Clarendon
+Lear, 1875), not to interpretive reading of argumentative structure.
+Worth keeping this boundary explicit going forward — it's tempting to
+reach for the heavier Edge-3 apparatus (mandatory agent/basis/
+confidence on every record) when it isn't warranted yet.
+
+Built a resolution cascade for the ~71 bare-colon =<SC>= names
+(population from the July 21 pilot): Tier 0 resolves from the
+bibliography parse we already have (=Edited by=-pattern entries —
+Wright, Moberly, Hudson); Tier 1 is genuinely-excluded complete-Works
+editors (Johnson, Steevens, Malone, &c., per Norris's own "surplusage"
+footnote); Tiers 2-3 resolve against single/multiple bibliography
+entries; Tiers 4-5 are likely variorum-embedded 18th-c. contributors
+and genuinely uncertain identities. ~90% resolves at Tiers 0-3; the
+open pile (Tiers 3-5) is under 40 names. Full table: [[file:citation-resolution/bare_citation_resolution.org][doc/citation-resolution/bare_citation_resolution.org]].
+
+Extracted and triaged all 112 occurrences of the Tier 3-5 names
+(act.scene.line locus, NVS page number via the raw =<PB>=-tagged
+transcription, verdict on full-text-search value). 83 are search-
+worthy. Several identity corrections came only from reading the
+actual citation content, not from name-plausibility: Davies, Dodd,
+Wedgwood, Gifford confirmed; Reynolds and Burney reclassified from
+"uncertain one-off" to "likely variorum-embedded" on the strength of
+their prose register; "Clarke" is probably not a fifth identity at
+all but shorthand for Cowden Clarke. Full triage:
+[[file:citation-resolution/tier3_5_triage_with_pages.org][doc/citation-resolution/tier3_5_triage_with_pages.org]].
+
+Ran a one-case pilot (Davies) against public web resources to test
+full-text search feasibility before committing to all 83: found the
+work digitized (Internet Archive) but OCR quality on 18th-c. long-s
+typography is bad enough to defeat literal phrase search; HathiTrust's
+viewer is =robots.txt=-blocked for direct fetch and its public search
+covers only a subset of the collection; multiple competing
+digitizations of the same work complicate matching regardless (same
+edition-proliferation problem as Walker's /Critical Examination/).
+
+Cliff surfaced Institutional Books 1.0 (institutional.org) the same
+session — confirmed as the real IDI dataset, Harvard Law School
+Library / Library Innovation Lab, "refined for accuracy and usability."
+Unconfirmed whether the metadata-only HuggingFace release carries
+searchable body text or only bibliographic/topic fields; the "full"
+release and the site's Tools page are unexplored. This is the actual
+blocker now — see [[file:agenda.org::#corpus/access-feasibility][agenda.org]].
+
+**** Decision
+[2026-07-21] Cliff's call: pause the Tier 3-5 search batch. Do not
+scale to the remaining ~80 occurrences until corpus access is
+resolved — running them against public web resources the way the
+Davies pilot did would waste effort against the OCR/access problem
+just demonstrated, not against the citation-resolution problem this
+thread is actually about. Confirmed: stay at Edge 2 for now; Edge 3
+(argument classification) is a later, separate task, not a natural
+continuation of this one.
+
+Spun off: =corpus/access-feasibility= in =agenda.org=, blocking.
+
+[2026-07-21, addendum] The =bibliography/parser= task in =agenda.org=
+is superseded by everything above and is being removed, not left
+stale. It assumed the English bibliography could be parsed directly
+into TEI =<bibl>= elements; the pilot that opened this thread showed
+that assumption doesn't hold (inconsistent author-signaling,
+continuation notes parasitic on head entries, ditto-marks). More to
+the point, the bibliography's actual role turned out to be as Tier 0
+evidence within the citation-resolution cascade above, not a
+standalone parsing deliverable — the =Edited by=-pattern rows are
+what resolve =Wright=/=Moberly=/=Hudson= bare citations. If bibliography
+parsing becomes its own task again, it should be re-scoped from that
+starting point, not from the original spec.
+
+** Edge 3 design precedent: IDI's LC topic classifier
+:PROPERTIES:
+:CUSTOM_ID: edge3/topic-classifier-precedent
+:ASSIGNEES: Cliff, Claude Chat
+:SOURCE: chat/2026-07-22
+:DEPENDS: citation-resolution
+:DISPOSITION: document
+:END:
+
+Cliff's July 21 observations on IDI's published tools
+([[file:../agenda.org::#corpus/access-feasibility][agenda.org]], footnote 1) surfaced their Topic Classification Model.
+Question: does its approach bear on Edge 3 (argument-relation
+classification — rebuts/refutes/extends/concedes/qualifies/silently
+absorbs/&c.), which citation-resolution deliberately deferred?
+
+**** Research
+[2026-07-22] The IDI model
+([[https://huggingface.co/institutional/institutional-books-topic-classifier-bert][institutional-books-topic-classifier-bert]]) is a fine-tuned BERT
+text-classifier, single-label, over the 21 fixed top-level classes of
+the Library of Congress Classification Outline, trained on
+bibliographic metadata (title/author/year/general note — not full
+text) against an abundance of pre-existing gold labels: nearly every
+catalogued volume already carries an LC class from a century of
+professional cataloging. Closed taxonomy, single-item, mostly
+surface-lexical signal (a title with "analytical geometry" is
+obviously SCIENCE without reading past the title page).
+
+That shape maps reasonably well onto our =comment_type= axis
+(textual_emendation / glossarial / interpretive / source_study /
+performance / biographical) — also a closed, small, single-item
+taxonomy, plausibly distillable into a cheap supervised classifier
+*eventually*, once we have gold labels from some other source.
+
+It does not map onto =argument_relation=, for three reasons:
+
+1. /No ground truth exists./ LC classification has a century of
+   labels to train on. Nobody has labeled "this 1852 note rebuts that
+   1783 note" at scale, and concepts.org is explicit that the
+   taxonomy itself is a theory, not a settled fact — there is nothing
+   to supervise-train against yet.
+2. /It's relational, not single-item./ Their classifier takes one
+   book, emits one label. Argument-relation classification needs two
+   comments in relation, often pages or acts apart, sometimes with
+   the relation never stated outright (=silently_absorbs=). A fixed-
+   window single-input classifier has no natural way to hold both
+   comments at once without scaffolding their problem never required.
+3. /The softmax confidence score is a live specimen of
+   Arnold-as-softmax./ =\{'label': 'SCIENCE', 'score': 0.9997\}= looks
+   like epistemic humility but is just distance from a trained
+   decision boundary — structurally incapable of saying "none of
+   these fit, and here is why," which is exactly what
+   =resists_classification= requires. Worth citing this model
+   directly in concepts.org's failure-mode bestiary as a real
+   instance of the pattern, not a hypothetical one.
+
+Where this genuinely is useful: their technical report (§4.5, cited
+on the model card) documents a real expensive-judgment-to-cheap-
+classifier distillation workflow. That's a legitimate future move for
+Edge 3 too, but only in that order — run the expensive model on
+argument-relation classification first, accumulate its judgments as a
+working dataset, and only then consider whether a distilled small
+classifier is worth building for scale. The topic classifier is
+evidence the distillation step is tractable once labels exist; it is
+not evidence that the labeling step can be skipped.
+
+**** Reference: a worked example (tender-hefted, II.iv.168)
+Cliff's 2026-07-22 email to David Smith (Perseus/IDI), asking for
+practical guidance on searching the Institutional Books corpus,
+independently illustrates exactly the citation-resolution difficulty
+this thread has been working through — worth keeping verbatim here
+since it's a better worked example than anything invented for
+illustration. Furness's note on "tender-hefted" runs seven citations
+deep (Steevens, Davies, Knight, White, the /Edinburgh Review/,
+Schmidt, Wright), and contains both open problems named above:
+
+- =<SC>Davies</SC>=, bare, no locator — exactly the ambiguous-identity
+  problem the bare-citation cascade was built for.
+- =<SC>Knight</SC>: We doubt Steevens's explanation.= — a real,
+  naturally-occurring two-level citation (Furness quoting Knight
+  disputing Steevens), the same structure as the Palleske-via-Schmidt
+  case from the July 21 triage, confirming that's a recurring pattern
+  rather than a one-off.
+
+#+begin_quote
+David,
+I'm ready to try working with the institutional books dataset and I'd
+appreciate some practical guidance.
+The initial task is relatively simple. Furness's Critical Commentary
+is typically discursive and many citations are gestural. See, for
+example, the following comment on 'tender-hefted' on Act II, scene iv,
+line 168 of King Lear:
+
+<P>168. <B>tender-hefted]</B> <SC>Steevens</SC>: <I>Hefted</I> seems to mean the same as <I>heaved.</I>
+&lquo;Tender-hefted,&rquo; <I>i. e.</I> whose bosom is agitated by tender passions. Sh. uses &lquo;hefts&rquo;
+for <I>heavings</I> in <I>Wint. Tale</I>, II, i, 45. The Qq, however, read, &lquo;tender-hested
+nature,&rquo; which may mean a nature which is governed by gentle dispositions. &lquo;Hest&rquo;
+is an old word, signifying command. <SC>Davies</SC>: I suppose the expression was in-
+tended to signify <I>smooth</I>, or <I>soft-handled</I>, consequently put here for <I>gentleness of dis-
+position.</I> <SC>Knight</SC>: We doubt Steevens's explanation. <I>Heft,&mdash;haft</I>,&mdash;is that which
+is <I>haved,&mdash;held;</I> and thus, &lquo;thy tender-hefted nature&rquo; may be thy nature which may
+be held by tenderness. <SC>White</SC>: Although I fail to see the appropriateness of any
+sense that may be extracted from either text of the Ff or Qq, I shrink from adopting
+the very specious reading of the earlier editors: tender-<I>hearted.</I> <SC>Edinburgh Re-
+view</SC> (July, 1869, p. 106): &lquo;Heft&rquo; is a well-known older English word for handle,
+that which holds or contains, and &lquo;tender-hefted&rquo; is simply delicately-housed, dain-
+tily-bodied, finely-sheathed. &lquo;Heft&rquo; was in this way applied proverbially to the body,
+and Howel has a phrase quoted by Halliwell: <I>loose in the heft</I>, to designate an ill
+habit of body, a person of dissipated ways. <SC>Schmidt</SC> (<I>Lex.</I>) quotes this extract,
+and adds: But is <I>haft</I> or <I>heft, i. e.</I> handle, indeed that which holds or contains, or
+not rather that by which a thing is held? <I>Loose in the handle</I>, applied to a person,
+could not possibly mean any thing else than what <I>loose in the heft</I> is said to have
+designated. Perhaps &lquo;tender-hefted,&rquo; <I>i. e.</I> tender-handled, is equivalent to tender,
+gentle, to touch or to approach; of an easy and winning address, affable. <SC>Wright</SC>:
+A heft or haft is a handle, and a nature tender-hefted is one which is set in a tender
+handle or delicate bodily frame. Regan was less masculine than Goneril. Cotgrave
+has, &lquo;Emmanch&eacute;: m. &eacute;e: f. Helued; set into a haft, or handle. Lasche emmanch&eacute;.
+Lazie, idle, slothfull, weake, feeble, loose ioynted, faint-hearted.&rquo; <I>Prompt. Parv.</I>
+&lquo;Heftyde, manubriatus.&rquo;
+
+For now, I'm simply working citation resolution. Some (like STEEVENS)
+can be resolved by looking at Furness's bibliography or at historical
+bibliographies of Shakespeare criticism (which LLMs have assimilated).
+Others are more difficult, either because the cited name might
+resolve to any of several authors or because an author has written
+more than one relevant work. E.g.,
+<SC>Davies</SC>: I suppose the expression was intended to signify
+<I>smooth</I>, or <I>soft-handled</I>, consequently put here for <I>gentleness
+of disposition.</I>
+or
+<SC>Knight</SC>: We doubt Steevens's explanation.
+
+The second is particularly interesting because it's a two-level
+citation: Furness citing Knight citing Steevens. In both cases, access
+to the full-text corpus would help disambiguate the authors and works
+Furness is talking about.
+
+I frankly do not know how to search a corpus of this size: my
+ignorance of contemporary NLP is on full display. Could you suggest
+some methods, or some practical tutorials I could study?
+
+—Cliff
+#+end_quote
+
+Awaiting reply; logged here independently of the reply since the
+Edge-3/topic-classifier question above doesn't depend on it. See
+=corpus/access-feasibility= in =agenda.org= for the access side of
+this same inquiry.

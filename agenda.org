@@ -31,34 +31,6 @@ exists in the forum from this pass — not just "I looked it over."
 Depends on the forum review above: the report should be written
 from a reviewed record, not an unreviewed one.
 
-* Bibliography
-
-** TODO Write script to parse bibliography
-:PROPERTIES:
-:CUSTOM_ID: bibliography/parser
-:DEPENDS: parsing-raw-xml-vs-plain-text
-:END:
-Convert the bibliography embedded in the NVS transcriptions into
-machine-readable form. (Migrated from the =doc/project.org= draft,
-2026-07-07.)
-
-Named revisit trigger for
-[[file:doc/forum.org::#parsing-raw-xml-vs-plain-text][#parsing-raw-xml-vs-plain-text]]:
-when this work begins, it's expected to use inline typography
-(smallcaps, bold, italic — currently escaped as literal text, see
-=nvs/parser-malformed-xml-output=) as a signal for identifying author
-names, book titles, and similar bibliographic entities in commentary
-text. That's the point to reconsider whether formatting needs to be
-modeled as real structure rather than literal escaped text.
-
-Worth checking first: =raw/shake.var.ham2.txt= (410 =<HE>= tags, zero
-=<CC>=) looks like the actual NVS Hamlet appendix/bibliography volume
-— see the addendum in
-[[file:doc/forum.org::#parsing-raw-xml-vs-plain-text][#parsing-raw-xml-vs-plain-text]].
-Its =<C>=/=<T>=/=<R>=/=<CE>= markup is unrelated to =<HE>=/=<CC>=, so
-this task likely needs its own extraction logic for that file rather
-than reusing =nvs/parsing.py='s commentary parser.
-
 * Packaging
 
 ** DONE Split bin/ scripts into src/hypervariorum package + thin wrappers
@@ -150,7 +122,7 @@ same shape: escape literal text content on the way out.
 
 Disposition: adopt.
 
-** TODO Refactor parse_annotations_to_xml: lxml construction + function decomposition
+** DONE Refactor parse_annotations_to_xml: lxml construction + function decomposition
 :PROPERTIES:
 :CUSTOM_ID: nvs/parser-refactor-lxml
 :END:
@@ -335,6 +307,58 @@ in source text — not just the known inline-formatting tags — will
 also produce malformed output. Same fix shape as the tag question:
 escape literal text content on the way out.
 
+[2026-07-27] Paused: fresh investigation found the literal crash no
+longer reproduces (verified empirically against all eight files on
+main), but surfaced a real unrecognized structural pattern (page-break
+lemma-continuation markers) hiding behind what looked like cosmetic
+tag litter — see
+[[file:doc/forum.org::#nvs/commentary-tag-litter-signals-structure][#nvs/commentary-tag-litter-signals-structure]]
+for the write-up, handed to Claude Chat. Not resuming implementation
+here until that comes back with a Decision.
+
+* Corpus Access
+
+** TODO Corpus access feasibility
+:PROPERTIES:
+:CUSTOM_ID: corpus/access-feasibility
+:DEPENDS: citation-resolution
+:END:
+Blocks the Tier 3-5 full-text search task (see
+[[file:doc/forum.org::#citation-resolution][#citation-resolution]] and
+[[file:doc/citation-resolution/tier3_5_triage_with_pages.org][the triage file]]). Do not proceed with the 83-item search batch
+until this is resolved.
+
+One pilot case (Davies) against public web resources found: the work
+is digitized but OCR quality on 18th-c. long-s typography defeats
+literal phrase search; HathiTrust's page-turner is =robots.txt=-
+blocked for direct fetch and its public search covers only a subset
+of the collection; multiple competing digitizations of the same work
+complicate matching regardless.
+
+Likely answer: Institutional Books 1.0, the actual IDI dataset
+(https://institutional.org/institutional-books) — same Harvard/
+Google Books scans HathiTrust draws from, but explicitly "refined
+for accuracy and usability." Two HuggingFace repos exist: a
+metadata-only one (confirmed SQL-queryable via DuckDB WASM in the
+HF Data Studio) and a "full version" — unconfirmed whether the
+latter carries searchable body text or only richer metadata. The
+site's Tools page (https://institutional.org/tools) is unexplored.[fn:1]
+License note for later: non-commercial, "Early-Access, provisional
+terms" — fine for research use, worth remembering if anything from
+this project is ever published or distributed.
+
+Next steps:
+1. Check institutional.org/tools and the full (non-metadata)
+   HuggingFace dataset for actual text content, not just metadata.
+2. If promising, re-run the 3-case pilot (Davies, Tollet/Waterford,
+   Ritson p.170) against IDI directly before scaling to all 83.
+3. Separately: check with Perseus researchers on what access they already
+   have or have used, in case this is a solved problem elsewhere in
+   the project.
+
+   <2026-07-21 Tue 17:13> I have sent an inquiry to David Smith for
+   guidance on 1 and 3.  Meanwhile, see [fn:1]. 
+
 * Bootstrap
 
 ** DONE Document the raw/ external-corpus symlink
@@ -357,3 +381,13 @@ for the full context. Two parts:
 Does not require deciding the project-config question (output
 paths, secrets, etc.) — that's deliberately deferred to a separate
 discussion.
+
+* Footnotes
+
+[fn:1] <2026-07-22 Wed> IDI has developed three open tools: GRIN
+Transfer, for downloading books from Google Books via the GRIN
+interface; Institutional Books Pipeline 1.0, for assembling datasets
+like IDI's; and, most interesting for us, a [[https://institutional.org/tools/#topic-classification-model][Topic Classification
+Model]], which categorizes volumes based on Library of Congress
+classification headings.  We aren't interested in the specific task,
+but its implementation, [[https://huggingface.co/institutional/institutional-books-topic-classifier-bert][described on HuggingFace]], may be worth study.
