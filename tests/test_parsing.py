@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 
 from hypervariorum.nvs.parsing import (
     parse_annotations_to_xml,
+    parse_continuation_marker,
     parse_lemma,
     roman_to_int,
     split_annotation_chunks,
@@ -112,3 +113,83 @@ def test_parse_annotations_to_xml_escapes_special_characters():
     annotation = root.find("annotation")
     assert "Rowe & Pope" in annotation.findtext("lemma")
     assert "<stray>" in annotation.findtext("commentary")
+
+
+def test_parse_continuation_marker_matches_bracketed_lemma_before_p():
+    lemma, remainder = parse_continuation_marker(
+        "<C>[32. <B>Cleopatra</B>]</C>\n<P>into Caesar's apartment"
+    )
+    assert lemma == "32. <B>Cleopatra</B>"
+    assert remainder.strip() == "into Caesar's apartment"
+
+
+def test_parse_continuation_marker_matches_bracketed_lemma_before_bq():
+    lemma, remainder = parse_continuation_marker("<C>[4. <B>Foo</B>]</C><BQ>quoted text")
+    assert lemma == "4. <B>Foo</B>"
+    assert remainder.strip() == "quoted text"
+
+
+def test_parse_continuation_marker_no_match_returns_none():
+    assert parse_continuation_marker("1. [Foo] ordinary annotation") is None
+
+
+def test_parse_annotations_to_xml_merges_page_turn_continuation():
+    src = (
+        "<CC><P>56. <B>an Arme-gaunt Steede]</B> Mr Warburton here seems to have stolen"
+        "</CC>"
+        "<PB N=77>"
+        "<HE>77 <I>THE TRAGEDIE OF</I></HE>"
+        "<FHL>"
+        "<CC>\n<C>[56. <B>an Arme-gaunt Steede</B>]</C>\n<P>synonymous. Spenser makes.</CC>"
+    )
+    out = io.StringIO()
+    parse_annotations_to_xml(io.StringIO(src), out)
+    root = ET.fromstring(out.getvalue())
+
+    annotations = root.findall("annotation")
+    assert len(annotations) == 1
+    assert (
+        annotations[0].findtext("commentary")
+        == "Mr Warburton here seems to have stolen synonymous. Spenser makes."
+    )
+
+
+def test_parse_annotations_to_xml_bracketed_lemma_without_page_break_unchanged():
+    # Two <CC> blocks with no intervening <PB>: condition 1 (page break just
+    # occurred) fails, so the bracketed chunk must fall through to the
+    # existing (pre-fix) behavior rather than being merged.
+    src = (
+        "<CC><P>1. [Foo] first annotation</CC>"
+        "<HE>no page break here</HE>"
+        "<CC>\n<C>[1. <B>Foo</B>]</C>\n<P>not a real continuation</CC>"
+    )
+    out = io.StringIO()
+    parse_annotations_to_xml(io.StringIO(src), out)
+    root = ET.fromstring(out.getvalue())
+
+    annotations = root.findall("annotation")
+    assert len(annotations) == 2
+    assert annotations[0].findtext("commentary") == "first annotation"
+    assert annotations[1].findtext("lemma") == ""
+    assert "<C>" in annotations[1].findtext("commentary")
+
+
+def test_parse_annotations_to_xml_merges_bq_adjacent_continuation():
+    src = (
+        "<CC><P>9. <B>a quoted line]</B> the passage begins"
+        "</CC>"
+        "<PB N=9>"
+        "<HE>9 <I>THE TRAGEDIE OF</I></HE>"
+        "<FHL>"
+        "<CC>\n<C>[9. <B>a quoted line</B>]</C>\n<BQ>and now it resumes.</CC>"
+    )
+    out = io.StringIO()
+    parse_annotations_to_xml(io.StringIO(src), out)
+    root = ET.fromstring(out.getvalue())
+
+    annotations = root.findall("annotation")
+    assert len(annotations) == 1
+    assert (
+        annotations[0].findtext("commentary")
+        == "the passage begins and now it resumes."
+    )

@@ -21,8 +21,10 @@ def roman_to_int(roman_str):
 
 
 def extract_elements(content: str) -> Iterator[str]:
-    """Yields <HE>...</HE> and <CC>...</CC> blocks in order of appearance."""
-    for match in re.finditer(r"(<HE>.*?</HE>|<CC>.*?</CC>)", content, re.DOTALL):
+    """Yields <HE>...</HE>, <CC>...</CC>, and <PB.../> blocks in order of appearance."""
+    for match in re.finditer(
+        r"(<HE>.*?</HE>|<CC>.*?</CC>|<PB[^>]*>)", content, re.DOTALL
+    ):
         yield match.group(1)
 
 
@@ -44,6 +46,14 @@ def split_annotation_chunks(cc_inner: str) -> list[str]:
     return re.split(r"<P>(?=\d+(?:[-–]\d+)?\.?|<B>.*?\])", cc_inner)
 
 
+def _normalize_bracket_lemma(raw_lemma: str) -> str:
+    """Applies the `]</B>`/`</B>]` swap and trailing-`]` strip shared by bracketed lemmas."""
+    lemma = raw_lemma.strip().replace("]</B>", "</B>").replace("</B>]", "</B>")
+    if lemma.endswith("]"):
+        lemma = lemma[:-1].strip()
+    return lemma
+
+
 def parse_lemma(chunk: str) -> tuple[str, str]:
     """Splits an annotation chunk into (lemma, commentary) using a 3-pattern fallback."""
     lemma = ""
@@ -56,22 +66,30 @@ def parse_lemma(chunk: str) -> tuple[str, str]:
     if pattern_a:
         part1 = pattern_a.group(1) or ""
         part2 = pattern_a.group(2) or ""
-        raw_lemma = (part1 + part2).strip()
-        lemma = raw_lemma.replace("]</B>", "</B>").replace("</B>]", "</B>")
-        if lemma.endswith("]"):
-            lemma = lemma[:-1].strip()
+        lemma = _normalize_bracket_lemma(part1 + part2)
         commentary = chunk[len(pattern_a.group(0)):].strip()
     elif pattern_b:
-        raw_lemma = pattern_b.group(1).strip()
-        lemma = raw_lemma.replace("]</B>", "</B>").replace("</B>]", "</B>")
-        if lemma.endswith("]"):
-            lemma = lemma[:-1].strip()
+        lemma = _normalize_bracket_lemma(pattern_b.group(1))
         commentary = chunk[len(pattern_b.group(0)):].strip()
     elif pattern_c:
         lemma = pattern_c.group(1).strip()
         commentary = chunk[len(pattern_c.group(1)):].strip()
 
     return lemma, commentary
+
+
+def parse_continuation_marker(chunk: str) -> tuple[str, str] | None:
+    """Detects a page-turn continuation marker: a bracketed lemma repeat immediately
+    followed by `<P>` or `<BQ>`, e.g. `<C>[32. <B>Cleopatra</B>]</C><P>...`.
+
+    Returns (normalized_lemma, remainder_text) if the chunk opens with one, else None.
+    """
+    match = re.match(r"^<C>\[(.*?)\]</C>\s*(?:<P>|<BQ>)", chunk, re.DOTALL)
+    if not match:
+        return None
+    lemma = _normalize_bracket_lemma(match.group(1))
+    remainder = chunk[match.end():]
+    return lemma, remainder
 
 
 def extract_line_info(lemma: str) -> dict[str, str]:
@@ -115,6 +133,8 @@ def parse_annotations_to_xml(in_file, out) -> None:
 
     current_act: str | None = None
     current_scene: str | None = None
+    pb_pending = False
+    open_annotation: etree._Element | None = None
 
     root = etree.Element("annotations")
 
@@ -125,21 +145,44 @@ def parse_annotations_to_xml(in_file, out) -> None:
                 current_act, current_scene = running_head
             continue
 
-        cc_inner = text[4:-5].strip()
+        if text.startswith("<PB"):
+            pb_pending = True
+            continue
 
+        cc_inner = text[4:-5].strip()
+        cc_follows_page_break = pb_pending
+        pb_pending = False
+
+        is_first_chunk = True
         for chunk in split_annotation_chunks(cc_inner):
             chunk = chunk.strip()
             if not chunk:
                 continue
+
+            if is_first_chunk and cc_follows_page_break:
+                is_first_chunk = False
+                marker = parse_continuation_marker(chunk)
+                if marker is not None and open_annotation is not None:
+                    marker_lemma, remainder = marker
+                    open_lemma = open_annotation.find("lemma").text
+                    if marker_lemma == open_lemma:
+                        commentary_el = open_annotation.find("commentary")
+                        commentary_el.text = (
+                            (commentary_el.text or "").rstrip() + " " + remainder.strip()
+                        )
+                        continue
+            is_first_chunk = False
+
             if chunk.startswith("<P>"):
                 chunk = chunk[3:].strip()
 
             lemma, commentary = parse_lemma(chunk)
             line_info = extract_line_info(lemma)
 
-            root.append(
-                build_annotation_element(lemma, commentary, current_act, current_scene, line_info)
+            open_annotation = build_annotation_element(
+                lemma, commentary, current_act, current_scene, line_info
             )
+            root.append(open_annotation)
 
     xml_bytes = etree.tostring(
         root, xml_declaration=True, encoding="utf-8", pretty_print=True
