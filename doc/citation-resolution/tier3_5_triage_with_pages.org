@@ -1,0 +1,746 @@
+#+title: Triage of Tier 3-5 Contexts, with Page Numbers
+#+date: <2026-07-21 Tue>
+#+description: Same triage as before, now with NVS page numbers attached
+#+description: via fuzzy match against the raw PB-tagged transcription.
+#+description: Page numbers are matched by content similarity, not exact
+#+description: structural correspondence between the two source files —
+#+description: treat as high-confidence but verify before citing formally.
+
+* Tier 3
+
+** Jennens
+
+*** [SKIP] Jennens #1 — 1.1.123 — p. 20
+Rationale: paraphrase only, no verbatim language
+:CONTEXT:
+Heath: These words are undoubtedly addressed to Kent; for in the next words Lear sends for France and Burgundy, in order to tender to them his youngest daughter. At such a time, therefore, to drive her out of his presence would be a contradiction to his declared intention. Jennens ably maintains that this is addressed to Cordelia, in so far as she had just raised her father's anger to the highest pitch, while Kent, the extent of whose opposition was thus far quite unknown, had been simply warned not to come between the dragon and his wrath. When Kent interposed a second time, Lear warned him a second time to make from the s
+:END:
+
+*** [SEARCH] Jennens #2 — 1.1.136 — p. 22
+Rationale: short quote: 'It is most likely Sh. wrote all the rest'
+:CONTEXT:
+Warburton reads ‘of th' Hest,’ because _Hest_ is an old word for regal command. Heath proposed to substitute _interest_, which will signify the legal right and property. Jennens: It is most likely Sh. wrote _all the rest._ Johnson: The phrase means, I suppose, the execution of all the other business.
+:END:
+
+*** [SEARCH] Jennens #3 — 1.1.180 — p. 27
+Rationale: direct quote on 'Friendship'/'banishment'
+:CONTEXT:
+Jennens: ‘Friendship,’ of the Qq, seems more properly opposed to ‘banishment;’ for what is ‘banishment’ but the being driven away from our friends and countryment?
+:END:
+
+*** [SEARCH] Jennens #4 — 1.1.? — p. 31
+Rationale: long block quote, his own defense of the Qq reading — high value
+:CONTEXT:
+</I> for having _vouch'd affection_ which you did not feel.’ By changing ‘Fall,’ of the Ff, into _Falls_, he says the same sense is produced, and adds ‘another possible sense. “Or” signifies _before;_ the meaning of the Ff may therefore be: “Sure her crime must be monstrous _before_ your affection can be affected with hatred.”’ Jennens, the sturdy champion of the Qq, enclosing the whole phrase in parentheses, thus defends and interprets their text: The best way to make sense [of the Qq text] will be to consider what was the real cause of the estrangement of Lear's love from Cordelia; it was the vouch'd affections of his three daughters; the two eldest vouch'd such affection to h
+:END:
+
+*** [SKIP] Jennens #5 — 1.1.223 — p. 32
+Rationale: paraphrase, jointly attributed with Eccles
+:CONTEXT:
+Abbott, § 387, supposes an ellipsis after ‘If’ of _it is_, and takes ‘for’ as equivalent to _because._ Jennens and Eccles suppose that it is a broken speech, expressing the modest fear and bashful diffidence of Cordelia, heightened by her concern under her pitiable circumstances. For instances of ‘for,’ meaning _because_, see Schmidt, _Lex._ s. v.
+:END:
+
+*** [SKIP] Jennens #6 — 1.1.225-227 — p. 32
+Rationale: paraphrase only
+:CONTEXT:
+Jennens, true to the Qq, and adopting their text here, believes that this is addressed to France; then, without making a period, Cordelia turns again to the king.
+:END:
+
+*** [SEARCH] Jennens #7 — 1.1.278 — p. 38
+Rationale: distinctive phrase: 'it is like seeding seed'
+:CONTEXT:
+I>vaunted,’ i. e.</I> that disherison, which you so much glory in, you deserve. Heath: Sh. might have written: ‘the want that you have _wasted,’ i. e._ you will deserve to want that which you have yourself so wastefully and unnecessarily thrown away. Tollet: ‘You are well deserving of the want of dower that you are without.’ Jennens: The old reading is not elegant, indeed, but it is intelligible,—it is like ‘seeding seed’—Gen. i. 29. Capell: The Qq reading, with this addition, viz: ‘are worth _to want_ the worth that you have wanted’ has a plain sense, and one worthy the utterer, and gives a roundness to the jingle. Eccles: It might be read: ‘worth <I>t
+:END:
+
+*** [SEARCH] Jennens #8 — 1.2.21 — p. 45
+Rationale: short quote on 'out or rout'
+:CONTEXT:
+ning readings of copies) by that ingenious work's writer: This emendation will have no impugners or doubters, if that corruption be look'd upon out of which it arose; if it's opposition to “base” be consider'd, and (which is yet a stronger matter than either) it's connection with “grow,” which has no natural introduction unless preceded by “top.”’ Jennens: If conjecture be made without any regard to the traces of the letters, _out_ or _rout_ are better than _be._ Malone: In Devonshire, as Sir Joshua Reynolds informs me, ‘to _toe_ a thing up is to tear it up by the roots; in which sense the word is perhaps used here, for Edmund immediately adds “I _grow_, I prosper.
+:END:
+
+*** [SKIP] Jennens #9 — 1.4.138 — p. 73
+Rationale: paraphrase only
+:CONTEXT:
+Jennens adopts Hanmer's change ‘_Or_ do,’ and asserts that the measure points out that a word is lost here [which is true], and that the sense shows it to be _Or_ [which is doubtful]. White is equally sure that the missing word is _And;_ his text reads ‘_And do thou_,’ and in his note he says that this _And_ the rhythm so
+:END:
+
+*** [SEARCH] Jennens #10 — 1.4.148 — p. 74
+Rationale: quote: 'a patent out of court for being sole fool'
+:CONTEXT:
+Jennens: That is, a patent out of court for being sole fool. Warburton: A satire on the gross abuses of monopolies at that time, and the corruption and avarice of the courtiers, who commonly went shares with the patentee. Steevens: Monopolies in Shakespeare's time were common objects of satire.
+:END:
+
+*** [SKIP] Jennens #11 — 1.4.334 — p. 94
+Rationale: paraphrase, no verbatim Jennens language
+:CONTEXT:
+Malone: A dissyllable. So also Abbott, § 480. To avoid this dissyllabic pronunciation of ‘more,’ Jennens inserted _Go_ before ‘Get you gone’—an emendation which was afterwards proposed by both Steevens and Walker. Dyce thinks most probably a word has dropped out of the line, ‘though our old poets seem occasionally to have used ‘more’ as a dissyllable. [See V, iii, 169.]
+:END:
+
+*** [SEARCH] Jennens #12 — 1.5.1 — p. 96
+Rationale: extended quote, his own reconstructed stage direction
+:CONTEXT:
+Jennens holds that this is addressed to the Gentleman whose entrance with Lear is marked in the Ff. ‘It is plain,’ he argues, ‘that the letter to Regan was sent by Kent; those to Glo'ster by another; the order to Kent was left out,’—his text accordingly reads: ‘_Lear._ [_to a Gentleman_] Go you before to Glo'ster with these letters.—You with thi
+:END:
+
+*** [SKIP] Jennens #13 — 2.1.119 — p. 112
+Rationale: paraphrase only
+:CONTEXT:
+Jennens: Regan may be here supposed officiously to complete Cornwall's sentence. Hudson: Regan's snatching the speech out of her husband's mouth is rightly in character. These two strong-minded ladies think nobody else can do anything so well as they. [Although Regan does certainly take up and continue her husband's speech, yet it should be remem
+:END:
+
+*** [SEARCH] Jennens #14 — 2.2.162-166 — p. 132
+Rationale: HIGH VALUE — his own textual reconstruction, block-quoted
+:CONTEXT:
+hus: <BQ>‘— Cordelia — has been — informed<LB> Of my obscured course, and shall find time—<LB> From this enormous state-seeking, to give<LB> Losses their remedies.’<LB></BQ> <P>Cordelia is informed of our affairs, and when the _enormous_ care of _seeking her for<unclear/> tune_ will allow her time, she will employ it in remedying losses. Jennens was the first to suggest that Kent reads fragments of Cordelia's letter. His text reads thus &dot; <BQ>‘—'Tis from Cordelia, [_Opening the letter._<LB REND=RIGHT> Who has most fortunately been inform'd<LB> Of my obscure course — _and shall find time_ [_Reading parts of the letter._<LB> <I>From this enormous state — seeking to give</
+:END:
+
+*** [SEARCH] Jennens #15 — 2.4.? — p. 158
+Rationale: quote on 'pinch'/'wage'
+:CONTEXT:
+206, 207. *To wage . . . howl]* Theobald (followed by Hanmer) transposed these lines so as to. make ‘Necessity's sharp pinch,’ the object of ‘wage.’ This Jennens pronounces nonsense, because ‘it is that “pinch” which forces a man to “wage;” _war_ is understood, or perhaps it is the very word instead of “wage.” “Necessity's sharp pinch” is in apposition to “To be a comrade,”’ &amp;c. Capell: ‘To wage,’ is to wage combat or battle. Steevens says, that _wage_ is often used thus, in
+:END:
+
+*** [SEARCH] Jennens #16 — 3.1.? — p. 167
+Rationale: distinctive 'moon' conjecture, quoted
+:CONTEXT:
+was meant by ‘the main’ in the former passage. Delius doubts that this means the land; the sense being rather that the curled waters swell above their own especial domain, the sea, and overflow the land. Jennens: Though all the editions have ‘main,’ it is very likely Sh. wrote _moon_, which is much better, because it more strongly expresses (according to Shakespeare's custom) the confusion which Lear in his rage would have introduced into nature; besides, ‘main’ is ambiguous, applicable to sea or land. The effect of overflowing the land is not so gre
+:END:
+
+*** [SEARCH] Jennens #17 — 3.2.42 — p. 175
+Rationale: extended quote on stage business
+:CONTEXT:
+Jennens, following the Qq, says that the reading of the Ff seems to be ‘an alteration made for the ease of the actors, that he who acted Lear might not have the trouble of sitting down on the ground, and rising again; but if propriety of action take place, what can be more proper than Lear's seating himself, after his last speech?’ Jennens inserts a stage
+:END:
+
+*** [SKIP] Jennens #18 — 3.2.? — p. 179
+Rationale: bare name in a list, no Jennens-specific language
+:CONTEXT:
+osed lines 93, 94 to follow line 84; that concludes the first prophecy, and Warburton points the allusion to the present time by adding parenthetically after them, ‘_i. e._ Now.’ The remaining lines compose the second prophecy, and at the end of the last line Warburton adds, ‘_i. e._ Never.’ Warburton's change was followed in the text by Hanmer, Johnson, Jennens, and Eccles. Capell grants Warburton's conclusions, but denounces the transposition of the lines as ‘destructive of humour, and of the speaker's wild character which disclaims regularity.’ Capell's explanation is that Sh. wrote two speeches for the Fool, ‘one comprising the whole of that prophecy which relates to things _present;_ it
+:END:
+
+*** [SKIP] Jennens #19 — 3.7.39 — p. 220
+Rationale: paraphrase, jointly attributed with Capell
+:CONTEXT:
+Both Jennens and Capell think that ‘favours’ refers to Gloucester's silver hairs. But Steevens shows that it means the ‘features, _i. e._ the different parts of which a face is composed. So in Drayton's epistle from _Matilda to King John_ [p. 87, ed. 1748.]: “Within the compass of man's face we see, How many sorts of several favours
+:END:
+
+*** [SEARCH] Jennens #20 — 3.7.93 — p. 228
+Rationale: short direct statement, usable
+:CONTEXT:
+Jennens [see Textual Notes]: She could never ask how he look'd<unclear/> she saw that. Eccles: ‘How look you’ is _how you look._'
+:END:
+
+*** [SEARCH] Jennens #21 — 4.1.20 — p. 232
+Rationale: quote on 'means'/'mean things'
+:CONTEXT:
+Warburton: That is, our moderate, mediocre condition. Jennens: ‘Means’ may perhaps be understood to be _mean things_ (using the adjec tive substantively), i. e. _adversæ res._ Capell: _Mean_ is mean or middle condition; and the maxim seems to arise from this reflection in Gloucester,—that, had he been a man in that station, he had 'scap'd these calamities; his ‘defects’ (his want of f
+:END:
+
+*** [SKIP] Jennens #22 — 4.2.35 — p. 241
+Rationale: paraphrase, third-person summary
+:CONTEXT:
+sion of matter. [After criticising Theobald's suggestion of ‘_maternal_ sap,’ Warburton cites an instance in Theobald's favour, where, in the title of an old book, ‘material’ is apparently equivalent to _maternal:_ ‘Sir John Froissart's Chronicle translated out of Frenche into our material English Tongue by John Bouchier, printed 1525.’] Jennens: The force of Albany's argument to prove that a branch torn from a tree must infallibly wither and die, lies in this, that it is separated from a communication with that which supplies it with the very identical matter by which it (the branch) lives, and of which it is composed. Collier (ed. 2): Might not _natural_, in spite of the i
+:END:
+
+*** [META] Jennens #23 — 4.2.57 — p. 244
+Rationale: BIBLIOGRAPHIC finding, not search material — confirms Jennens produced his own EDITION/TEXT; 'his text reads' language elsewhere likely points to the 1770 edition, not the 1772 Vindication
+:CONTEXT:
+This is Jennens's emendation and text, erroneously attributed in the Cam. ed. to Eccles. Through some oversight Jennens's edition seems to have been somewhat slighted by the Cam. Edd.; many of the readings attributed in their textual notes to ‘Steevens 1778’ should be given to Jennens. In fact Jennens's text, in this play, owing to a preference for the Qq,
+:END:
+
+*** [SEARCH] Jennens #24 — 4.6.53 — p. 272
+Rationale: quote: 'a-stretch; but the old reading is intelligible enough'
+:CONTEXT:
+Theobald: 'Tis certain 'tis a bold phrase, but I dare warrant it was our author's, and means, ten masts placed at the extremity of each other. Warburton: Mr Theobald restores the old nonsense. Johnson: We may say ‘ten masts _on end._’ Jennens: We might offer another conjecture, _a-stretch;_ but the old reading is intelligible enough. Steevens: Perhaps we should read, ‘at _reach_,’ _i. e._ extent. Singer reads _at eche_, which he derives from the Anglosaxon _eacan_, to add, and defines as ‘drawn out at length, or each added to the other.’ He al
+:END:
+
+*** [SEARCH] Jennens #25 — 4.6.81 — p. 275
+Rationale: extended quote, distinctive
+:CONTEXT:
+Warburton: Without doubt Sh. wrote _sober, i. e._ while the understanding is in a right frame it will never thus accommodate its owner; alluding to Lear's extravagant dress. Thence he concludes him to be mad. Capell: That is, sounder. Johnson: I read _saner._ Jennens: I read, with all the old copies, ‘safer;’ ‘Nor do I think the man of _safe_ discretion, That does affect’ to alter it.—
+:END:
+
+*** [SEARCH] Jennens #26 — 4.6.142 — p. 281
+Rationale: quote: 'read with the sockets'
+:CONTEXT:
+Jennens: Having lost my eyes, would you have me read with the sockets. Steevens: That is, the socket of either eye. So in _Wint. Tale_, V, ii, 14: ‘tear the cases of their eyes.’ Malone: Also in _Per._ V, i, 112: ‘her eyes as jewel-like and cased as richly,’ and _Ib._ III, ii, 99: ‘her eyelids, cases to those heavenly jewe
+:END:
+
+*** [SKIP] Jennens #27 — 4.6.213 — p. 288
+Rationale: editorial meta-note (Ed. voice)
+:CONTEXT:
+Both Jennens and The Cambridge Editors note these words as omitted in Q<SUB>2</SUB>, the ‘N. Butter’ Quarto. They are present in my copy, in Steevens's Reprint, and in Ashbee's Facsimile. I note this simply as an indication of the differences in different copies of the same edition.—Ed.
+:END:
+
+*** [SKIP] Jennens #28 — 5.3.186 — p. 332
+Rationale: about later editors' treatment of Jennens, not his own words
+:CONTEXT:
+If the text of the Qq be preferred, Jennens's clever emendation, which has been adopted by many editors, follows naturally. Dyce, who was conservative, to timidity, in his first edition, adopted it in his second, when he was under the freer influence of Lettsom and Walker. (He was mistaken, however, in attributing it to Malone.) But the text of the Ff is in
+:END:
+
+*** [SEARCH] Jennens #29 — 5.3.? — p. 337
+Rationale: short but distinctive textual reconstruction
+:CONTEXT:
+251, 252. Noteworthy is the dramatic reading of Q<SUB>1</SUB>, followed by Jennens: ‘*Take* my sword, The Captain—give it the captain.’—Ed.
+:END:
+
+*** [SEARCH] Jennens #30 — 5.3.265 — p. 340
+Rationale: extended quote, distinctive
+:CONTEXT:
+ese words were made very intelligible by the action accompanying; the wide display of his hands, and the lifting-up of his eye, both directed towards the heavens, would shew plain enough that it is they who are call'd upon to _fall_, and crush a world that is such a scene of calamity . . . [The words mean] Fall, heaven! and let things cease!’ Jennens tells us, ‘till a better emendation is proposed,’ to read as in his text: ‘_Edg._ O image of true honour! _Alb._ Fair and chaste.’ ‘Which,’ adds Jennens, ‘is a very natural exclamation on the murder of so amiable a creature.’ Steevens: Albany is looking with attention on the pains employed by Lear to recover his child, and knows
+:END:
+
+*** [SEARCH] Jennens #31 — 5.3.283 — p. 342
+Rationale: quote: 'The context seems to require we should read light'
+:CONTEXT:
+Capell changed this phrase to ‘This _sight of mine_ &verbar; Is a dull sight,’ and remarks in his notes: ‘The language of the addition is so natural, and the addition so necessary, it will probably have the suffrage of all persons of candour as a good and certain amendment.’ Jennens: The context seems to require we should read _light._ Collier (ed. 2) pronounces this change of ‘sight’ to _light_, which is also found in the (MS), a very happy literal improvement. White does not hesitate to adopt it, considering the ease with which the old long _$_ and the _l_ might be mistaken for each oth
+:END:
+
+*** [SEARCH] Jennens #32 — 5.3.294 — p. 344
+Rationale: quote, usable
+:CONTEXT:
+(See Textual Notes.) Jennens: The sense is, he won't know us when he sees us, therefore 'tis in vain to present ourselves to him.
+:END:
+
+*** [SEARCH] Jennens #33 — 5.3.321 — p. 349 (resolved by direct phrase search)
+Rationale: very short but distinctive: 'The play would end best here.'
+:CONTEXT:
+Jennens: The play would end best here.
+:END:
+
+*** [SEARCH] Jennens #34 — 5.3.? — p. 349
+Rationale: extended quote, distinctive
+:CONTEXT:
+322, 323. Jennens: Kent only declines the share in the government on account of his age. How unexpectedly and awkwardly would he die, after saying only, he had a journey _shortly_ to go, and without bidding _farewell_, or discovering any symptoms of death. Malone: Kent on his entrance in this scene says: ‘I am come To bid my king and master aye g
+:END:
+
+*** [SEARCH] Jennens #35 — 5.3.? — p. 350
+Rationale: extended quote, distinctive
+:CONTEXT:
+326, 327. Jennens: The two last [_sic_] lines, as they stand, are silly and false; and are only inserted that any one may alter them for the better if they can. Hanmer has not made them a jot better. Capell thinks that Albany intimates that his life will be shortened by the terrible scenes he has lived through. Eccles: The sense of this seemi
+:END:
+
+** Ritson
+
+*** [SEARCH] Ritson #1 — 1.2.26 — p. 46
+Rationale: distinctive legal-historical detail, cites the statute
+:CONTEXT:
+Johnson: Upon the sudden stimulation of caprice, as cattle run madding when they are stung by the gadfly. Ritson: Done suddenly, or as before, while ‘the iron is hot.’ A ‘gad’ is an iron bar. The Statute of 2 and 3 Eliza. 6, c. 27, is a ‘Bill against false forging of iron gadds, instead of gadds of steel.’ Collier: Upon the spur; in _Tit. And._ IV, 103, the hero wishes to engrave on brass with ‘a gad of steel,’ _i. e._ a _point_ of st
+:END:
+
+*** [SEARCH] Ritson #2 — 2.4.21 — p. 138
+Rationale: short, distinctive dramatic-voice gloss
+:CONTEXT:
+Ritson: In assuming this character, I may preserve myself; as Edgar I am inevitably gone.
+:END:
+
+*** [SEARCH] Ritson #3 — 2.4.54 — p. 142
+Rationale: gives a page cite for Harsnet + quoted phrase
+:CONTEXT:
+obable, that Sh. would not have thought of making Lear affect to have the _Hysterick Passion_, or _Mother_, if this passage in Harsnet's pamphlet had not suggested it to him, when he was selecting the other particulars from it, in order to furnish out his character of Tom of Bedlam, to whom this demoniacal gibberish is admirably adapted. Ritson: In p. 25 of the above pamphlet it is said, ‘Ma: Maynie had a spice of the _Hysterica passio_, as seems, from his youth, he himselfe termes it the _Moother._’
+:END:
+
+*** [SEARCH] Ritson #4 — 2.4.268 — p. 163
+Rationale: substantial quote, high value
+:CONTEXT:
+a real need, you heavens! give me patience—patience I need indeed. Hudson follows Mason's reading of this line. Jervis gives what is essentially the same reading. Malone: I believe the word ‘patience’ was repeated inadvertently by the compositor. White and Keightley adopted this conjecture of Malone's. Ritson: The compositor has repeated the wrong word. Read: ‘give me that patience _that_ I need.’ Or, still better, perhaps: ‘give me patience!—that I need.’ Collier (ed. ii): Instead of ‘that patience’ the (MS) has ‘_but_ patience.’ We may doubt whether the line did not originally run: ‘give me but patience that I need.’ Dyce:
+:END:
+
+*** [SEARCH] Ritson #5 — 3.6.67 — p. 211
+Rationale: HIGH VALUE — gives Ritson's OWN page number (p.170), directly locatable
+:CONTEXT:
+ed ‘Leash hounds, such as draw after a hurt deer, in a _leash_ or _liam._’ Again, in _The Muses Elysium_, by Drayton: ‘My dog-hook at my belt, to which my lyam's ty'd.’ Again: ‘My hound then in my lyam,’ &amp;c. Capell derives it from the French _limier_, which Cotgrave defines: ‘a Bloud hound, or Lime-hound.’ Ritson (p. 170): A ‘lym’ seems to have been a large dog of the spaniel kind. ‘His cosin had a Lyme hound argent white.’—Harrington's _Orlando Furioso_, xli, 30. Again: ‘His Lyme laid on his back, he crouching down.’ The word, differently spelled, occurs again, p. 349: ‘Oliuero whose deuise is the Spaniell, or lyam hound.’
+:END:
+
+*** [SEARCH] Ritson #6 — 4.5.4 — p. 262
+Rationale: substantive quote
+:CONTEXT:
+Ritson: The Ff are right. Goneril not only converses with Lord Edmund, in the Steward's presence, but prevents him from speaking to, or even seeing, her husband. Malone: In the MSS from which the Qq were printed an L only was probably set down, according to the mode of that time. It could be of no consequence to Regan whether Edmund spoke with G
+:END:
+
+*** [SKIP] Ritson #7 — 4.6.181 — p. 284 (resolved by direct phrase search)
+Rationale: very thin
+:CONTEXT:
+): _This is_ is not unfrequently,—like _that is_, &amp;c.— contracted into a monosyllable. See _Lear_, V, iii, 283; _Tam. Shr._ I, ii, 45, ‘Why this' a heavy chance 'twixt him and you.’ Wright: See _Meas. for Meas._ V, i, 131, ‘this' a good Fryer belike.’ See Abbott, § 461; also II, ii, 116, of this play. Ritson needlessly suggested ‘'Tis.’
+:END:
+
+*** [SEARCH] Ritson #8 — 4.7.61 — p. 303
+Rationale: short but specific verbatim detail
+:CONTEXT:
+Steevens: The authenticity of this passage Sir Joshua Reynolds justly suspects. It was probably the interpolation of some player, and is better omitted, both in regard to sense and versification. Ritson agrees with Steevens, and adds ‘foolish’ before ‘player.’ Malone says that the Folio's ‘absurd’ addition means ‘not an hour more or less than an indeterminate number, for such is fourscore _and upward._’ Knight denounces the omission of this phrase as a sacrilege not less than the breaking off of a limb from an ancient statu
+:END:
+
+* Tier 4
+
+** Henley
+
+*** [SKIP] Henley #1 — 1.1.154 — p. 24
+Rationale: very short, paraphrase
+:CONTEXT:
+Steevens: That is, a _pledge._ Capell, followed by Henley, strangely thinks that this refers to the pawn in a game of chess.
+:END:
+
+*** [SEARCH] Henley #2 — 1.1.280 — p. 39
+Rationale: quote + biblical citation, distinctive
+:CONTEXT:
+Mason: The Ff are right, with the change of a single letter: _covert_ instead of ‘covers.’ Thus, ‘Who _covert_ faults at last with shame derides.’ ‘Who’ referring to ‘time.’ [This reading was followed by Rann.] Henley: Cordelia alludes to Prov. xxviii, 13: ‘He that _covereth_ his sins shall not _prosper_,’ &amp;c. Singer (ed. 2): I have no doubt we should read _cover_-faults, _i. e. dissemblers_, and that the meaning is: ‘_Time_ shall unfold what cunning duplicity hides, _who_ (Time) at last derides such dissemblers with s
+:END:
+
+*** [SEARCH] Henley #3 — 2.1.120 — p. 112
+Rationale: substantial paleographic argument, high value
+:CONTEXT:
+Malone: Weight or moment. Henley: Sh. having elsewhere used to _peize_ for to _balance_ or _weigh_, and the letter _r_ in his own autograph being made more like an _e_, I conclude that _peize_ was the original word, and signified _deliberation._ Schmidt upholds the Ff, to whose reading he gives the meaning: ‘of some account;’ thus, in <
+:END:
+
+*** [SEARCH] Henley #4 — 2.2.118 — p. 127
+Rationale: substantial definitional argument
+:CONTEXT:
+Henley: A young soldier is said to _flesh_ his sword the first time he draws blood with it. ‘Fleshment,’ therefore, is here metaphorically applied to the first act of service, which Kent, in his new capacity, had performed for his master; and, at the same time, in a sarcastic sense, as though he had esteemed it an heroic exploit to trip a man behind
+:END:
+
+*** [SEARCH] Henley #5 — 4.2.62 — p. 245
+Rationale: substantial interpretive paraphrase
+:CONTEXT:
+Johnson: I cannot but think that this means, thou that hast _disguised_ nature by wickedness; thou that hast _hid_ the woman under the fiend. Henley: Goneril, having thrown off the convenient seeming of female gentleness, now no longer played the hypocrite, but exhibited in her face the self-same passions she had covered in her heart. Malone: Thou who hast put a _covering on thyself_ which nature did not give thee. The covering which Albany means is, the semblance and appearance
+:END:
+
+*** [SEARCH] Henley #6 — 4.7.17 — p. 297
+Rationale: moderate, usable
+:CONTEXT:
+Steevens: That is, changed to a child by his years and his wrongs; or, perhaps, reduced to this condition by his children. Henley: Lear is become insane, and this is the change referred to. Insanity is not the property of second childhood, but dotage. Malone: Changed by his children. So _care-craz'd, wave-worn_, &amp;c. Delius conjectures that it may mean that he has exchanged children; that is, that he has left Regan and Goneril and come to Cordelia.
+:END:
+
+*** [SEARCH] Henley #7 — 5.3.? — p. 339
+Rationale: moderate, distinctive
+:CONTEXT:
+ce, unacquainted with the Scriptures, they give Sh. credit for more accuracy than I fear he possessed. Steevens: This note deserves the highest praise, and is inserted with the utmost degree of gratitude to its author. [Although Mason's view, for which a hint may have been supplied by Capell, is probably correct, yet the following note by Henley deserves consideration:] Does not this exclamation refer to the confidence expressed in her letter to himself, ‘that—seeking to give losses their remedies—she should find time amidst the enormities of the state, to obtain the full effect of her purpose?’ As these words (supposing this to be their reference in the mouth of Kent) were not addressed
+:END:
+
+** Tollet
+
+*** [SEARCH] Tollet #1 — 1.1.278 — p. 38
+Rationale: quote, usable
+:CONTEXT:
+r Father.’ Warburton: This nonsense must be corrected thus: ‘worth . . . . _vaunted,’ i. e._ that disherison, which you so much glory in, you deserve. Heath: Sh. might have written: ‘the want that you have _wasted,’ i. e._ you will deserve to want that which you have yourself so wastefully and unnecessarily thrown away. Tollet: ‘You are well deserving of the want of dower that you are without.’ Jennens: The old reading is not elegant, indeed, but it is intelligible,—it is like ‘seeding seed’—Gen. i. 29. Capell: The Qq reading, with this addition, viz: ‘are worth _to want_ the worth that you have wanted’ has a plain sense, and one worthy the uttere
+:END:
+
+*** [SEARCH] Tollet #2 — 1.4.107 — p. 71
+Rationale: HIGH VALUE — Latin citation, very distinctive
+:CONTEXT:
+Steevens: A bitch of the hunting kind. Dr Letherland, on the margin of Warburton's ed., proposed ‘_lady's_ brach,’ _i. e._ favoured animal. ‘Lady’ is still a common name for a hound. So Hotspur, in 1 _Hen. IV:_ III, i, 240. Tollet [Note in III, vi, 67]: The females of all dogs were once called _braches._ Ulitius upon Gratius observes: ‘_Racha_ Saxonibus canem significabat unde Scoti hodie _Rache_ pro cane fœmina habent, quod Anglis est _Brache._’ A[rchibald] S[mith] (_N. and Qu._ 2 Ser., vol. v, p. 202, 1858): Here is a curious opp
+:END:
+
+*** [SEARCH] Tollet #3 — 1.4.? — p. 78
+Rationale: HIGH VALUE — specific checkable historical claim
+:CONTEXT:
+Cotgrave has, ‘_Goussepillé._ . . . vnhusked, shaled, vncased, stripped.’ Johnson explains the phrase (if explanation be needed), ‘The outside of a king remains, but all the intrinsic parts of royalty are gone.’ <P>Tollet (who has been followed by many an editor without credit accorded to him), on the authority of Camden's _Remains_, states that Richard II's effigy in Westminster Abbey is wrought with _peascods open_ and the _peas out;_ ‘perhaps,’ adds Tollet, ‘an allusion to his being once in full possession of sovereignty, but soon reduced to an em
+:END:
+
+*** [SEARCH] Tollet #4 — 2.2.61 — p. 121
+Rationale: short quote
+:CONTEXT:
+Warburton: Unrefined by education. Tollet: ‘Unbolted mortar’ is mortar made of unsifted lime, and to break the lumps it is necessary to tread it by men in wooden shoes. ‘Unbolted,’ therefore, here means _coarse._
+:END:
+
+*** [SEARCH] Tollet #5 — 4.3.? — p. 252
+Rationale: substantial
+:CONTEXT:
+V, viii, 18. The thought is taken from Sidney's _Arcadia_, p. 244: ‘Her tears came dropping down like rain in sunshine.’ Cordelia's behaviour is apparently copied from Philoclea's. The same book, in another place, says: ‘her tears followed one another like a precious rope of pearl.’ In this same edition of Steevens in 1778 a note is given by Tollet in which he suggests that ‘a better _day_’ or ‘a better _May_’ is better than Warburton's alteration, because it implies that sunshine prevails over rain, whereas Warburton's ‘wetter May’ implies that Cordelia's sorrow excelled her patience. Malone adopted Tollet's emendation, without credit, in the following note: If a <I>bette
+:END:
+
+*** [SEARCH] Tollet #6 — 4.6.15 — p. 268
+Rationale: HIGH VALUE — gives his own citation to Smith's History of Waterford
+:CONTEXT:
+Tollet: ‘_Samphire_ grows in great plenty on most of the seacliffs in this country; it is terrible to see how people gather it, hanging by a rope several fathom from the top of the impending rocks, as it were in the air.’—Smith's _History of Waterford_, 1774, p. 315. Malone: This personage is not a mere creature of Shakespeare's imagin
+:END:
+
+** Whalley
+
+*** [SKIP] Whalley #1 — 1.3.4 — p. 58
+Rationale: joint attribution, no distinct language
+:CONTEXT:
+Malone cites _Ham._ I, v, 164: ‘O day and night, but this is wondrous strange!’ in support of the exclamation-mark introduced by Capell; but Whalley and Steevens rightly interpret these words in their ordinary sense, signifying _always, every way_, as appears, says Wright, from ‘every hour’ which follows.
+:END:
+
+*** [SKIP] Whalley #2 — 2.4.? — p. 149
+Rationale: joint mention only, thin
+:CONTEXT:
+eney.’ The author, in calling London Cockeney, might possibly allude to that imaginary country of idleness and luxury which was anciently known by the name of _Cokaigne._ Nares also believes that it is derived from cookery, and that here in _Lear_ it means a cook, because she is ‘making a pie.’ In the passages cited by Tyrwhitt, Whalley and Malone think that it refers to some dish, while Douce maintains that it signifies a little cock. Halliwell, in his _Archaic Dict._, says that he can find no certain authority for any such interpretation as Tyrwhitt gives it, but in his Folio edition of _Sh._ he says that the word ‘cockney is used in various
+:END:
+
+*** [SEARCH] Whalley #3 — 4.7.35 — p. 300
+Rationale: substantial quote
+:CONTEXT:
+e plumes of white feathers, the which, after the manner of captaines, they doe tourn behinde, waveryng over theyr shoulder with a brave kynde of riot.’ Again, in Bacon's _Apology touching the late Earl of Essex_, 1651, p. 105: ‘—you have put me like one of those that the Frenchmen call _Enfans perdus_ that serve on foot before horsemen.’ Whalley: Amongst other desperate services in which the forlorn hope, or _enfans perdus_, were engaged, the night-watches seem to have been a common one. So in Beau. and Fl.: ‘These are trim things. I am set here like a _perdu_, To _watch_ a fellow that has wrong'd my mistress.’—_Little French Lawyer_, II, iii. Wright: Cotgrave
+:END:
+
+*** [SEARCH] Whalley #4 — 5.3.266 — p. 340
+Rationale: short but specific comparative citation
+:CONTEXT:
+Whalley: Compare 2 _Hen. IV:_ IV, v, 31, 32: ‘By his gates of breath There lies a downy feather which stirs not.’
+:END:
+
+** Blakeway
+
+*** [SEARCH] Blakeway #1 — 4.6.? — p. 276
+Rationale: substantial, distinctive argument
+:CONTEXT:
+_Meas. for Meas._ I, i, 72. Blakeway: The ‘safer sense’ seems to me to mean _the eye-sight_, which, says Edgar, will never more serve the unfortunate Lear so well as those senses which Gloucester has remaining will serve him, who is now returned to his right mind. The _eye-sight_ is probably the ‘safer sense,’ in allusion to our vulgar proverb: ‘Seeing is believing.’ Horace
+:END:
+
+** Percy
+
+*** [SEARCH] Percy #1 — 2.4.54 — p. 142
+Rationale: substantial
+:CONTEXT:
+Percy: Lear here affects to pass off the swelling of his heart, ready to burst with grief and indignation, for the disease called the _Mother_, or _Hysterica Passio_, which, in our author's time, was not thought peculiar to women only. In Harsnet's _Declaration of Popish Impostures_, Richard Mainy, Gent, one of the pretended demoniacs, de
+:END:
+
+*** [SKIP] Percy #2 — 2.4.197 — p. 157
+Rationale: very thin
+:CONTEXT:
+Percy: A still worse, or more disgraceful, situation a situation not so reputable. Schmidt: An undisguised sneer.
+:END:
+
+*** [SKIP] Percy #3 — 3.7.28 — p. 219 (resolved by direct phrase search)
+Rationale: truncated/minimal
+:CONTEXT:
+Johnson: Dry, withered, husky. Percy: It was probably suggested
+:END:
+
+** Nares
+
+*** [SEARCH] Nares #1 — 1.2.25 — p. 46
+Rationale: moderate
+:CONTEXT:
+Johnson: That is, _allowance._ The term is yet used in the universities. Steevens: So in _Two Gent._ I, iii, 69. Nares: Also Jonson, _Silent Woman_, III, i, ‘Behave yourself distinctly and with good morality; or, I protest I'll take away your exhibition.’ Moberly: Restricted to a mere maintenance; as in Roman law, ‘si liberi ali desiderent, ut a parente exhibeantur.’ So we have ‘exhibere viam’ for ‘to keep up a road.’
+:END:
+
+*** [SEARCH] Nares #2 — 1.4.100 — p. 70
+Rationale: moderate
+:CONTEXT:
+Nares: A familiar contraction of _mine uncle._ It seems to have been the customary appellation of the licensed fool to his superiors. In the same style the fools called each other _cousin._ In Beaumont and Fletcher's _Pilgrim_, when Alinda assumes the character of a fool, she uses the same language. She meets Alphonso, and calls him <I>nu
+:END:
+
+*** [SKIP] Nares #3 — 2.1.73 — p. 107
+Rationale: thin definition only
+:CONTEXT:
+Nares: Temptation, seduction. Hunter (Note on _Macb._ I, iii, 134): ‘Suggestion’ is a theological word, one of the three ‘procurators or tempters’ of sin. _Delight_ and _Consent_ being the others.
+:END:
+
+*** [SEARCH] Nares #4 — 2.1.76 — p. 107
+Rationale: moderate
+:CONTEXT:
+no intimation that it is used in its ‘literal meaning;’ the fourteen instances of its use that he cites he divides under three heads: 1st, expert, clever, ingenious, artful; 2d, disposed, ready, prompt (under this head the present passage is cited); 3d, probable in the highest degree, clear, evident. Now, on the other hand, I cannot but think that Nares came nearer the truth when he said that the ruling sense of this word is that of ‘being full or productive of something.’ Out of Schmidt's fourteen instances eleven appear to me to come under Nares's definition. Three instances (_Lear_ IV, vi, 222; _Wint. Tale_, V, ii, 34; and _Ant. and Cleop._ II, i, 45) are used in so metaphorical
+:END:
+
+*** [SEARCH] Nares #5 — 2.1.78 — p. 108
+Rationale: moderate
+:CONTEXT:
+Nares: A particular set of notes on the trumpet, used as a signal for a march. From _toccata_, which Florio defines: ‘A præludium that cunning musitions use to play, as it were, voluntary before any set lesson.’
+:END:
+
+*** [SEARCH] Nares #6 — 2.2.8 — p. 114
+Rationale: good, his own conjecture quoted
+:CONTEXT:
+a place where the fines were arbitrary. Steevens surmised that it might import the same as _Lob's Pound;_ with which it seems to have no more connection than that ‘pinfold’ means ‘Pound’ and ‘Lob’ and ‘Lipsbury’ begin with the same letter. ‘Lob's Pound,’ as is well known, means a place of confinement, whether a prison or the stocks. Nares's guess is perhaps as happy as any: ‘It may be,’ he says, ‘a coined name, and it is just possible that it might mean the teeth, as being the pinfold within the _lips._’ Collier's MS gives _Finsbury_, where, says that editor, there must have been a pinfold, well known to Shakespeare's audiences; and this word, through mishearing or
+:END:
+
+*** [SEARCH] Nares #7 — 2.2.29 — p. 117
+Rationale: good, distinctive recipe reference
+:CONTEXT:
+Capell: A ludicrous phrase, importing that he would lay [Oswald] upon his back on the earth, like a ‘sop’ in a dripping-pan, for the moonbeams to baste him. Farmer: Perhaps here an equivoque wa<unclear/> intended. In _The Old Shepherd's Kalendar_, among the dishes recommended for Prymetyne, ‘One is egges in moneshine.’ Nares: This probably alludes to some dish so called. There was a way of dressing eggs, called ‘eggs in moonshine.’ [Nares here gives a receipt from May's _Accompl. Cook_, p. 437, to which I refer the enthusiastic student. It is sufficient to say that the eggs are fried in ‘oyl or butter,’ covered with slices of onions and seasoned with verjuice, nu
+:END:
+
+*** [SEARCH] Nares #8 — 2.2.73 — p. 122
+Rationale: moderate
+:CONTEXT:
+Nares: Deny, renounce; _renego_, Lat. [whence _renegado._— Wright]. The _g_ is pronounced hard. See _Ant. &amp; Cleop._ I, i, 8, and Sylvester's Du Bartas _The Battail of Yury_ [p. 551, ed. 1633]: ‘All _Europe_ nigh (all sorts of _Rights_ reneg'd) Against the _Truth_ and _Thee, un-holy Leagu'd._’ [As
+:END:
+
+*** [SKIP] Nares #9 — 2.2.101 — p. 126
+Rationale: thin
+:CONTEXT:
+Nares: Always accented on the last syllable in Sh. Delius: Here used in a secondary astrological sense, like ‘influence’ in the following line.
+:END:
+
+*** [SKIP] Nares #10 — 2.3.18 — p. 137
+Rationale: thin
+:CONTEXT:
+Nares: A very common epithet, with our old writers, to signify paltry or contemptible.
+:END:
+
+*** [SEARCH] Nares #11 — 2.4.? — p. 138
+Rationale: moderate
+:CONTEXT:
+Italian terms for a fool or madman; and the Flemings had a proverb, ‘_As unfortunate as Turlupin and his children._’ Nares: Seemingly a name for a sort of beggar described in the preceding lines. I cannot persuade myself that this word, however similar in meaning, has any real connection with _turlupin_, notwithstanding the authority of Warburton and Douce. It seems to be an original English term, being too remote in form from the other to be a corruption from it
+:END:
+
+*** [SEARCH] Nares #12 — 2.4.? — p. 149
+Rationale: moderate
+:CONTEXT:
+ttend them. In those rhymes ascribed to Hugh Bigot, which Camden has published: ‘Were I in my castle of Bungey upon the river of Waveney, I would ne care for the King of Cockeney.’ The author, in calling London Cockeney, might possibly allude to that imaginary country of idleness and luxury which was anciently known by the name of _Cokaigne._ Nares also believes that it is derived from cookery, and that here in _Lear_ it means a cook, because she is ‘making a pie.’ In the passages cited by Tyrwhitt, Whalley and Malone think that it refers to some dish, while Douce maintains that it signifies a little cock. Halliwell, in his _Archaic Dict._, says
+:END:
+
+*** [SKIP] Nares #13 — 3.1.26 — p. 169
+Rationale: thin
+:CONTEXT:
+Wright: Quarrels. Nares: _To take in snuff_ is to be angry, to take offence.
+:END:
+
+*** [SEARCH] Nares #14 — 3.6.68 — p. 211
+Rationale: moderate, regional detail
+:CONTEXT:
+Nares: A northern word for a common sort of dog, and still a frequent term of reproach in Lancashire and Yorkshire [and in New England.—Ed.].
+:END:
+
+*** [SKIP] Nares #15 — 4.1.60 — p. 236
+Rationale: thin, joint mention
+:CONTEXT:
+Capell (_Gloss._): To drop, duck, or dance oddly. Nares, Dyce, and Schmidt define it by ‘making grimaces.’ Malone quotes from Harsnet's _Declaration:_ ‘—Make antike faces, grinne, mow and mop like an ape.’
+:END:
+
+*** [SEARCH] Nares #16 — 4.6.91 — p. 277
+Rationale: moderate
+:CONTEXT:
+Nares: The mark fixed in the centre of the butts, at which archers shot for practice. _Clouette_, Fr. Literally, the nail, or pin. The best shot was that which clove or split the _clout_, or pin, itself. [See ‘pin,’ _Rom. &amp; Jul._ II, iv, 15, and notes.—Ed.]
+:END:
+
+* Tier 5
+
+** Verplanck
+
+*** [SEARCH] Verplanck #1 — 4.5.22 — p. 263
+Rationale: substantial, distinctive prose
+:CONTEXT:
+Johnson: I know not well why Sh. gives to Oswald, who is a mere factor of wickedness, so much fidelity. He now refuses the letter; and afterwards, when he is dying, thinks only how it may be safely delivered. Verplanck: Sh. has here incidentally painted, without the formality of a regular moral lesson, one of the very strange and very common self-contradictions of our enigmatical nature. Zealous, honourable, even self-sacrificing fidelity,—sometimes to a chief or leader, sometimes to a party, a faction, or a gang,—appears to be so little dependent on any princip
+:END:
+
+*** [SEARCH] Verplanck #2 — 4.7.36 — p. 300
+Rationale: substantial, includes anecdote
+:CONTEXT:
+Collier: The misprint of the Qq: _injurious_ for ‘enemy's’ is quite as extraordinary as that of ‘runaways’ for _enemies_ in _Rom. &amp; Jul._ Mitford (_Gent. Mag._ p. 469, 1844) conjectures that the Qq lead to the word that will supply the line, ‘Mine enemy's _furious_ dog.’ Verplanck: The late J. W. Jarvis, the artist, used often to quote these lines as accumulating in the shortest compass the greatest causes of dislike to be overcome by good-natured pity. It is not merely the personal enemy, for whom there might be human sympathy, that is admitted to the family fireside, but his dog, and that a dog who had himself inflicted h
+:END:
+
+*** [SEARCH] Verplanck #3 — 5.2.? — p. 347
+Rationale: substantial, distinctive
+:CONTEXT:
+thus to wander from his daughter, lying dead before him. On the other hand, if Sh. did not mean to revert to the Fool, he has certainly omitted to account for a prominent and interesting character. Verplanck: With this customary and familiar use of the phrase, when the whole interest of the scene is fixed on Cordelia's death, and Lear himself, in the same breath addressing her (‘And thou no breath at all? Thou'lt come no more’), it seems to me evident that it is to Cordelia alone that the phrase can allude. Hudson: These words refer, not to t
+:END:
+
+** Griffiths
+
+*** [SEARCH] Griffiths #1 — 1.4.118 — p. 72
+Rationale: short but decent; identity near-confirmed via bibliography
+:CONTEXT:
+Mrs Griffiths: That is, never set equal to the stake you throw for. Schmidt: The sense varies according to the way in which we understand ‘less,’ whether as an adjective or as an adverb. If it is an adjective, then the meaning is: ‘Set a less sum than thou hast won by thy last throw;’ if an adverb: ‘Keep on throwing, but set nothing.’
+:END:
+
+** Gifford
+
+*** [SEARCH] Gifford #1 — 2.2.50 — p. 120
+Rationale: good, real publication detail (ed. Gifford, 1816)
+:CONTEXT:
+In a note on Jonson's _Volpone_, III, vi (p. 264, ed. Gifford, 1816), where this same phrase occurs, Gifford says that this expression is very common in our old writers [it occurs again on p. 284 of the same play]; it seems, however, to have been wearing out about this time, since it is found far less frequently in the second than in the first impression of Jonson's plays; two instances of _disclaim in_ occur in the Qto ed. of <I>Every Man in his Hu
+:END:
+
+*** [SEARCH] Gifford #2 — 3.7.57 — p. 221 (resolved by direct phrase search)
+Rationale: good, quoted via Dyce but gives Gifford's words
+:CONTEXT:
+Qq is the old hunting term for the stroke made by a wild boar with his tusks. It occurs in Spenser, _Faerie Queene_, b. IV, c. ii: ‘And shields did share, and mailes did rash, and helmes did hew.’ Again in b. V, c. iii: ‘Rashing off helmes, and ryving plates asunder.’ Dyce (_Remarks_, &amp;c. p. 229) quotes the following note by Gifford: ‘To _rash_ (a verb which we have
+:END:
+
+*** [SEARCH] Gifford #3 — 3.7.105 — p. 229
+Rationale: substantial, distinctive
+:CONTEXT:
+e is ridiculed by Jonson in _The Case is Altered_, 1609, II, iv. Malone: _The Case is Altered_ was written before the end of the year 1599, but Jonson might have inserted this sneer at our author between the time of _Lear's_ appearance and the publication of his own play in 1609. [Of course this attack on Jonson aroused all Gifford's bitterness, and in a note on the passage in _The Case is Altered_, after quoting these notes by Steevens and Malone just given, he says: ‘Malone exposes Steevens's dishonesty with respect to the priority of the present drama, but, unwilling to lose a charge against Jonson, seeks to bolster up his crazy accusation by a supposition as full of m
+:END:
+
+*** [SKIP] Gifford #4 — 4.6.240 — p. 291
+Rationale: thin
+:CONTEXT:
+The name of an apple, and hence, according to Gifford (Note on the _Alchemist_, IV, i), humourously applied to the head. Whence ‘coster-monger.’
+:END:
+
+** Dodd
+
+*** [SEARCH] Dodd #1 — 1.2.15 — p. 44
+Rationale: short but quotable
+:CONTEXT:
+Dodd: I think the passage originally stood ‘_atween_ sleep and wake.’ The _a_ might very easily have been so transposed.
+:END:
+
+*** [SEARCH] Dodd #2 — 5.3.205-208 — p. 333
+Rationale: HIGH VALUE — gives volume/page (ii,134)
+:CONTEXT:
+Warburton: This is corrupted into miserable nonsense. We should read it thus: ‘This would have seem'd a period. But such &verbar; As love to amplify another's sorrow, &verbar; To much, would make much more, and top extremity.’ Dodd (ii, 134) ingeniously perverts this into a reproach on Edmund: ‘The bastard, whose savage nature is well display'd by it, desires to hear more; the gentle Albany, touch'd at the sad tale, begs him no more to melt his heart; upon which, Edgar observes, sensibly affected by Edmund's inhumanity, “One should have imagined, this would have seem'd a per
+:END:
+
+** Reynolds
+
+*** [SEARCH] Reynolds #1 — 1.4.210 — p. 79
+Rationale: substantial first-person voice
+:CONTEXT:
+oncurs with me in supposing that this is a fragment of some old song. Malone: In a very old comedy called _The Longer Thou Livest the more Foole Thou Arte_, about 1580, we find the following stage-direction: ‘Entreth Moros, counterfaiting a vaine gesture and a foolish countenance, synging the foote of many songs, as fools were wont.’ Sir Joshua Reynolds: Shakespeare's fools are certainly copied from the life. The originals whom he copied were no doubt men of quick parts; lively and sarcastic. Though they were licensed to say any thing, it was still necessary, to prevent giving offence, that everything they said should have a playful air; we may suppose, therefore, that they had a custom of taking
+:END:
+
+*** [SEARCH] Reynolds #2 — 3.7.1 — p. 230
+Rationale: substantial
+:CONTEXT:
+be contemned.</I>’ Or, perhaps, there is an error, which may be rectified thus: ‘Yet better thus _unknown_ to be contemned.’ When a man divests himself of his real character he feels no pain from contempt, because he supposes it incurred only by a voluntary disguise which he can throw off at pleasure. I do not think any correction necessary. Sir Joshua Reynolds: The meaning seems to be this: ‘Yet it is better to be thus in this fixed and acknowledged contemptible state, than, living in affluence, to be flattered and despised at the same time.’ He who is placed in the worst and lowest state has this advantage: he lives in hope, and not in fear, of a reverse of fortune. The lamentable change is from afflue
+:END:
+
+*** [SEARCH] Reynolds #3 — 5.3.306 — p. 345
+Rationale: substantial, distinctive
+:CONTEXT:
+olicitude about him was at an end. The term ‘poor fool’ might indeed have misbecome the mouth of a vassal commiserating the untimely end of a princess, but has no impropriety when used by a weak, old, distracted king, in whose mind the distinctions of nature only survive, while he is uttering his last frantic exclamations over a murdered daughter. Sir Joshua Reynolds: I confess I am one of those who _have thought_ that Lear means his Fool, and not Cordelia. If he means Cordelia, then what I have always considered as a beauty, is of the same kind as the accidental stroke of the pencil that produced the foam. Lear's affectionate remembrance of the Fool, in this place, I used to think, was one of those strok
+:END:
+
+** Burney
+
+*** [SEARCH] Burney #1 — 1.2.129 — p. 55
+Rationale: HIGH VALUE — technical/distinctive musicological content
+:CONTEXT:
+Dr Burney: Sh. shows by the context that he was well acquainted with the property of these syllables in solmization, which imply a series of sounds so unnatural that ancient musicians prohibited their use. The monkish writers on music say: _mi contra fa est diabolus:_ the interval _fa mi_, including a _tritonus_, or sharp 4th, consisting of t
+:END:
+
+** Wedgwood
+
+*** [SEARCH] Wedgwood #1 — 1.2.128 — p. 55
+Rationale: distinctive etymological content
+:CONTEXT:
+Bolton Corney (_N. &amp; Qu._ 5 Aug. 1865) cites the following definition of this word from Butler's _English Grammar_, 1634: ‘Q. A note of entrance for actors, because it is the first letter of _quando_=when, shewing when to enter and speak.’ Wedgwood adopts this definition, but also cites Minsheu: ‘A _qu_, a term used among stage-players, a Lat. _qualis i. e._ at what manner of word the actors are to begin to speak, one after another has done his speech.’ The Fr. term is _replique_Wright apparently derives it from Fr. _queue_, a tail.
+:END:
+
+*** [SEARCH] Wedgwood #2 — 1.4.235 — p. 84
+Rationale: distinctive etymological content
+:CONTEXT:
+The old spelling of _debauched_, of which word, Wedgwood says that the radical idea seems to be to throw out of course, from _bauche_, a row. rank, or course of stones, or bricks, in building.
+:END:
+
+*** [SEARCH] Wedgwood #3 — 2.4.? — p. 149
+Rationale: distinctive etymological content
+:CONTEXT:
+ntonly as a cockney.’—Hollyband's _Treasurie._ See also Baret's _Alvearie._ Chaucer uses the word as a term of contempt, and it occasionally signifies a little cook, _coquinator._ See Brand's _Pop. Ant._, notes on Shrove Tuesday. Cotgrave gives _Coquine_: A beggar-woman; also a cockney, simperdecockit, nice thing. Wedgwood: The original meaning of ‘cockney’ is a child too tenderly or delicately nurtured, one kept in the house and not hardened by out-of-doors life; hence applied to citizens, as opposed to the hardier inhabitants of the country, and in modern times confined to the citizens of London. [Does not this definition lack an allusion to the meaning in which S
+:END:
+
+** Palleske
+
+*** [SKIP] Palleske #1 — 5.3.271 — p. 341
+Rationale: NOT SEARCHABLE — confirmed secondhand/mediated citation
+:CONTEXT:
+Schmidt adopts in his text an emendation, which, he says, was proposed by Emil Palleske: ‘_Ye_ might have,’ &amp;c. ‘This emendation,’ Schmidt adds, ‘is so obvious and simple as to need no vindication.’ [Does not the preceding note by Moberly reveal that change is needless?—Ed.]
+:END:
+
+** Chambers
+
+*** [SKIP] Chambers #1 — 5.2.? — p. 347
+Rationale: too thin, four words
+:CONTEXT:
+</I> after calling her _poor fool_, unbutton here, look on her, &amp;c. I do not think that it is even necessary to allow for the broken thought and incoherent expression of a madman, and imagine that his ideas of who is the victim, his daughter or his Fool, are confused in his crushed intellect. Delius: Cordelia is here referred to. Chambers: Not the Fool, but Cordelia. Cowden Clarke: A term of endearment applied by Lear to his dead daughter. We do not believe that Sh. would have made the bereaved father recur for even one moment to any thought of other loss than the one before him— his murdered daughter. Furthermore, if Sh. had intended to denote a tender reminiscence of the
+:END:
+
+** Beisly
+
+*** [SEARCH] Beisly #1 — 4.4.4 — p. 258
+Rationale: distinctive botanical Latin
+:CONTEXT:
+e (R. 14, 32); and in John Russell's _Boke of Nurture_ (Early English Text Society, 1868), p. 183, is mentioned ‘yardehok,’ which is apparently a kind of hock or mallow. If the botanists could identify the plants mentioned under these names, either of them could easily be corrupted into ‘Hardokes,’ or ‘hor-docks.’ [It is unfortunate that both Beisly and Ellacombe suppose Farmer's conjecture of _harlocks_ to be the original word; they have, therefore, given us nothing new on the subject, and do not mention ‘burdocks.’—Ed.]
+:END:
+
+*** [SEARCH] Beisly #2 — 4.4.4 — p. 259
+Rationale: HIGH VALUE — precise botanical Latin nomenclature
+:CONTEXT:
+Beisly: The _Lychnis flos-cuculi_, Ragged Robin, a well-known meadow and marsh plant, with rose-coloured flowers and deeply-cut narrow segments;
+:END:
+
+*** [SEARCH] Beisly #3 — 4.6.15 — p. 268
+Rationale: HIGH VALUE — distinctive botanical Latin
+:CONTEXT:
+>: Gerarde gives as one of its Italian names, ‘_Herba di San Pietro._’ He says (_Herball_, p. 428): ‘Rocke Sampier groweth on the rocky cliffes at Douer.’ Cotgrave has ‘Herbe de S. Pierre. Sampire, Crestmarin.’ Moberly: This samphire-gatherer is the realizing touch in the description; it seems a thing that could not be imagined. Beisly: _Crithmum maritimum_, commonly called St. Peter's Herb and Sea-fennel, is abundant on rocks by the sea, flowers dull yellow, with long, glaucous, fleshy leaflets. The plant is aromatic, and the young leaves are gathered, preserved in vinegar, and eaten as a pickle. It flowers in July, August, and September. Dr W. Turner says of it: ‘That in
+:END:
+
+** Davies
+
+*** [SEARCH] Davies #1 — 1.4.42 — p. 63
+Rationale: HIGH VALUE — vol/page given
+:CONTEXT:
+Davies (_Dram. Misc._ ii, 176) gives what was the stage business in his time: ‘He [Oswald] generally enters the stage in a careless, disengaged manner, humming a tune, as if on purpose to give umbrage to the king by his neglect of him.’
+:END:
+
+*** [SEARCH] Davies #2 — 1.4.269 — p. 88
+Rationale: HIGH VALUE — vol/page given
+:CONTEXT:
+Davies (_Dram. Misc._ ii, 180): I have heard certain critics complain that, in pronouncing this denunciation, Garrick was too deliberate, and not so quick in the emission of his words as he ought to have been; that he did not yield to that impetuosity which the situation required. . . . Garrick rendered the curse so terribly affecting to the audienc
+:END:
+
+*** [SEARCH] Davies #3 — 2.4.150 — p. 153
+Rationale: HIGH VALUE — vol/page given
+:CONTEXT:
+not addressing these words to Regan, but is repeating what he would say to Goneril if he should ask her forgiveness. Collier: Both ‘Kneeling’ here and ‘Rising’ below are inserted in the (MS), so that there can be no dispute as to what was the practice of the ancient stage in this respect. These are what Regan means by ‘unsightly tricks.’ Davies (_Dram. Misc._ ii, 190): Garrick threw himself on both knees, with his hands clasped, and in a supplicating tone repeated this touching, though ironical, petition.
+:END:
+
+*** [SEARCH] Davies #4 — 2.4.168 — p. 155
+Rationale: HIGH VALUE — vol/page given
+:CONTEXT:
+fted</I> seems to mean the same as _heaved._ ‘Tender-hefted,’ _i. e._ whose bosom is agitated by tender passions. Sh. uses ‘hefts’ for _heavings_ in _Wint. Tale_, II, i, 45. The Qq, however, read, ‘tender-hested nature,’ which may mean a nature which is governed by gentle dispositions. ‘Hest’ is an old word, signifying command. Davies: I suppose the expression was intended to signify _smooth_, or _soft-handled_, consequently put here for _gentleness of disposition._ Knight: We doubt Steevens's explanation. _Heft,—haft_,—is that which is _haved,—held;_ and thus, ‘thy tender-hefted nature’ may be thy nature which may be held by tenderness. Wh
+:END:
+
+*** [SEARCH] Davies #5 — 3.7.66 — p. 224
+Rationale: HIGH VALUE — vol/page given
+:CONTEXT:
+t day, Wanting the tapers that should give thee light. [_Pulls out his eyes._’ Immediately after, his hands are cut off. I have introduced this passage to show that Shakespeare's drama was not more sanguinary than that of his contemporaries. Malone: In Marston's _Antonio's Revenge_, 1602, Piero's tongue is torn out on the stage. Davies (_Dram. Misc._ ii, 197): After all, Sh. might possibly contrive not to execute this horrible deed upon the stage, though it is so quoted in the book. . . . At the present, the sufferer is forced into some adjoining room; and the ears of the audience are more hurt by his cries than their eyes can be when he is afterwards led on the stage. The
+:END:
+
+*** [SEARCH] Davies #6 — 4.6.? — p. 294
+Rationale: HIGH VALUE — vol/page given
+:CONTEXT:
+_Entre el_ Si _y el_ No _de la muger, no me atreveria yo à poner una punta d' Alfiler._ Betwixt a Woman's _Yea_, and _No_, I would not undertake to thrust a Pin's Point. Davies: A vicious woman sets no bounds to her appetites. Steevens: O undistinguishing licentiousness of a woman's inclinations! Collier: Here, according to the (MS), we have a remarkable proof of mishearing. . . . The fact is that ‘undistinguish'd’ ought to be _unextinguish'd_, and ‘space’ _blaze;_ thus taking ‘will’ for <I>di
+:END:
+
+*** [SEARCH] Davies #7 — 5.3.265 — p. 340
+Rationale: HIGH VALUE — vol/page given
+:CONTEXT:
+o _cease_ is used for to _die;_ and in _Ham._ the death of Majesty is called “the _cease_ of majesty.” See III, i, 7. Malone: I doubt whether this speech is addressed to Lear. Mason: Possibly this might be an allusion to the theatre, and Albany may mean to say, ‘Let fall the curtain, and end the horrid scene.’ Davies (_Dram. Misc._ ii, 212): Perhaps Albany means, ‘Lower your voice, and cease all exclamation, lest you interrupt the dying king.’ This is not unlike to the word ‘quietness’ in _Ant. &amp; Cleop.:_ Charmian, on the Queen's fainting, whispers to Iras, ‘O quietness!’ Delius supposes that Edgar and Albany continue Kent's train of tho
+:END:
+
+** Clarke
+
+*** [NOTE] Clarke #1 — 2.1.99 — p. 110
+Rationale: likely shorthand for Cowden Clarke, not a new identity
+:CONTEXT:
+Clarke: Regan seeks to associate the accused man, Edgar, with the knights of her father's train, upon whom she is determined to fasten blame as an excuse for her refusal to receive and entertain them.
+:END:
+
+*** [NOTE] Clarke #2 — 2.4.? — p. 145
+Rationale: same caveat
+:CONTEXT:
+e: No transposition is necessary, if, as I believe, ‘knave’ in line 80 is used in the sense of servant, in line 81 of rogue, while ‘fool,’ in line 80, has the reproachful sense it has in the Bible, and in line 81 is but the official title. Hudson: The Fool seems here to be using the trick of suggesting a thing by saying the opposite. Clarke: Sh., in his own noble philosophy, here affirms that the cunning rogue who deserts his benefactor in the time of reverse, from motives of prudence, shows himself fool as well as knave, moral miscalculator as well as moral coward. Moberly: The touching faith of the Fool to his master is one of the most beautiful points of the play. The his
+:END:
+
+*** [NOTE] Clarke #3 — 2.4.302 — p. 165
+Rationale: same caveat
+:CONTEXT:
+Eccles: We are led to imagine, from a passage in Act III, that Lear's attendant knights had not yet arrived. Clarke: Regan's barefaced pretence,—insisting on speaking of her old father as still attended by a large train of
+:END:
+
+*** [NOTE] Clarke #4 — 3.4.71 — p. 188
+Rationale: same caveat
+:CONTEXT:
+Delius refers this to the sticking of pins in the mortified bare arms, Clarke to the exposure of poor Tom's body to the storm. In Edwin Booth's _Prompt Book_ there is the following stage-direction: ‘Draws a thorn, or wooden spike, from Edgar's arm, and tries to thrust it into his own.’ After line 73: ‘Edgar seizes Lear's hand and takes away the thorn.’
+:END:
+
+*** [NOTE] Clarke #5 — 5.3.291 — p. 343
+Rationale: same caveat
+:CONTEXT:
+Rowe's punctuation after ‘steps,’ which is followed above, in the text, seems better. Kent says, in effect, ‘I am the very man, and no one else, that has followed your sad steps.’ He does not catch either of Lear's low apathetic replies: ‘I'll see that straight’ and ‘You are welcome hither.’ This is also the view of Delius and of Clarke. But Ulrici objects to it, and says that not only does it leave ‘nor’ unaccounted for, but it is false in fact, since the Fool as well as Kent accompanied from the first Lear's sad steps, and that, moreover, ‘else’ is unexplained. Instead of the present text, Ulrici proposes to transpose the ‘Nor’ and the ‘no’: ‘“No, nor man else,” that i
+:END:
+
+* Summary
+
+- SEARCH-worthy: 83
+- SKIP: 25
+- META: 1
+- NOTE (identity caveat): 5
+- Unmatched by fuzzy match, resolved manually by direct phrase search: 4 (Jennens #33 -> p.349, Ritson #7 -> p.284, Percy #3 -> p.219, Gifford #2 -> p.221)
+- All 112 occurrences now have a page number.

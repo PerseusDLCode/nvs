@@ -1,0 +1,164 @@
+#+title: Bare-Citation Name Resolution (Edge 2, "computable, mostly")
+#+date: <2026-07-21 Tue>
+#+description: Resolution table for the 71 bare-colon <SC>Name</SC> citations
+#+description: in the Lear commentary (population A from the July 21 pilot).
+#+description: Structured as a cascade: check our own parsed data first,
+#+description: fall back to external historical knowledge, flag what's
+#+description: genuinely uncertain rather than guessing.
+
+* Data-cleaning note (do this before matching, not after)
+
+Several names in the raw <SC> tally are split by source line-wrap
+hyphenation and were merged by hand for this table:
+War-\nburton -> Warburton (+4), Mo-\nberly / Mober-\nly -> Moberly (+4),
+Hal-\nliwell -> Halliwell (+3), John-\nson -> Johnson (+2),
+Cole-\nridge -> Coleridge (+2), Ca-\npell -> Capell (+1),
+Stee-\nvens -> Steevens (+1), Cowden\nClarke -> Cowden Clarke (+2),
+Dellus -> Delius (+1, apparent OCR error for "Delius").
+
+One occurrence, "Hudson. Wright", looks like a tag-boundary artifact —
+possibly two adjacent citations that got concatenated during escaping/
+unescaping, possibly a genuine "Hudson. [new sentence] Wright..."
+Needs a look at the source annotation directly before counting either
+way; not resolved here.
+
+* Tier 0 — already resolvable from OUR OWN parsed bibliography
+
+These are "Edited by X" head-entries we already extracted from the
+English bibliography (single-play Lear editions, not complete-Works
+editions, so not excluded by Norris's "surplusage" rule). No external
+research needed — just point the citation at the row we already have.
+
+| Name (tagged) | Count | Bibliography entry already parsed              | Confidence |
+|---------------+-------+--------------------------------------------------+------------|
+| Wright        |   150 | Edited by W. Aldis Wright (Clarendon Ed.), Oxford, 1875 | high |
+| Moberly       |    89 | Edited by Moberly (Rugby Ed.), 1871; 2nd ed. 1876 | high — two dated eds., disambiguate by context if possible |
+| Hudson        |    34 | Edited by Hudson, Boston, 1879                    | high |
+
+Action: before doing ANY external lookup, re-run resolution against
+the "Edited by" rows from the bibliography pass. This alone accounts
+for 273 of 1169 bare-colon occurrences (~23%) at effectively zero
+research cost.
+
+* Tier 1 — genuinely excluded: editors of the complete Works
+
+Per Norris's footnote, these are the "surplusage" — full editions of
+the Shakespeare canon, deliberately absent from the English
+bibliography we parsed. Resolvable from general knowledge of the
+editing tradition, not from our data. These are the load-bearing
+identifications; I'm giving my confidence honestly rather than
+uniformly high.
+
+| Name       | Count | Likely referent                                                        | Confidence |
+|------------+-------+--------------------------------------------------------------------------+------------|
+| Steevens   |   125 | George Steevens, ed. (with Johnson), Plays of Shakespeare, multiple eds. 1773-1785 | high |
+| Johnson    |   106 | Samuel Johnson, ed., The Plays of William Shakespeare, 1765               | high |
+| Malone     |    67 | Edmond Malone, ed., Plays and Poems of Shakspeare, 1790 (10 vols); notes also underlie the posthumous 1821 "Third Variorum" | high |
+| Schmidt    |    73 | Alexander Schmidt — NOT an edition; see note below                       | see below |
+| Capell     |    57 | Edward Capell, ed., Comedies, Histories, and Tragedies, 1768 — NB also has separate catalogable works (Tier 3) | medium — straddles tiers |
+| Delius     |    46 | Nicolaus Delius, ed., Shakspere's Werke (German), Elberfeld, c.1854-61    | high |
+| Warburton  |    45 | William Warburton, ed., The Works of Shakespear, 1747                    | high |
+| White      |    31 | Richard Grant White, ed., The Works of William Shakespeare, Boston, 1857-66 | high |
+| Collier    |    29 | John Payne Collier, ed., Works of William Shakespeare, 1842-44 — NB also several separate catalogable works (Tier 3) | medium — straddles tiers |
+| Knight     |    18 | Charles Knight, ed., Pictorial Edition of the Works, 1838-43              | high |
+| Dyce       |    17 | Rev. Alexander Dyce, ed., Works of William Shakespeare, 1857 — NB also 3 separate works in bibliography (Tier 3) | medium — straddles tiers |
+| Staunton   |    15 | Howard Staunton, ed., The Plays of Shakespeare, 1858-60                   | high |
+| Theobald   |    14 | Lewis Theobald, ed., The Works of Shakespeare, 1733                       | high |
+| Halliwell  |    15 | J. O. Halliwell(-Phillipps), ed., folio Works of Shakespeare, 1853-65     | high |
+| Hanmer     |     4 | Sir Thomas Hanmer, ed., The Works of Shakespear, Oxford, 1743-44          | high |
+| Pope       |     2 | Alexander Pope, ed., The Works of Shakespear, 1725                        | high |
+| Singer     |     9 | Samuel Weller Singer, ed., Dramatic Works of Shakespeare, 1826 (rev. 1856) — NB may also have separate works | medium |
+| Boswell    |     3 | James Boswell the younger, completed the posthumous Malone edition ("Third Variorum"), 1821 | medium-high |
+| Reed       |     1 | Isaac Reed, ed., First Variorum, 1803 (and earlier eds.)                  | medium-high |
+| Cambridge Editors | 3 | W. G. Clark & W. Aldis Wright, eds., The Cambridge Shakespeare, 1863-66 — the complete-Works Cambridge edition, distinct from Wright's later solo Clarendon *Lear* in Tier 0 | high |
+
+** Note on Schmidt
+
+Schmidt is NOT primarily a Shakespeare editor — Alexander Schmidt's
+major work is the /Shakespeare-Lexicon/ (a dictionary/concordance),
+already showing up separately in our data under the "s.v." locator
+pattern. The 73 bare "Schmidt:" citations most likely also default to
+the Lexicon, but I flagged this as genuinely ambiguous in the earlier
+pass and I'll repeat that flag here rather than resolve it by fiat —
+it deserves a look at a handful of actual instances before deciding.
+
+* Tier 2 — single-entry bibliography authors (bare citation is unambiguous by elimination)
+
+These have exactly one entry each in the English bibliography we
+already parsed. No title needed in the commentary because there's
+nothing else by that surname to confuse it with.
+
+| Name        | Count | Bibliography entry                                              |
+|-------------+-------+---------------------------------------------------------------- |
+| Heath       |    22 | Heath: A Revisal, &c., 1765                                      |
+| Douce       |     8 | Douce: Illustrations, 1807                                       |
+| Mason       |    18 | Mason: Comments, London and Dublin, 1785                         |
+| Tyrwhitt    |     6 | Tyrwhitt: Observations and Conjectures, 1766                     |
+| Lord Campbell |   2 | Lord Campbell: Shakespeare's Legal Acquirements, 1859            |
+| Eccles      |    28 | Eccles: Illustrations and Variorum Commentaries, 1792            |
+| Ellacombe   |     3 | Ellacombe: Plant-lore and Garden-craft of Shakespeare, 1878      |
+| Keightley   |     3 | Keightley: The Shakespeare Expositor, 1867                       |
+| Cartwright  |     1 | Cartwright: New Readings, 1866                                   |
+| Farmer      |     7 | *Not confirmed in our parsed excerpt* — likely Richard Farmer, /An Essay on the Learning of Shakespeare/, 1767 (a standalone pamphlet, not a variorum-contributor note) — worth checking the fuller bibliography file for a Farmer row |
+
+* Tier 3 — ambiguous: author has MULTIPLE bibliography entries
+
+Bare citation cannot disambiguate these without more context (nearby
+commentary content, or the specific line under discussion).
+
+| Name   | Count | Candidate works                                                                                  |
+|---------+-------+-------------------------------------------------------------------------------------------------|
+| Jennens |    18 | (a) King Lear, collated with old and modern editions, 1770; (b) A Vindication of King Lear as lately published, 1772 |
+| Ritson   |     5 | (a) Remarks, Critical and Illustrative, 1783; (b) Cursory Criticisms, 1792                                     |
+
+* Tier 4 — likely 18th-c. commentators embedded in a COMPILED variorum, not standalone authors
+
+These names are, to the best of my knowledge, contributors whose notes
+survive only inside someone else's multi-volume edition (Reed's 1803
+First Variorum or the 1821 Third/"Boswell-Malone" Variorum) — the
+catalogable object is that compiled edition, not a book by this
+person. If so, the citation target isn't "Tollet's book," it's "page
+N of the 1821 Variorum, in the section attributed to Tollet" — a
+mediation problem (Edge 4) hiding inside what looks like a Tier-1
+resolution. Flagging for verification rather than asserting.
+
+| Name    | Count | Note                                                                    |
+|---------+-------+--------------------------------------------------------------------------|
+| Henley  |     5 | Samuel Henley — plausible variorum contributor; unconfirmed             |
+| Tollet  |     3 | George Tollet — plausible variorum contributor; unconfirmed             |
+| Whalley |     2 | Peter Whalley — plausible variorum contributor; unconfirmed             |
+| Blakeway |    1 | John Blakeway — plausible variorum contributor; unconfirmed             |
+| Percy   |     3 | Bishop Thomas Percy — plausible variorum contributor; unconfirmed       |
+| Nares   |    12 | Robert Nares — likely /A Glossary ... Illustrating the Works of English Authors, particularly Shakespeare/, 1822 — closer to a standalone reference work than a variorum note; tier 2 candidate, low-medium confidence |
+
+* Tier 5 — genuinely uncertain, needs your eyes before we trust any of it
+
+I'd rather hand you an honest "don't know" than a confident guess for
+these. Some may not be Shakespeare scholarship at all — one-off
+citations for a fact outside the editorial tradition entirely.
+
+| Name              | Count | Best guess (low confidence)                                              |
+|-------------------+-------+------------------------------------------------------------------------- |
+| Verplanck         |     3 | Gulian C. Verplanck, ed., The Illustrated Shakespeare (American), 1847 — plausible Tier-1 case, moderate confidence |
+| Mrs Griffiths     |     1 | Possibly Elizabeth Griffith — bibliography has "Griffith: The Morality of Shakespeare's Drama, 1775" (note singular/no plural mismatch — may be an OCR variant of the same name) |
+| Gifford           |     1 | William Gifford — primarily a Jonson/Massinger editor, not Shakespeare; likely a one-off comparative citation, not an edition |
+| Dodd              |     1 | Possibly William Dodd, The Beauties of Shakespeare, 1752 — unconfirmed |
+| Sir Joshua Reynolds |   3 | The painter — almost certainly a one-off anecdotal/critical citation, not an edition; do not force into this table's shape at all |
+| Dr Burney         |     1 | Possibly Charles Burney, music historian — likely a one-off citation on a musical point, not an edition |
+| Wedgwood          |     1 | Possibly Hensleigh Wedgwood, philologist — likely a one-off etymological citation |
+| Emil Palleske     |     1 | Unconfirmed — possibly a German literary historian; unclear why cited here |
+| Chambers          |     1 | Unconfirmed — possibly Robert Chambers (man of letters, not E. K. Chambers, whose Shakespeare work postdates this text) |
+| Beisly             |     0* | Appears in raw count but I have low confidence on identity — flagging for your review rather than guessing |
+| Davies            |     2 | Possibly Thomas Davies, Dramatic Miscellanies, 1784 — this IS in our bibliography (row 54), so may belong in Tier 2 instead; flagged here pending confirmation |
+| Clarke            |     3 | Ambiguous with "Cowden Clarke" (separately tallied) — may be a truncation artifact, not a distinct person |
+
+* What this changes about the resolution task
+
+The earlier framing — "build a canonical-editions table" — undersold
+how much of this cascade is actually Tier 0/Tier 2 work: pointing
+citations back at data we already parsed, not new research. Only
+Tier 1 needed real recall of 18th/19th-c. editing history, and only
+Tier 4/5 are genuinely open questions. I'd suggest treating Tiers 0-3
+as close to done, and spending actual review time on Tiers 4-5, which
+total under 40 occurrences — a small, bounded pile of "ask Cliff"
+rather than a research program.

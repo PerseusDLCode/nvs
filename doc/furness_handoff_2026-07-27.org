@@ -1,0 +1,103 @@
+#+title: Handoff — Furness Bibliography / Citation Resolution
+#+date: <2026-07-27 Mon>
+#+description: Session handoff, written because the "Parsing Furness's
+#+description: bibliography into TEI" chat's input field froze. Carry
+#+description: this into a new conversation to resume without re-deriving
+#+description: context. Canonical state still lives in forum.org / agenda.org
+#+description: — this is a bridge, not a replacement for those.
+
+* Where things stand
+
+Working on citation resolution within Furness's commentary apparatus
+for the Hypervariorum (NVS) King Lear edition. The task: resolve the
+bare-colon =<SC>Name</SC>= citations in the annotation XML to actual
+bibliography entries, without relying on regex — this requires real
+syntactic/contextual judgment, which is itself a Schmidt Sciences–
+relevant finding about Edge 2 vs. Edge 3 task classification
+(documented in =concepts.org=).
+
+The resolution table is built as a *cascade*, checking our own parsed
+bibliography before reaching for external research:
+
+- *Tier 0* — already resolvable from our own parsed bibliography.
+  Single-play Lear editions (not excluded by Norris's "surplusage"
+  rule, which only applies to complete-*Works* editions). E.g.
+  Wright (150 occurrences → Clarendon Ed., 1875), Moberly (89 →
+  Rugby Ed., 1871).
+- *Tier 1* — needs real recall of 18th/19th-c. editing history but
+  resolvable with moderate-to-high confidence (e.g. Verplanck →
+  Gulian C. Verplanck's /Illustrated Shakespeare/, 1847).
+- *Tier 2* — points back to bibliography rows we already parsed but
+  hadn't cross-referenced (e.g. Davies → Dramatic Miscellanies, 1784,
+  row 54 — flagged pending confirmation).
+- *Tiers 3–5* — genuinely open/low-confidence: one-off citations that
+  may not be Shakespeare scholarship at all (Sir Joshua Reynolds —
+  the painter, almost certainly anecdotal; Dr Burney — probably a
+  musical point; Wedgwood — probably etymological), OCR/tag-boundary
+  artifacts to check against source (Beisly, "Hudson. Wright"), and
+  name collisions (Clarke vs. Cowden Clarke).
+
+Revised framing from partway through the last session: Tiers 0–2 are
+close to done — mostly pointing citations at data already parsed, not
+new research. The actual open work is Tiers 3–5, which total under 40
+occurrences — a small, bounded "ask Cliff" pile rather than a research
+program.
+
+Files already drafted (check whether committed to the repo yet):
+- =doc/citation-resolution/bare_citation_resolution.org= — full Tier
+  0–2 table
+- =doc/citation-resolution/tier3_5_triage_with_pages.org= — the
+  low-confidence triage
+
+Data-cleaning note baked into the table: several names in the raw
+tally are split by source line-wrap hyphenation and were merged by
+hand (Warburton, Moberly, Halliwell, Johnson, Coleridge, Capell,
+Steevens, Cowden Clarke, and an apparent OCR error "Dellus" →
+Delius). Do this cleanup *before* matching, not after.
+
+* Blocker: full-text search batch is paused
+
+The Tier 3–5 resolution task needs to search for bibliography-item
+full text (an 83-item search batch), but this is blocked pending a
+scoping question, logged as its own agenda item ("Corpus access
+feasibility") rather than folded into the citation-classification
+pipeline itself.
+
+Pilot case run: Davies, /Dramatic Miscellanies/. Findings:
+- Digitized on Internet Archive, but OCR quality on 18th-c. long-s
+  typography is bad enough that literal phrase search is unreliable.
+- HathiTrust's page-turner is =robots.txt=-blocked for direct fetch;
+  its public search covers only a subset of the collection.
+- Multiple competing digitizations of the same work complicate
+  matching regardless (≥3 for Davies alone — same problem as
+  Walker's /Critical Examination/ earlier).
+
+Open question logged: does Harvard's actual IDI/HTRC access (vs. the
+public HathiTrust website) provide (a) cleaner OCR or an alternate
+text layer, (b) bulk/programmatic full-text search across the whole
+corpus, (c) the ability to run our own fuzzy/OCR-tolerant matching
+against raw text? If yes to any — task is tractable as scoped. If no
+— needs rescoping around downloading full-text dumps and matching
+locally.
+
+*Since that agenda item was drafted*, you found the HuggingFace
+=institutional/institutional-books-1.0-metadata= dataset viewer
+supports live SQL queries via DuckDB WASM directly in the browser —
+which speaks directly to the open question above. That thread was
+live when the session ended; it hadn't yet been resolved whether the
+"full version" repo (vs. metadata-only) carries searchable body text.
+
+*Next step*: follow up on the Institutional Books 1.0 full-text
+question (with Charles/Greg if needed) before resuming the Tier 3–5
+search pass. Keep this as infrastructure the citation pipeline
+depends on, not part of the pipeline proper.
+
+* To resume
+
+1. Confirm whether =bare_citation_resolution.org= and
+   =tier3_5_triage_with_pages.org= made it into the repo, and whether
+   =forum.org= / =agenda.org= already reflect the corpus-access
+   blocker as drafted above.
+2. If the IDI full-text question is answered, unblock and resume the
+   83-item search batch.
+3. If not, this is a good place to pick the thread back up.
