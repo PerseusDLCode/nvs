@@ -300,6 +300,230 @@ Stakes: this directly blocks the current actual goal, processing
 citations within commentary text — citation extraction needs
 commentary text with trustworthy annotation boundaries first.
 
+**** Research (addendum)
+[2026-07-28] Cliff's observation resolves the open question above:
+the playtext and the Critical Commentary are paginated
+independently. The playtext advances at a roughly fixed rate (so
+many verse lines per page); the commentary is elastic — a lemma may
+get two words or, per the =tender-hefted= case in
+=edge3/topic-classifier-precedent=, a page and a half. When the
+commentary hasn't finished by the time the page is full, Furness's
+printer cuts it, carries it to the next page, and marks the
+continuation by repeating the bracketed lemma — =<C>[...]</C>=
+immediately followed by =<P>= — rather than opening a genuinely new
+annotation. This is a print convention for stitching a note across a
+page break, not an unrecognized annotation format.
+
+This reframes the finding: it is not evidence of a hidden Edge-3-
+like judgment call. The traced case (and 179/184, 97%, of the full
+population) is directly adjacent to a =<PB>= tag, and the bracketed
+lemma text matches the lemma of the annotation that was open when the
+page cut. Both conditions are checkable mechanically against the
+stream — proximity to =<PB>=, string-match against the preceding
+annotation's lemma — with no interpretive reading required. This is
+Edge 1 (anchoring): deterministic, computable, previously
+misclassified as ambiguous only because the parser's existing
+chunk-splitter rule (bracketed-lemma-after-=<P>=-starts-a-new-
+annotation) checks the pattern locally rather than relationally
+against the preceding annotation and nearest =<PB>=. The remaining 5
+occurrences (=<BQ>=-adjacent rather than =<P>=-adjacent) are the same
+mechanism applied to a quoted passage resuming rather than prose, not
+a separate case.
+
+**** Decision
+Let Claude Code run with this and then we'll evaluate the results.
+
+**** Analysis (implementation results)
+[2026-07-28] Implemented on
+=feature/nvs-parser-continuation-marker-disambiguation= exactly as
+specified: =extract_elements= now yields =<PB.../>= tokens
+interleaved with =<HE>=/=<CC>= blocks; a new =parse_continuation_marker=
+detects a =<C>[...]</C>= chunk immediately followed by =<P>=/=<BQ>=;
+the orchestrator merges into the tracked =open_annotation= only when
+both conditions hold (immediately after a =<PB>=, and the bracketed
+lemma string-matches the open annotation's lemma). Unit tests added
+(genuine merge, non-PB-adjacent unchanged, =<BQ>=-adjacent merge);
+=pdm run pytest= green (34 tests); all eight =shake.var.*= files
+still produce well-formed XML that =load_annotations()= loads
+without error — no regression on =nvs/parser-malformed-xml-output=.
+
+Evaluating against real data surfaces a gap in the "deterministic,
+no interpretive judgment" premise. Ran the implementation against
+all eight files and classified every =<PB>=-adjacent bracketed-lemma
+candidate as matched / lemma-mismatch / no-open-annotation:
+
+| File   | Matched | Mismatch | Expected (survey) |
+|--------+---------+----------+--------------------|
+| ac     |       5 |        9 |                 14 |
+| coriol |      82 |       31 |                114 |
+| ham    |       0 |       30 |                 30 |
+| lear   |       1 |        0 |                  1 |
+| macb   |       5 |        1 |                  7 |
+| oth    |       0 |       18 |                 18 |
+| rj     |       0 |        0 |                  0 |
+| Total  |      93 |       89 |                184 |
+
+=lear= (the play the original spec discussion centered on) matches
+100%; =ham= and =oth= match 0%. Two distinct sub-patterns behind the
+mismatches, both traced to concrete examples:
+
+1. /The bracketed repeat isn't always verbatim./ Furness elides long
+   lemmas with =...= on first mention — e.g. an annotation opens
+   =36-38. <B>dram...scandal</B>=, spanning act I, sc. iv — but every
+   continuation marker on the five following pages reads =36. 'The
+   dram of eale,' &c.=: a different paraphrase, not a literal repeat.
+   (=oth='s and the rest of =ham='s mismatches are the same pattern,
+   different lemma.) A few cases are near-misses differing only in
+   markup, not wording — e.g. marker =144. hoa= vs open =144. <B>hoa</B>=.
+2. /"Most recently appended" isn't always "the annotation that was
+   open."/ In several cases (all of =ham='s and =oth='s, part of
+   =ac='s and =coriol='s) the comparison lands on an *empty* lemma —
+   meaning an ordinary, unlabeled =<P>= paragraph-continuation (no
+   recognized lemma marker) got appended as its own spurious
+   empty-lemma annotation between the real opening and the page
+   break, so =open_annotation= by the time of the =<PB>= is one of
+   these orphans, not the real one. This is concrete evidence for the
+   open question this thread already flagged and left unresolved —
+   whether "ordinary" =<P>= litter is uniformly benign. Here, at
+   least, it isn't: it silently displaces the continuation-marker
+   target.
+
+Both are real judgment calls (how loose should lemma comparison be;
+should tracking skip past empty-lemma orphans to find the true open
+annotation, and if so how far back) — exactly what the current
+Decision was trying to keep out of this task by requiring an exact
+string match. Not resolving either unilaterally. Code and tests are
+complete and correct against the spec as written (93 genuine merges,
+zero regressions); paused here per Cliff pending a fresh Decision on
+how to handle the matching gap, rather than continuing on judgment
+calls Claude Code shouldn't be making alone. Branch not merged;
+=agenda.org='s =nvs/parser-continuation-marker-disambiguation= marked
+paused, not done.
+
+**** Research (addendum, on the mismatch pattern)
+[2026-07-28] Cliff raised whether the mismatch pattern (=lear= 100%,
+=ham=/=oth= 0%, =macb= 71%, =ac= 36%, =coriol= 72%) reflects different
+Furness volumes following different editorial/typesetting policies,
+rather than one uniform convention. Checked the actual publication
+history before reasoning further from the numbers:
+
+| File   | Play               | Published | Editor                          |
+|--------+---------------------+-----------+----------------------------------|
+| rj     | Romeo & Juliet      |      1871 | Furness Sr. (his first)          |
+| macb   | Macbeth             |      1873 | Furness Sr.                      |
+| ham    | Hamlet              |      1877 | Furness Sr.                      |
+| lear   | King Lear           |      1880 | Furness Sr.                      |
+| oth    | Othello             |      1886 | Furness Sr.                      |
+| ac     | Antony & Cleopatra  |      1907 | Furness Sr. (son assisting since 1901) |
+| coriol | Coriolanus          |      1928 | Furness Jr. ALONE, 16 yrs after Sr.'s death |
+
+One clean fact supports the hypothesis: =coriol= is not a Furness Sr.
+volume at all — it's the first New Variorum Coriolanus, produced
+solely by Furness Jr. in 1928, a different generation and production
+era entirely. But the hypothesis doesn't survive contact with the
+rest of the table: if the split were simply Sr.'s convention vs.
+Jr.'s, =ham= (1877) and =oth= (1886) — both squarely Sr., both close
+in date to =lear= (1880) — should pattern with =lear=. Instead they're
+the *worst* matches in the set (0%), worse than =coriol=, the one
+volume Sr. never touched. A clean editor-generation story predicts
+roughly the opposite ranking from what the data shows.
+
+So: real pattern, probably not reducible to "who edited it." Worth
+separating the two failure sub-patterns Claude Code already
+identified, because they likely have different causes and need
+different responses:
+
+1. /Genuine print-convention variation/ — the traced =ac= case where
+   the resumed lemma is a paraphrase (=36. 'The dram of eale,' &c.=)
+   rather than a verbatim repeat of the opening lemma
+   (=36-38. dram...scandal=). If this is a real habit of a particular
+   compositor or editorial moment, it's an actual fact about 19th/
+   20th-c. print-shop practice, not noise — worth documenting as such
+   even if it complicates the matching rule.
+2. /Parser-tracking artifact, unrelated to any editorial policy/ — an
+   ordinary, unlabeled =<P>= paragraph-continuation misclassified as
+   a spurious empty-lemma annotation, displacing the real "open
+   annotation" before the page-break arrives. No Furness editor, Sr.
+   or Jr., ever intended a bare paragraph break to open a nameless
+   note — this is the chunk-splitter's local-lookahead weakness
+   showing up more in some files than others, not a print convention
+   to accommodate.
+
+Next step before resolving the Decision on the matching gap: pull 3-4
+concrete traced examples from =ham= and =oth= (real text around a
+=<PB>=, the way the =ac= case was traced), not just the classification
+counts, to see directly whether those files' mismatches are genuinely
+paraphrase (supports #1, informs how loose lemma-matching needs to
+be) or genuinely orphan-displacement (supports #2, and is simply a
+bug to fix — skip past empty-lemma orphans when tracking the open
+annotation — independent of whatever gets decided about #1).
+
+**** Research (addendum, traced examples from ham/oth)
+[2026-07-28] Pulled concrete examples per the "next step" above, tracing
+each mismatch back to the true original bracketed lemma (not just the
+parsed =open_lemma= field) by grepping its first occurrence in the raw
+text. This changes the picture: the "orphan-displacement" count from the
+matched/mismatch table is an overcount, and the "paraphrase" cases split
+into two genuinely different sub-patterns, only one of which is really a
+paraphrase.
+
+1. /Cosmetic quoting — same words, decorative punctuation added/. =ham=,
+   =<PB N=147>=: original =<P>181. <B>good kissing carrion</B>]=
+   (no quotes); continuation marker =<C>[181. '<B>good kissing
+   carrion.</B>']</C>=. Same for =<PB N=163>=: original =<P>320.
+   <B>inhibition</B>]=; marker =<C>[320. '<B>inhibition.</B>']</C>=.
+   The wording never changes, only curly quotes and a trailing period get
+   added on the continuation-page repeat. A punctuation-insensitive
+   comparison (strip quotes/terminal punctuation, compare the rest)
+   would catch both of these correctly.
+
+2. /Elision on the original, expansion on the marker — genuinely
+   different text, but traceable to one editorial habit/. =ham=,
+   =<PB N=83..87>= (the already-known =dram of eale= case): original
+   =<P>36-38. <B>dram...scandal</B>]= (Furness's own =...=-elision
+   convention for a long lemma); marker =<C>[36. '<B>The dram of
+   eale,</B>' &amp;c.]</C>= on all five following pages. Same pattern in
+   =oth=, =<PB N=6,7,8>=: original =<P>22, 23. <B>Florentine, . . .
+   Wife</B>]= (elided with =. . .=, not =...=, but the same convention);
+   marker =<C>[22, 23. '<B>Florentine, (A Fellow almost damn'd in a
+   faire Wife).</B>']</C>= on all three following pages. And =oth=,
+   =<PB N=31>=: original =<P>16. <B>double</B>]= — here the original
+   isn't even elided, just terse — the continuation-page marker instead
+   quotes the fuller phrase =<C>[16. '<B>As double as the Dukes.</B>']</C>=.
+   All three are the *same* underlying fact: Furness's original bracket
+   is a short catchword or an elided phrase, and the continuation-page
+   printer's bracket is a fuller quoted rendition of the same lemma —
+   not an unrelated paraphrase, but not recoverable by any amount of
+   punctuation-stripping either, since the actual word count differs.
+
+3. /What looked like orphan-displacement turned out to include a
+   disguised elision case./ Walking back from the =oth= =<PB N=6>=
+   Florentine marker past the immediate empty-lemma =open_lemma= to the
+   *nearest non-empty* annotation lands on =22. <B>Cassio</B>= — which
+   does not match the marker either. Grepping the true first occurrence
+   shows the real antecedent is =22, 23. Florentine, . . . Wife]=
+   (case 2 above) — several annotations further back than the nearest
+   non-empty one. So "skip empty-lemma orphans and take the next
+   non-empty lemma" is not a reliable fix by itself: it can land on a
+   real but different intervening annotation. Whether =22. Cassio= is
+   itself a genuine top-level annotation interrupting the Florentine
+   discussion, or an artifact of the same chunk-splitter over-triggering
+   on an in-passage lemma reference, isn't established by this trace and
+   would need its own look.
+
+Net reframing of Claude Chat's two-category split: cosmetic-quoting
+mismatches (category 1) are real and separable — a normalized comparison
+handles them. But categories "genuine paraphrase" and "orphan-
+displacement" turn out not to be independent: in every traced case, the
+non-cosmetic mismatch is the *same* elision-vs-expansion habit (case 2),
+and naive orphan walk-back doesn't reliably recover it (case 3) because
+the true antecedent isn't always "the nearest real lemma," it's
+specifically "the annotation whose elided lemma the marker is expanding"
+— which needs elision-aware matching (e.g. compare the marker's lemma
+against each candidate with mid-string =...=/=. . .= treated as a
+wildcard, walking back as far as needed) rather than either exact-match
+or nearest-neighbor.
+
 **** Decision
 [to be recorded]
 
@@ -551,3 +775,21 @@ Awaiting reply; logged here independently of the reply since the
 Edge-3/topic-classifier question above doesn't depend on it. See
 =corpus/access-feasibility= in =agenda.org= for the access side of
 this same inquiry.
+** Housekeeping: eschewing red herrings
+:PROPERTIES:
+:CUSTOM_ID: red_herrings
+:END:
+<2026-07-30 Thu> We spent several days trying increasingly elaborate
+methods to deal with the condition of a comment that starts on one
+page continuing onto another page before realizing there was a simple
+formatting clue (<C>...</C> after the new <CC> section starts).  I
+want to avoid getting led astray like this in the future.  The
+responsibility lies with me: this kind of distraction is a well-known
+short-coming of contemporary AIs.
+
+*What I've done:* I edited the agenda.org file and removed many of the
+todo items that were confused or misleading. (NB: the agenda.org file
+is tracked in git, so we can always recover previous states.)  I also removed the
+structure, so todo items are at the top level. If we actually find it
+useful to categorize them, we should use org mode's built-in tags
+feature.
