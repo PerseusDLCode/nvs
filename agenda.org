@@ -71,6 +71,29 @@ Next steps:
    <2026-07-21 Tue 17:13> I have sent an inquiry to David Smith for
    guidance on 1 and 3.  Meanwhile, see [fn:1]. 
 
+* TODO debug parsing raw file into chunks
+:PROPERTIES:
+:CUSTOM_ID: reimplement-parsing
+:END:
+Look at the RawToChunks parser class in @src/hypervariorum/nvs/parsers.py.
+The parse() method, as implemented, does not work properly; it appears to skip
+lines, and there may be additional flaws.
+
+Fix this method. It should process a raw text file to which start and
+stop markers have been added: between those markers, the method should extract
+everything between the <CC> and </CC> tags and generate a <chunk>
+element. The opening <chunk> tag should record data from the running
+head (denoted with <HE></HE> tags), specifically, the page number, the
+act number, and the scene number. The method should accumulate the
+chunks in a list (self.chunks).
+
+Add a new method to serialize self.chunks to a file.
+
+Write tests to verify that the parse() method is extracting all the
+text between the <CC> and </CC> tags. Test to make sure it isn't
+picking up lines outside the <CC> </CC> tags.  Test to make sure the
+running head is being properly parsed into page number, act number,
+and scene number values.
 * Footnotes
 
 [fn:1] <2026-07-22 Wed> IDI has developed three open tools: GRIN

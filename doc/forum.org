@@ -804,3 +804,63 @@ to..." as a warning sign. Added a "Shared Failure Modes" section to
 Cliff's appetite for theoretical elaboration and Claude Chat's
 fluency in it can reinforce each other — and flagging the implicit
 =CLIFF.md= as a thread to return to. =DISPOSITION: adopt=
+
+** Two-stage parsing pipeline
+:PROPERTIES:
+:CUSTOM_ID: pipeline/two-stage
+:ASSIGNEES: Claude Code, Cliff
+:SOURCE: chat/2026-07-31
+:END:
+
+Replace =parsing.py= with a two-stage functional pipeline, following
+Unix pipe logic: each stage does one thing and passes clean output
+to the next.
+
+*Stage 1* (=parsers.py=, =Parser= class, already drafted): extract
+=<CC>= blocks from the raw NVS text, attaching act, scene, and page
+number metadata parsed from the intervening =<HE>= running heads.
+Output is a list of chunks, each carrying enough context that Stage 2
+never needs to look at the raw file again.
+
+*Stage 2* (to be built): work through the chunk list to extract
+individual annotations — splitting on =<P>= boundaries, parsing
+lemmas, extracting line numbers. Page-turn continuation (=<C>[lemma]</C>=
+at the start of a chunk) is detected and handled here, merging with
+the preceding annotation; the =page_number= attribute on the chunk
+provides sufficient context without Stage 2 needing to track =<PB>=
+tags directly. This is cleaner than =parsing.py='s =pb_pending= flag,
+which tangled the two stages together.
+
+**** Research
+
+[2026-07-31] The key design rationale: act and scene tracking belongs
+in Stage 1 because it requires reading the running heads, which are
+an artifact of the raw file format. Stage 2 should work on structured
+content only. Line numbers in lemmas are sufficient for annotation
+identity once act/scene is inherited from the chunk metadata.
+
+One open question before Stage 2 is built: the intermediate
+representation between stages. Two options:
+
+- *Raw strings* (current =parsers.py= approach): =<chunk>= elements
+  with attributes. Inspectable, writable to a file, Unix-idiomatic.
+  Stage 2 must parse attributes back out of strings.
+
+- *Dataclass* (=Chunk= with =act=, =scene=, =page_number=, =content=
+  fields): type-safe, no re-parsing. Less directly inspectable but
+  the natural Python contract between two stages in the same process.
+
+This choice should be settled before Stage 2 is implemented; it is
+the interface contract between the two stages.
+
+Immediate tasks for Claude Code before Stage 2 begins:
+1. Fix mechanical issues in =parsers.py=: remove debug =print=
+   statements, remove unused =curr_act=/=curr_scene=/=curr_page=
+   instance variables, replace bare =print= in =parse_head= with
+   =logging.warning=.
+2. Confirm via corpus grep that =<CC>= is always multi-line (single-line
+   =<CC>...</CC>= would silently misparse in the current iterator logic).
+3. Write tests for =Parser= that nail down the output contract —
+   these tests also serve as the specification Stage 2 is built against.
+
+**** Decision

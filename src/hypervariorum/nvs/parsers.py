@@ -1,9 +1,6 @@
 from pathlib import Path
 import re
 
-head_recto = r"^<HE>([0-9]+)\s+<I>.*?</I>\s+\[(.*?)</HE>"
-head_verso = r"^<HE>(<SC>.*?</SC>.*?)\]\s+<I>.*?</I>\s+(\d+).*$"
-
 def roman_to_int(roman_str):
     """Converts a small Roman numeral string (like i, ii, iii, iv) to an integer string."""
     roman_str = roman_str.upper().strip()
@@ -21,12 +18,10 @@ def roman_to_int(roman_str):
 
 
 
-class Parser:
+class RawtoChunks:
+    """Parses a raw file (to which start/stop markers have been added) into CC chunks."""
     def __init__(self, file_path:Path) -> None:
         self.file_path:Path = file_path
-        self.curr_act : int | None = None
-        self.curr_scene: int | None = None
-        self.curr_page: int | None = None
         self.chunks: list[str] = []
 
     def parse(self) -> None:
@@ -82,6 +77,10 @@ class Parser:
     def parse_head(self, head_str) -> dict:
             """Parses a running head and returns its components."""
 
+            
+            head_recto = r"^<HE>([0-9]+)\s+<I>.*?</I>\s+\[(.*?)</HE>"
+            head_verso = r"^<HE>(<SC>.*?</SC>.*?)\]\s+<I>.*?</I>\s+(\d+).*$"
+
             result = {}
             act_scene = None
 
@@ -108,9 +107,12 @@ class Parser:
                     result['scene'] = roman_to_int(match.group(2))
             return result
                     
-    
-            
+class ChunkConsolidator:
+    """Parses a chunk into annotations."""
+    def __init__(self, chunk_list:list) -> None:
+            self.input_list:list = chunk_list
 
-            
+    def is_continuation(self, chunk) -> bool:
+        pass
 
     
