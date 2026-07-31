@@ -31,6 +31,12 @@ Before implementing:
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
+**For research and analysis tasks (Claude Chat):** Sophistication in reasoning can mask a simpler question underneath. Three specific checks:
+
+- **Source before inference.** Before proposing any detection, classification, or inference mechanism, ask: *does the data already mark this?* Building machinery to infer something the source explicitly encodes is the canonical red herring.
+- **Iteration is diagnostic.** If a problem has required more than one solution attempt without resolution, the problem is probably mis-stated, not under-solved. Re-read the source data and the original question before proposing anything further.
+- **"First we need to..." is a warning sign.** A prerequisite chain that defers the actual question is a flag. Ask whether the prerequisites are genuinely required or scaffolding around an unexamined assumption.
+
 ## 3. Surgical Changes
 
 **Touch only what you must. Clean up only your own mess.**

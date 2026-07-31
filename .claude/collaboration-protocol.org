@@ -220,6 +220,31 @@ feature branch is ever in flight at once. In practice: commit
 coordination-file edits to =main= first, merge the feature branch
 afterward.
 
+* Shared Failure Modes
+
+The checks in =CLAUDE.md= address Claude Chat's tendencies. A complete
+protocol would have a companion document — call it =CLIFF.md= —
+cataloguing the human side: the theorist's appetite for a
+well-constructed problem, the literary scholar's pleasure in following
+an idea wherever it leads. These are genuine intellectual virtues and
+part of what makes the collaboration productive; neither party should
+want them suppressed.
+
+But any good team maintains some awareness of the ways members can
+reinforce each other's unproductive tendencies rather than correct
+them. Claude Chat's fluency in elaboration pairs naturally with
+Cliff's taste for it, and the result can be a mutually satisfying
+spiral that takes several days to recognize as a red herring. The
+"source before inference" and "iteration is diagnostic" checks above
+are partly designed to interrupt that dynamic — giving the
+collaboration a structural tripwire that doesn't depend on either
+party noticing in the moment that they're enjoying themselves too much
+to stop.
+
+This is a thread worth pulling on separately: the way both
+participants model each other, and shape the personae they present
+accordingly, has implications that reach well beyond project hygiene.
+
 * What This Protocol Does Not Cover
 
 - *Automatic syncing*: no tooling pushes changes between

@@ -793,3 +793,14 @@ is tracked in git, so we can always recover previous states.)  I also removed th
 structure, so todo items are at the top level. If we actually find it
 useful to categorize them, we should use org mode's built-in tags
 feature.
+
+**** Decision
+[2026-07-30] Added three specific checks to the "Simplicity First"
+section of =CLAUDE.md= covering research and analysis tasks (as
+distinct from the existing code-focused items): source before
+inference, iteration as diagnostic signal, and "first we need
+to..." as a warning sign. Added a "Shared Failure Modes" section to
+=.claude/collaboration-protocol.org= noting the mutual dynamic —
+Cliff's appetite for theoretical elaboration and Claude Chat's
+fluency in it can reinforce each other — and flagging the implicit
+=CLIFF.md= as a thread to return to. =DISPOSITION: adopt=
