@@ -10,9 +10,16 @@ add one when a real design decision preceded the task.
 
 
 * TODO Review forum.org with Claude Chat
-SCHEDULED: <2026-07-28 Tue +2w>
+SCHEDULED: <2026-08-11 Tue +2w>
 :PROPERTIES:
 :CUSTOM_ID: process/forum-review
+:END:
+:LOGBOOK:
+- [2026-08-01 Sat] Reviewed by Claude Code (first pass, no prior
+  review). See
+  [[file:doc/forum.org::#process/forum-review-2026-08-01][#process/forum-review-2026-08-01]]:
+  3 items flagged needing a Decision, 3 archive-ready, 1 data-quality
+  note, 0 needing a Review section.
 :END:
 Read forum entries since the last review. Flag anything that should
 move to Decision, anything stale enough to archive

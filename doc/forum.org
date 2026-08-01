@@ -868,3 +868,69 @@ Immediate tasks 1–3 done: see
 The raw-string-vs-dataclass interface question above is still open.
 
 **** Decision
+
+** Periodic forum review (2026-08-01)
+:PROPERTIES:
+:CUSTOM_ID: process/forum-review-2026-08-01
+:ASSIGNEES: Claude Code, Cliff, Claude Chat
+:SOURCE: adhoc
+:END:
+First pass of the recurring =process/forum-review= task (no prior
+review exists — no =forum.org_archive= yet). Run by Claude Code from
+the repo side; the design-judgment items below still want Claude
+Chat's or Cliff's eyes, not resolved here.
+
+**** Needs a Decision
+- =external/raw-corpus-dependency= (2026-07-15, oldest open item):
+  both Research concerns already resolved in the repo — =readlink raw=
+  returns the relative =../NVS_Shakespeare= (portable), and
+  =README.md=:6-13 already documents the clone-and-symlink bootstrap.
+  Just needs the Decision recorded to close it out.
+- =nvs/commentary-tag-litter-signals-structure= (2026-07-28): the
+  continuation-marker matching-gap thread. Implementation against the
+  original spec is done and tested (93 genuine merges, no
+  regressions), but real-data evaluation surfaced two sub-patterns
+  (cosmetic-quoting vs. elision-vs-expansion) that need a Decision on
+  comparison strategy before =feature/nvs-parser-continuation-marker-disambiguation=
+  (paused, unmerged) can resume.
+- =pipeline/two-stage= (2026-07-31): raw-string-vs-=Chunk=-dataclass
+  interface question, still open. Not urgent — blocks Stage 2, which
+  hasn't started.
+
+**** Stale enough to archive (=org-archive-subtree=)
+- =process/collaboration-protocol-v2= — settled 2026-07-15, nothing
+  further expected.
+- =architecture/ingestion-model-classifier-split= — settled
+  2026-07-15; its follow-on (=packaging/src-layout-split=) no longer
+  appears in =agenda.org=, consistent with the 2026-07-30 cleanup
+  (=red_herrings=) rather than an oversight.
+- =red_herrings= — settled 2026-07-30, one-off housekeeping note.
+
+**** Correctly still open (not archive candidates)
+- =parsing-raw-xml-vs-plain-text= — Decision recorded, but has an
+  explicit revisit trigger (bibliographic-entity work or real
+  =commentary= classifier requirements) that hasn't fired yet.
+- =citation-resolution= — =DISPOSITION: defer=, deliberately paused on
+  =corpus/access-feasibility=, which is still an open =agenda.org= task.
+- =edge3/topic-classifier-precedent= — =DISPOSITION: document=; serves
+  its purpose as reference material (its tender-hefted worked example
+  illustrates =citation-resolution='s central difficulty), nothing
+  pending.
+
+**** Data-quality note
+=parsing-raw-xml-vs-plain-text= points 3 (the inline-formatting revisit
+trigger) and 4 (the =ham2.txt= addendum) both still name
+=bibliography/parser= as the connected task. That task was explicitly
+removed, not left stale, per =citation-resolution='s 2026-07-21
+addendum ("superseded by everything above ... being removed"). Both
+should point at =citation-resolution= instead, since that's what
+actually absorbed the bibliography-parsing work — worth a small
+correction next time that section is touched.
+
+**** Needing a Review section
+None currently. No classifier-adjacent branch is at the
+implemented-but-unreviewed stage right now — the continuation-marker
+branch is paused pending a fresh Decision, not merged, so the
+Review-gated pattern doesn't apply yet.
+
+**** Decision
