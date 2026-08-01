@@ -111,7 +111,8 @@ corpus); replaced with a regex scan over the START/STOP region. See
 [[file:doc/forum.org::#pipeline/two-stage][#pipeline/two-stage]] for
 the Stage 1/Stage 2 design this fed into.
 
-* TODO Refactor Chunk to a dataclass
+* DONE Refactor Chunk to a dataclass
+CLOSED: [2026-08-01 Sat]
 :PROPERTIES:
 :CUSTOM_ID: pipeline/chunk-dataclass
 :DEPENDS: pipeline/two-stage
@@ -142,6 +143,17 @@ Not in scope: Stage 2 itself (splitting chunks into annotations) and
 the paused continuation-marker matching-gap work
 ([[file:doc/forum.org::#nvs/commentary-tag-litter-signals-structure][#nvs/commentary-tag-litter-signals-structure]]),
 which the forum Decision explicitly defers until after this lands.
+
+=Chunk= dataclass added (=act=, =scene=, =page_number=, =content=;
+=act=/=scene=/=page_number= typed =str | None= / =int | None= to match
+=parse_head()='s output). =RawtoChunks.parse()= now builds =Chunk=
+objects; =self.chunks= is =list[Chunk]=. =serialize()= keeps writing
+the =<chunk act=... page_number=...>...</chunk>= tag form, built from
+the dataclass fields at write time rather than at parse time — same
+on-disk shape as before, since nothing downstream depends on it yet.
+=tests/test_parsers.py= updated to assert on =Chunk= fields directly.
+See =src/hypervariorum/nvs/parsers.py=,
+=feature/pipeline-chunk-dataclass=.
 
 * Footnotes
 
