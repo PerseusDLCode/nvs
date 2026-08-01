@@ -817,21 +817,12 @@ fluency in it can reinforce each other — and flagging the implicit
 Replace =parsing.py= with a two-stage functional pipeline, following
 Unix pipe logic: each stage does one thing and passes clean output
 to the next.
-
+*** Stage 1
 *Stage 1* (=parsers.py=, =Parser= class, already drafted): extract
 =<CC>= blocks from the raw NVS text, attaching act, scene, and page
 number metadata parsed from the intervening =<HE>= running heads.
 Output is a list of chunks, each carrying enough context that Stage 2
 never needs to look at the raw file again.
-
-*Stage 2* (to be built): work through the chunk list to extract
-individual annotations — splitting on =<P>= boundaries, parsing
-lemmas, extracting line numbers. Page-turn continuation (=<C>[lemma]</C>=
-at the start of a chunk) is detected and handled here, merging with
-the preceding annotation; the =page_number= attribute on the chunk
-provides sufficient context without Stage 2 needing to track =<PB>=
-tags directly. This is cleaner than =parsing.py='s =pb_pending= flag,
-which tangled the two stages together.
 
 *** Research
 
@@ -869,8 +860,65 @@ Immediate tasks 1–3 done: see
 [[file:../agenda.org::#reimplement-parsing][#reimplement-parsing]].
 The raw-string-vs-dataclass interface question above is still open.
 
+
 *** Decision
 Refactor chunks into dataclasses.
+
+*** Stage 2
+:PROPERTIES:
+:CUSTOM_ID: pipeline/two-stage-stage-two
+:END:
+
+*Stage 2* (to be built): work through the chunk list to extract
+individual annotations — splitting on =<P>= boundaries, parsing
+lemmas, extracting line numbers. Page-turn continuation is detected
+and handled here. This is cleaner than =parsing.py='s =pb_pending=
+flag, which tangled the two stages together.
+
+**** Research
+
+[2026-08-01] Examined real corpus output (=chunks.txt= from Lear,
+~7500 lines). Key findings:
+
+*Continuation detection is simple.* =<C>...</C>= appears only as a
+centred line at the start of a continuation chunk's content — never
+in any other context in the corpus. No lemma extraction or comparison
+is needed; a single regex suffices:
+#+begin_src python
+r"^\s*<C>.*?</C>\s*$"
+#+end_src
+(with =re.MULTILINE=). The =<P>= immediately following =</C>= is an
+encoding artifact — strip it together with the =<C>...</C>= line and
+append what remains to the previous annotation.
+
+*Continuation chunks can contain new annotations.* The chunk at p.259
+continues annotation =4. nettles, cuckoo-flowers= but then starts two
+new sub-annotations (=4. nettles]= and =4. cuckoo-flowers]=).
+=parsing.py='s =continue= statement silently lost these. The fix:
+after merging the continuation text, run remaining =<P>= sections
+through normal annotation processing. =split_annotation_chunks=
+already produces the right split.
+
+*Multi-page continuations are real.* Annotation =91. Enter Fool.=
+spans three pages (pp. 66-68); two consecutive chunks open with
+=<C>[91. <B>Enter Fool.]</B></C>=. Handled naturally if
+=open_annotation= is always the last annotation emitted — no special
+case needed.
+
+*9 continuation markers* in Lear total. Rare but real.
+
+*Functions salvageable from =parsing.py= unchanged:*
+- =split_annotation_chunks= — splits =<CC>= content on =<P>=
+  boundaries that begin a new annotation; handles the continuation
+  case correctly.
+- =parse_lemma= — three-pattern fallback; well-tested.
+- =_normalize_bracket_lemma= — helper used by =parse_lemma=.
+- =extract_line_info= — extracts line/line-range attributes.
+
+These move into =parsers.py= alongside =ChunkConsolidator= (or a new
+=annotators.py= if the file grows unwieldy).
+
+**** Decision
 
 ** Periodic forum review (2026-08-01)
 :PROPERTIES:
