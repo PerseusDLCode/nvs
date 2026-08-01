@@ -1,7 +1,11 @@
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
+
+from lxml import etree
+
+from hypervariorum.model.annotation import Annotation
 
 def roman_to_int(roman_str):
     """Converts a small Roman numeral string (like i, ii, iii, iv) to an integer string."""
@@ -121,12 +125,139 @@ class RawtoChunks:
                     result['scene'] = roman_to_int(match.group(2))
             return result
                     
+def split_annotation_chunks(cc_inner: str) -> list[str]:
+    """Splits the inner content of a <CC> block on <P>-boundaries that start a new annotation."""
+    return re.split(r"<P>(?=\d+(?:[-–]\d+)?\.?|<B>.*?\])", cc_inner)
+
+
+def _normalize_bracket_lemma(raw_lemma: str) -> str:
+    """Applies the `]</B>`/`</B>]` swap and trailing-`]` strip shared by bracketed lemmas."""
+    lemma = raw_lemma.strip().replace("]</B>", "</B>").replace("</B>]", "</B>")
+    if lemma.endswith("]"):
+        lemma = lemma[:-1].strip()
+    return lemma
+
+
+def parse_lemma(chunk: str) -> tuple[str, str]:
+    """Splits an annotation chunk into (lemma, commentary) using a 3-pattern fallback."""
+    lemma = ""
+    commentary = chunk
+
+    pattern_c = re.match(r"^(\d+(?:[-–]\d+)?\.)\s+", chunk)
+    pattern_a = re.match(r"^(\d+(?:[-–]\d+)?\.\s*)(<B>.*?\](?:</B>)?|[^<\n]*?\])", chunk, re.DOTALL)
+    pattern_b = re.match(r"^(<B>.*?\](?:</B>)?|[^<\n]*?\])", chunk, re.DOTALL)
+
+    if pattern_a:
+        part1 = pattern_a.group(1) or ""
+        part2 = pattern_a.group(2) or ""
+        lemma = _normalize_bracket_lemma(part1 + part2)
+        commentary = chunk[len(pattern_a.group(0)):].strip()
+    elif pattern_b:
+        lemma = _normalize_bracket_lemma(pattern_b.group(1))
+        commentary = chunk[len(pattern_b.group(0)):].strip()
+    elif pattern_c:
+        lemma = pattern_c.group(1).strip()
+        commentary = chunk[len(pattern_c.group(1)):].strip()
+
+    return lemma, commentary
+
+
+def extract_line_info(lemma: str) -> dict[str, str]:
+    """Extracts line/line-from/line-to attributes from a lemma's leading line number(s)."""
+    if not lemma:
+        return {}
+
+    range_match = re.match(r"^(\d+)[-–](\d+)\.", lemma)
+    if range_match:
+        return {"line-from": range_match.group(1), "line-to": range_match.group(2)}
+
+    single_match = re.match(r"^(\d+)\.", lemma)
+    if single_match:
+        return {"line": single_match.group(1)}
+
+    return {}
+
+
+def _int_or_none(value: str | None) -> int | None:
+    return int(value) if value is not None else None
+
+
+_CONTINUATION_LINE_RE = re.compile(r"^\s*<C>.*?</C>\s*$", re.MULTILINE)
+
+
 class ChunkConsolidator:
-    """Parses a chunk into annotations."""
-    def __init__(self, chunk_list:list) -> None:
-            self.input_list:list = chunk_list
+    """Consolidates a list of Chunks into a list of Annotations."""
+    def __init__(self, chunk_list: list[Chunk]) -> None:
+        self.input_list: list[Chunk] = chunk_list
+        self.annotations: list[Annotation] = []
 
-    def is_continuation(self, chunk) -> bool:
-        pass
+    def is_continuation(self, chunk: Chunk) -> bool:
+        return _CONTINUATION_LINE_RE.search(chunk.content) is not None
 
-    
+    def consolidate(self) -> None:
+        self.annotations = []
+        for chunk in self.input_list:
+            if self.is_continuation(chunk):
+                self._consolidate_continuation(chunk)
+            else:
+                self._consolidate_parts(chunk, split_annotation_chunks(chunk.content))
+
+    def _consolidate_continuation(self, chunk: Chunk) -> None:
+        match = _CONTINUATION_LINE_RE.search(chunk.content)
+        remainder = chunk.content[match.end():].lstrip()
+        if remainder.startswith("<P>"):
+            remainder = remainder[len("<P>"):]
+
+        if not self.annotations:
+            logging.warning("continuation marker with no open annotation: %r", chunk)
+            self._consolidate_parts(chunk, split_annotation_chunks(remainder))
+            return
+
+        parts = split_annotation_chunks(remainder)
+        continuation_text = parts[0].strip()
+        prev = self.annotations[-1]
+        self.annotations[-1] = replace(
+            prev, commentary=(prev.commentary.rstrip() + " " + continuation_text).strip()
+        )
+        self._consolidate_parts(chunk, parts[1:])
+
+    def _consolidate_parts(self, chunk: Chunk, parts: list[str]) -> None:
+        for part in parts:
+            part = part.strip()
+            if not part:
+                continue
+            if part.startswith("<P>"):
+                part = part[len("<P>"):].strip()
+            lemma, commentary = parse_lemma(part)
+            line_info = extract_line_info(lemma)
+            self.annotations.append(Annotation(
+                act=_int_or_none(chunk.act),
+                scene=_int_or_none(chunk.scene),
+                line=_int_or_none(line_info.get("line")),
+                line_from=_int_or_none(line_info.get("line-from")),
+                line_to=_int_or_none(line_info.get("line-to")),
+                lemma=lemma,
+                commentary=commentary,
+            ))
+
+    def serialize(self, out) -> None:
+        """Writes self.annotations to out (a writable text stream) as <annotations>...</annotations> XML."""
+        root = etree.Element("annotations")
+        for annotation in self.annotations:
+            attrib: dict[str, str] = {}
+            if annotation.act is not None:
+                attrib["act"] = str(annotation.act)
+            if annotation.scene is not None:
+                attrib["scene"] = str(annotation.scene)
+            if annotation.line is not None:
+                attrib["line"] = str(annotation.line)
+            if annotation.line_from is not None:
+                attrib["line-from"] = str(annotation.line_from)
+            if annotation.line_to is not None:
+                attrib["line-to"] = str(annotation.line_to)
+            elem = etree.SubElement(root, "annotation", attrib=attrib)
+            etree.SubElement(elem, "lemma").text = annotation.lemma
+            etree.SubElement(elem, "commentary").text = annotation.commentary
+        xml_bytes = etree.tostring(root, xml_declaration=True, encoding="utf-8", pretty_print=True)
+        out.write(xml_bytes.decode("utf-8"))
+
