@@ -71,7 +71,8 @@ Next steps:
    <2026-07-21 Tue 17:13> I have sent an inquiry to David Smith for
    guidance on 1 and 3.  Meanwhile, see [fn:1]. 
 
-* TODO debug parsing raw file into chunks
+* DONE debug parsing raw file into chunks
+CLOSED: [2026-08-01 Sat]
 :PROPERTIES:
 :CUSTOM_ID: reimplement-parsing
 :END:
@@ -94,6 +95,14 @@ text between the <CC> and </CC> tags. Test to make sure it isn't
 picking up lines outside the <CC> </CC> tags.  Test to make sure the
 running head is being properly parsed into page number, act number,
 and scene number values.
+
+Root cause was a line-by-line state machine that silently mis-parsed
+single-line =<CC>...</CC>= blocks (1 of 2,703 occurrences in the
+corpus); replaced with a regex scan over the START/STOP region. See
+=src/hypervariorum/nvs/parsers.py= and =tests/test_parsers.py=,
+=feature/reimplement-parsing-chunk-extraction= (merged). Also see
+[[file:doc/forum.org::#pipeline/two-stage][#pipeline/two-stage]] for
+the Stage 1/Stage 2 design this fed into.
 * Footnotes
 
 [fn:1] <2026-07-22 Wed> IDI has developed three open tools: GRIN
