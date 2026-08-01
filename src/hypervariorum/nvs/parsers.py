@@ -1,5 +1,6 @@
-from pathlib import Path
+import logging
 import re
+from pathlib import Path
 
 def roman_to_int(roman_str):
     """Converts a small Roman numeral string (like i, ii, iii, iv) to an integer string."""
@@ -28,52 +29,52 @@ class RawtoChunks:
         start_marker = "<!-- START -->"
         stop_marker = "<!-- STOP -->"
         self.chunks = []
-        with self.file_path.open() as file:
-            
-            in_processing:bool = False
-            header = {}
-            for line in file:
-                stripped_line = line.strip()
 
-                if stripped_line == start_marker:
-                    in_processing = True
-                    continue
+        content = self.file_path.read_text()
 
-                if stripped_line == stop_marker:
-                    in_processing = False
-                    break
-                
-                if in_processing is True:
-                    print("in_processing")
-                    if line.startswith("<HE>"):
-                        header: dict = self.parse_head(line.strip())
-                    if line.startswith("<CC>"):
-                        current_chunk = [line[4:]]  # Keep the starting line after the <CC>
+        start_index = content.find(start_marker)
+        if start_index == -1:
+            return
+        region_start = start_index + len(start_marker)
 
-                        for inner_line in file:
-                            if inner_line.rstrip().endswith("</CC>"):
-                                clean_line = inner_line.replace("</CC>", "")
-                                current_chunk.append(clean_line)
-                                break
+        stop_index = content.find(stop_marker, region_start)
+        region_end = stop_index if stop_index != -1 else len(content)
 
-                            current_chunk.append(inner_line)
+        region = content[region_start:region_end]
 
-                        # Construct the chunk
-                        open_tag:str = "<chunk"
-                        if page_number := header.get('page_number', None):
-                            open_tag = open_tag + f" page_number='{page_number}'"
-                        if act := header.get('act', None):
-                            open_tag = open_tag + f" act='{act}'"
-                        if scene := header.get('scene', None):
-                            open_tag = open_tag + f" scene='{scene}'"
-                        open_tag = open_tag + ">"
-                        close_tag:str = "</chunk>"
-                        content = "".join(current_chunk)
-                        chunk = open_tag + content + close_tag
+        header: dict = {}
+        for match in re.finditer(r"<HE>.*?</HE>|<CC>.*?</CC>", region, re.DOTALL):
+            text = match.group(0)
 
-                        # Save the clean chunk
-                        self.chunks.append(chunk)
-                    
+            if text.startswith("<HE>"):
+                header = self.parse_head(text)
+                continue
+
+            # Construct the chunk
+            open_tag:str = "<chunk"
+            if page_number := header.get('page_number', None):
+                open_tag = open_tag + f" page_number='{page_number}'"
+            if act := header.get('act', None):
+                open_tag = open_tag + f" act='{act}'"
+            if scene := header.get('scene', None):
+                open_tag = open_tag + f" scene='{scene}'"
+            open_tag = open_tag + ">"
+            close_tag:str = "</chunk>"
+            content_inner = text[len("<CC>"):-len("</CC>")]
+            chunk = open_tag + content_inner + close_tag
+
+            # Save the clean chunk
+            self.chunks.append(chunk)
+
+    def serialize(self, out_path: Path) -> None:
+        """Writes self.chunks to out_path, wrapped in a <chunks> root element."""
+        with out_path.open("w") as file:
+            file.write("<chunks>\n")
+            for chunk in self.chunks:
+                file.write(chunk)
+                file.write("\n")
+            file.write("</chunks>\n")
+
     def parse_head(self, head_str) -> dict:
             """Parses a running head and returns its components."""
 
@@ -93,7 +94,7 @@ class RawtoChunks:
                 result['page_number'] = int(match.group(2))
                 act_scene: str | None = match.group(1)
             else:
-                print(f"string is not a properly formed running head: {head_str}")
+                logging.warning(f"string is not a properly formed running head: {head_str}")
 
             # parse the act_scene string
             # first get rid of the <SC> tags
