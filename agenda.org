@@ -110,6 +110,39 @@ corpus); replaced with a regex scan over the START/STOP region. See
 =feature/reimplement-parsing-chunk-extraction= (merged). Also see
 [[file:doc/forum.org::#pipeline/two-stage][#pipeline/two-stage]] for
 the Stage 1/Stage 2 design this fed into.
+
+* TODO Refactor Chunk to a dataclass
+:PROPERTIES:
+:CUSTOM_ID: pipeline/chunk-dataclass
+:DEPENDS: pipeline/two-stage
+:END:
+Settles the Stage 1/Stage 2 interface question left open by
+[[file:doc/forum.org::#pipeline/two-stage][#pipeline/two-stage]]:
+Decision was to refactor, not keep raw =<chunk>= strings.
+
+=RawtoChunks.parse()= (=src/hypervariorum/nvs/parsers.py=) should
+build a =Chunk= dataclass per commentary block instead of a
+=<chunk ...>...</chunk>= string, with fields =act=, =scene=,
+=page_number=, =content= (as sketched in the forum Research section) —
+=act=/=scene=/=page_number= typed to match what =parse_head()=
+already produces, =content= holding the text currently placed between
+the tags. =self.chunks= becomes =list[Chunk]=.
+
+=serialize()= needs to keep writing a file from =self.chunks=; decide
+whether it still emits the =<chunk act=... page_number=...>...</chunk>=
+tag form (building it from the dataclass fields at serialize time) or
+some other on-disk shape — Stage 2 hasn't been built yet, so nothing
+downstream depends on the current tag format specifically.
+
+Update =tests/test_parsers.py= for the new contract: chunks are
+compared as =Chunk= objects/fields, not by substring-matching
+attributes out of a tag string.
+
+Not in scope: Stage 2 itself (splitting chunks into annotations) and
+the paused continuation-marker matching-gap work
+([[file:doc/forum.org::#nvs/commentary-tag-litter-signals-structure][#nvs/commentary-tag-litter-signals-structure]]),
+which the forum Decision explicitly defers until after this lands.
+
 * Footnotes
 
 [fn:1] <2026-07-22 Wed> IDI has developed three open tools: GRIN
