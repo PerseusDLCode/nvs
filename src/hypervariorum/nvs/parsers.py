@@ -1,5 +1,6 @@
 import logging
 import re
+from dataclasses import dataclass
 from pathlib import Path
 
 def roman_to_int(roman_str):
@@ -19,11 +20,19 @@ def roman_to_int(roman_str):
 
 
 
+@dataclass
+class Chunk:
+    act: str | None
+    scene: str | None
+    page_number: int | None
+    content: str
+
+
 class RawtoChunks:
     """Parses a raw file (to which start/stop markers have been added) into CC chunks."""
     def __init__(self, file_path:Path) -> None:
         self.file_path:Path = file_path
-        self.chunks: list[str] = []
+        self.chunks: list[Chunk] = []
 
     def parse(self) -> None:
         start_marker = "<!-- START -->"
@@ -51,17 +60,13 @@ class RawtoChunks:
                 continue
 
             # Construct the chunk
-            open_tag:str = "<chunk"
-            if page_number := header.get('page_number', None):
-                open_tag = open_tag + f" page_number='{page_number}'"
-            if act := header.get('act', None):
-                open_tag = open_tag + f" act='{act}'"
-            if scene := header.get('scene', None):
-                open_tag = open_tag + f" scene='{scene}'"
-            open_tag = open_tag + ">"
-            close_tag:str = "</chunk>"
             content_inner = text[len("<CC>"):-len("</CC>")]
-            chunk = open_tag + content_inner + close_tag
+            chunk = Chunk(
+                act=header.get('act'),
+                scene=header.get('scene'),
+                page_number=header.get('page_number'),
+                content=content_inner,
+            )
 
             # Save the clean chunk
             self.chunks.append(chunk)
@@ -71,7 +76,15 @@ class RawtoChunks:
         with out_path.open("w") as file:
             file.write("<chunks>\n")
             for chunk in self.chunks:
-                file.write(chunk)
+                open_tag:str = "<chunk"
+                if chunk.page_number is not None:
+                    open_tag = open_tag + f" page_number='{chunk.page_number}'"
+                if chunk.act is not None:
+                    open_tag = open_tag + f" act='{chunk.act}'"
+                if chunk.scene is not None:
+                    open_tag = open_tag + f" scene='{chunk.scene}'"
+                open_tag = open_tag + ">"
+                file.write(open_tag + chunk.content + "</chunk>")
                 file.write("\n")
             file.write("</chunks>\n")
 
