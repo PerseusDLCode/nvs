@@ -151,7 +151,7 @@ dependency requiring a separate clone.
    is a minimal, independent fix.
    
 *** Decision
-[to be recorded]
+This is a minor issue; don't worry about it for now.
 ** Parsing raw XML vs treating it as literal text
 :PROPERTIES:
 :CUSTOM_ID: parsing-raw-xml-vs-plain-text
@@ -525,7 +525,9 @@ wildcard, walking back as far as needed) rather than either exact-match
 or nearest-neighbor.
 
 **** Decision
-[to be recorded]
+<2026-08-01 Sat> At least some of this complexity stemmed from faulty
+parsing of the <CC> chunks.  We are now re-implementing that code and
+will re-visit the problem of continuation markers next.
 
 ** Citation Resolution
 :PROPERTIES:
@@ -831,7 +833,7 @@ provides sufficient context without Stage 2 needing to track =<PB>=
 tags directly. This is cleaner than =parsing.py='s =pb_pending= flag,
 which tangled the two stages together.
 
-**** Research
+*** Research
 
 [2026-07-31] The key design rationale: act and scene tracking belongs
 in Stage 1 because it requires reading the running heads, which are
@@ -867,7 +869,8 @@ Immediate tasks 1–3 done: see
 [[file:../agenda.org::#reimplement-parsing][#reimplement-parsing]].
 The raw-string-vs-dataclass interface question above is still open.
 
-**** Decision
+*** Decision
+Refactor chunks into dataclasses.
 
 ** Periodic forum review (2026-08-01)
 :PROPERTIES:
