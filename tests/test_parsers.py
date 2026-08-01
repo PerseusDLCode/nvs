@@ -1,4 +1,4 @@
-from hypervariorum.nvs.parsers import RawtoChunks
+from hypervariorum.nvs.parsers import Chunk, RawtoChunks
 
 
 def _write(tmp_path, content):
@@ -19,8 +19,8 @@ def test_parse_extracts_multiline_cc_block(tmp_path):
     parser.parse()
 
     assert len(parser.chunks) == 1
-    assert "<P>1. some commentary\nthat continues on the next line." in parser.chunks[0]
-    assert "</CC>" not in parser.chunks[0]
+    assert "<P>1. some commentary\nthat continues on the next line." in parser.chunks[0].content
+    assert "</CC>" not in parser.chunks[0].content
 
 
 def test_parse_extracts_single_line_cc_block_without_swallowing_next_chunk(tmp_path):
@@ -35,9 +35,9 @@ def test_parse_extracts_single_line_cc_block_without_swallowing_next_chunk(tmp_p
     parser.parse()
 
     assert len(parser.chunks) == 2
-    assert "101." in parser.chunks[0]
-    assert "second annotation" not in parser.chunks[0]
-    assert "second annotation" in parser.chunks[1]
+    assert "101." in parser.chunks[0].content
+    assert "second annotation" not in parser.chunks[0].content
+    assert "second annotation" in parser.chunks[1].content
 
 
 def test_parse_excludes_content_outside_cc_tags(tmp_path):
@@ -53,8 +53,8 @@ def test_parse_excludes_content_outside_cc_tags(tmp_path):
     parser.parse()
 
     assert len(parser.chunks) == 1
-    assert "stray running text" not in parser.chunks[0]
-    assert "<PB" not in parser.chunks[0]
+    assert "stray running text" not in parser.chunks[0].content
+    assert "<PB" not in parser.chunks[0].content
 
 
 def test_parse_excludes_content_outside_start_stop_markers(tmp_path):
@@ -69,7 +69,7 @@ def test_parse_excludes_content_outside_start_stop_markers(tmp_path):
     parser.parse()
 
     assert len(parser.chunks) == 1
-    assert "inside markers" in parser.chunks[0]
+    assert "inside markers" in parser.chunks[0].content
 
 
 def test_parse_with_no_start_marker_produces_no_chunks(tmp_path):
@@ -105,7 +105,7 @@ def test_parse_head_unmatched_header_returns_empty_dict(caplog):
     assert result == {}
 
 
-def test_parse_carries_page_act_scene_onto_chunk_open_tag(tmp_path):
+def test_parse_carries_page_act_scene_onto_chunk(tmp_path):
     src = (
         "<!-- START -->\n"
         "<HE>4 <I>KING LEAR</I> [<SC>act i, sc.</SC> i.</HE>\n"
@@ -115,12 +115,12 @@ def test_parse_carries_page_act_scene_onto_chunk_open_tag(tmp_path):
     parser = RawtoChunks(_write(tmp_path, src))
     parser.parse()
 
-    assert "page_number='4'" in parser.chunks[0]
-    assert "act='1'" in parser.chunks[0]
-    assert "scene='1'" in parser.chunks[0]
+    assert parser.chunks[0].page_number == 4
+    assert parser.chunks[0].act == "1"
+    assert parser.chunks[0].scene == "1"
 
 
-def test_parse_chunk_before_any_header_omits_attributes(tmp_path):
+def test_parse_chunk_before_any_header_has_no_act_scene_page(tmp_path):
     src = (
         "<!-- START -->\n"
         "<CC><P>1. commentary with no preceding header.</CC>\n"
@@ -129,12 +129,17 @@ def test_parse_chunk_before_any_header_omits_attributes(tmp_path):
     parser = RawtoChunks(_write(tmp_path, src))
     parser.parse()
 
-    assert parser.chunks[0].startswith("<chunk>")
+    assert parser.chunks[0].act is None
+    assert parser.chunks[0].scene is None
+    assert parser.chunks[0].page_number is None
 
 
 def test_serialize_writes_chunks_wrapped_in_root_element(tmp_path):
     parser = RawtoChunks(tmp_path / "unused.txt")
-    parser.chunks = ["<chunk page_number='4'>first</chunk>", "<chunk page_number='5'>second</chunk>"]
+    parser.chunks = [
+        Chunk(act=None, scene=None, page_number=4, content="first"),
+        Chunk(act=None, scene=None, page_number=5, content="second"),
+    ]
 
     out_path = tmp_path / "out.xml"
     parser.serialize(out_path)
