@@ -111,7 +111,8 @@ corpus); replaced with a regex scan over the START/STOP region. See
 [[file:doc/forum.org::#pipeline/two-stage][#pipeline/two-stage]] for
 the Stage 1/Stage 2 design this fed into.
 
-* TODO Implement Stage 2: ChunkConsolidator
+* DONE Implement Stage 2: ChunkConsolidator
+CLOSED: [2026-08-01 Sat]
 :PROPERTIES:
 :CUSTOM_ID: pipeline/chunk-consolidator
 :DEPENDS: pipeline/chunk-dataclass
@@ -157,6 +158,63 @@ Write tests covering:
 Once tests pass and =ChunkConsolidator= is complete, delete
 =parsing.py= and remove its test file (or migrate any tests not
 already covered).
+
+=ChunkConsolidator.consolidate()= implemented per the algorithm above;
+=serialize()= added beyond the original spec to close a gap found
+during planning — Stage 2 had no way to write =list[Annotation]= back
+out as the =annotations.xml= shape =load_annotations()= expects, so
+=serialize()= builds that XML with lxml (same attribute/element shape
+as =parsing.py='s =build_annotation_element=). Reuses the existing
+=hypervariorum.model.annotation.Annotation= dataclass rather than
+adding a near-duplicate — it already matches the spec'd fields exactly.
+
+=split_annotation_chunks=, =parse_lemma=, =_normalize_bracket_lemma=,
+=extract_line_info= were *copied* into =parsers.py=, not moved with
+deletion from =parsing.py=: =parsing.py= is still the only thing
+wired into =bin/parse_annotations.py= and the Makefile's
+=%.annot.xml= rule, and has no replacement yet for the
+=<!-- START -->=/=<!-- STOP -->= marker-insertion step
+=RawtoChunks.parse()= requires (nothing in the automated pipeline
+currently inserts those markers). Deleting =parsing.py= now would
+break the build with no substitute. See
+[[file:../agenda.org::#pipeline/retire-parsing][#pipeline/retire-parsing]]
+for the deferred follow-up. =parsing.py=, =bin/parse_annotations.py=,
+the Makefile rule, and =test_annotation.py= are all left untouched.
+
+Manually verified against real corpus text (=raw/shake.var.lear.txt=,
+the p.259 hemlock/nettles/cuckoo-flowers region cited in the forum
+research): the hemlock annotation's commentary correctly spans the
+page break even though the =<C>[4. nettles, cuckoo-flowers]</C>=
+marker names the wrong lemma — confirms the forum's no-lemma-matching
+design is the right call. See =src/hypervariorum/nvs/parsers.py=,
+=tests/test_parsers.py=, =feature/pipeline-chunk-consolidator=.
+
+* TODO Retire parsing.py
+:PROPERTIES:
+:CUSTOM_ID: pipeline/retire-parsing
+:DEPENDS: pipeline/chunk-consolidator
+:END:
+=parsing.py='s functions now have unchanged copies in =parsers.py=
+(see [[file:../agenda.org::#pipeline/chunk-consolidator][#pipeline/chunk-consolidator]]),
+but =parsing.py= itself, =bin/parse_annotations.py=, and the
+Makefile's =%.annot.xml= rule are still the only working end-to-end
+pipeline, and were deliberately left alone rather than broken.
+
+Before =parsing.py= can actually be deleted:
+1. Add a marker-insertion step that produces
+   =<!-- START -->=/=<!-- STOP -->=-tagged input from the Makefile's
+   =%.cleaned= files (currently only =convert_entities.py= runs at
+   that stage — nothing inserts the markers =RawtoChunks.parse()=
+   requires).
+2. Repoint =bin/parse_annotations.py= (and the Makefile rule's
+   dependency line) at =RawtoChunks= + =ChunkConsolidator= +
+   =ChunkConsolidator.serialize()= instead of
+   =parsing.parse_annotations_to_xml=.
+3. Update/replace =test_annotation.py='s
+   =test_load_annotations_from_parser_output=, which currently
+   exercises =parsing.parse_annotations_to_xml= directly.
+
+Then delete =parsing.py= and =tests/test_parsing.py=.
 
 * DONE Refactor Chunk to a dataclass
 CLOSED: [2026-08-01 Sat]
