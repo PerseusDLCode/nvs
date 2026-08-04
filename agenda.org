@@ -37,7 +37,8 @@ exists in the forum from this pass — not just "I looked it over."
 Depends on the forum review above: the report should be written
 from a reviewed record, not an unreviewed one.
 
-* TODO Convert inline NVS markup to real XML elements
+* DONE Convert inline NVS markup to real XML elements
+CLOSED: [2026-08-04 Tue]
 :PROPERTIES:
 :CUSTOM_ID: nvs/inline-xml-conversion
 :END:
@@ -79,6 +80,32 @@ Tests to write:
 Verify end-to-end: =make out/shake.var.lear.annot.xml= and spot-check
 that =<SC>Walker</SC>= appears as =<hi rend="smallcaps">Walker</hi>=
 and that the file is well-formed XML.
+
+=parse_inline_markup= implemented per spec in =src/hypervariorum/nvs/parsers.py=
+and wired into both =ChunkConsolidator.serialize()= call sites. Scope
+addition beyond the original spec, approved by Cliff: =model/annotation.py='s
+=load_annotations()= read =<lemma>=/=<commentary>= via stdlib
+=ElementTree.findtext()=, which only returns text before the first
+child element — once these elements gained =<hi>= children, any
+lemma/commentary containing inline markup would have silently
+truncated on read-back. Fixed by concatenating via =.itertext()=
+instead.
+
+Tests added to =tests/test_parsers.py= (=parse_inline_markup= directly,
+plus a =ChunkConsolidator.serialize()= round-trip check) and
+=tests/test_annotation.py= (=load_annotations()= with =<hi>= children).
+=pdm run pytest= green (49 tests).
+
+Verified end-to-end against the real corpus: =make out/shake.var.lear.annot.xml=
+now produces 0 occurrences of =&lt;SC&gt;= (previously present, e.g.
+=&lt;SC&gt;Walker&lt;/SC&gt;=, =&lt;SC&gt;Abbott&lt;/SC&gt;=), 4677
+=<hi rend="...">= elements, well-formed XML, and =load_annotations()=
+round-trips all 1249 annotations with complete lemma/commentary text
+(e.g. the Walker/=Crit.= citation reads correctly across the =<hi>=
+boundary). Annotation count (1249) unaffected by this change — verified
+identical before/after, so the earlier "1250" figure in
+=pipeline/retire-parsing= was a stale count, not a regression here.
+See =feature/nvs-inline-xml-conversion=.
 
 * TODO Corpus access feasibility
 :PROPERTIES:

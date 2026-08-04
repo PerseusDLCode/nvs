@@ -486,6 +486,13 @@ tag types. Use a regex-based inline parser rather than an XML parse
 of raw content. See =nvs/inline-xml-conversion= in =agenda.org= for
 the implementation spec.
 
+[2026-08-04] Implemented and verified against the full =lear= corpus
+(0 escaped =&lt;SC&gt;= remaining, 4677 =<hi>= elements, well-formed,
+round-trips through =load_annotations()=). See
+[[file:../agenda.org::#nvs/inline-xml-conversion][#nvs/inline-xml-conversion]]
+for implementation notes and =feature/nvs-inline-xml-conversion=.
+Closing.
+
 ** Citation Resolution
 :PROPERTIES:
 :CUSTOM_ID: citation-resolution
