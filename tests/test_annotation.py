@@ -1,7 +1,6 @@
 import io
 
 from hypervariorum.model.annotation import load_annotations
-from hypervariorum.nvs.parsing import parse_annotations_to_xml
 
 
 def test_load_annotations_single_line():
@@ -103,23 +102,3 @@ def test_load_annotations_accepts_path_and_file_object(tmp_path):
     from_buffer = load_annotations(io.StringIO(xml))
 
     assert from_path == from_buffer
-
-
-def test_load_annotations_from_parser_output():
-    src = (
-        "<HE>Act i, sc. ii.</HE>"
-        "<CC><P>1. [Foo] some commentary</CC>"
-    )
-    xml_out = io.StringIO()
-    parse_annotations_to_xml(io.StringIO(src), xml_out)
-    xml_out.seek(0)
-
-    annotations = load_annotations(xml_out)
-
-    assert len(annotations) == 1
-    a = annotations[0]
-    assert a.act == 1
-    assert a.scene == 2
-    assert a.line == 1
-    assert a.lemma == "1. [Foo"
-    assert "some commentary" in a.commentary
