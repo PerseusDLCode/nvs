@@ -10,118 +10,13 @@ it instead. Tasks belong in =agenda.org=, cross-linked by CUSTOM_ID.
 
 * Discussions
 
-** Establishing the collaboration protocol
-:PROPERTIES:
-:CUSTOM_ID: process/collaboration-protocol-v2
-:ASSIGNEES: Cliff, Claude Chat
-:SOURCE: chat/2026-07-15
-:DISPOSITION: adopt
-:END:
-
-The Minimum Viable Perseus protocol assumed Claude Chat had no
-direct repo access and put Claude Code and Cliff-in-Emacs as the
-only direct writers of =forum.org=. That's no longer true — Claude
-Chat now has Filesystem access. Hypervariorum is also a
-sole-researcher project (no Charles, no Peter), which removes the
-concurrent-edit risk that access change would otherwise raise, and
-it's broader/more research-oriented than MVP, with real design
-weight on the AI-assisted classifiers.
-
-**** Decision
-[2026-07-15] Adopt symmetric read/write access for all three
-participants, scoped to =forum.org= and =agenda.org= (not blanket
-repo access for Claude Chat). Split the old single-file convention
-into two files: =forum.org= for deliberation, =agenda.org= (repo
-root) for tracked tasks, cross-linked via =CUSTOM_ID= and org
-file-links. Full rationale and structure in
-=.claude/collaboration-protocol.org=.
-
-** Ingestion vs. model: where NVS-specific code ends
-:PROPERTIES:
-:CUSTOM_ID: architecture/ingestion-model-classifier-split
-:ASSIGNEES: Cliff
-:SOURCE: chat/2026-07-15
-:DEPENDS: packaging/src-layout-split
-:DISPOSITION: adopt
-:END:
-
-Proposed while queuing the =bin/= → =src/= packaging task: does the
-project need an architectural seam between code that is specific to
-parsing the NVS transcriptions and code that operates on the
-annotation model generally (graph construction, the AI-assisted edge
-classifiers)? Renaming the repo/package to =hypervariorum= (see
-=process/collaboration-protocol-v2= above) already signals that the
-project is meant to outgrow any one source corpus; this question asks
-whether the code layout should say so too.
-
-
-**** Research
-[2026-07-15] Parsing is inherently tied to the idiosyncrasies of one
-source format — =parse_annotations_to_xml= is built entirely around
-this transcription's =<HE>=/=<CC>= tag conventions, with regex tuned
-to how this editor marked up acts, scenes, and lemma ranges. That
-code will always be NVS-shaped. Classification and graph operations
-are, in principle, source-agnostic: a classifier deciding that one
-annotation glosses a particular passage doesn't need to know whether
-the annotation arrived via NVS markup or some other encoding. This is
-the same seam as MVP's Corpus → Annotations → Views layering:
-source-specific ingestion feeding a format-independent model, with
-higher layers unaware of provenance.
-
-Proposed layout:
-
-#+begin_example
-src/hypervariorum/
-  nvs/                  <- NVS-specific: markup parsing, entity conversion
-    entities.py
-    parsing.py
-  model/  (or graph/)   <- source-agnostic: Annotation, the dependency graph
-    annotation.py
-  classifiers/          <- source-agnostic: the AI-assisted edge classifiers
-#+end_example
-
-=nvs/= stays as parochial as the source material demands; =model/=
-and =classifiers/= are where the project's actual research claim to
-Greg/Perseus lives — "a source-agnostic annotation-graph-and-
-classifier engine, currently fed by an NVS parser" rather than
-"some NVS-specific code."
-
-Open question, not resolved here: is the ingestion layer meant to
-stay singular (=nvs/= just documents provenance, permanently the only
-source), or is a second source corpus genuinely anticipated (another
-variorum edition, or non-Shakespeare material) — in which case =nvs/=
-is the first of a =sources/= family rather than a fixture. Cheap to
-decide now; expensive to restructure into later. Does not need to be
-answered by building a second parser today, just by naming the
-likelihood.
-
-Actionable for Claude Code (once Decision is recorded):
-- Fold this layout into the =packaging/src-layout-split= task in
-  =agenda.org= rather than treating it as a second refactor.
-
-**** Decision
-<2026-07-15 Wed 13:26> I had been wondering if there should be an
-entirely separate package, in its own repo, for the code that
-interfaces with raw files, and then another repo for higher-level code
-that works with annotation objects.  And I'm answering my own
-question: that's getting too complex for this stage of the project.
-
-So at the beginning of the project we will assume that we will be
-using the Furness editions of the NVS as source texts. Explicitly,
-then: ingestion stays singular for now — =nvs/= names the one source
-and documents its provenance, rather than being built out as a
-=sources/= family. Revisit only if a second source corpus actually
-materializes.
-
-The Furness editions don't have to live in this repository, though;
-see =external/raw-corpus-dependency= below for that question.
-
 ** External raw-corpus dependency: raw/ symlink
 :PROPERTIES:
 :CUSTOM_ID: external/raw-corpus-dependency
 :ASSIGNEES: Cliff
 :SOURCE: chat/2026-07-15
 :DEPENDS: bootstrap/document-raw-symlink
+:DISPOSITION: defer
 :END:
 
 Split out from =architecture/ingestion-model-classifier-split=: the
@@ -151,7 +46,11 @@ dependency requiring a separate clone.
    is a minimal, independent fix.
    
 *** Decision
-This is a minor issue; don't worry about it for now.
+[2026-07-15] Minor issue; defer for now.
+
+[2026-08-04] Confirmed resolved: =readlink raw= returns the relative
+=../NVS_Shakespeare= (portable); =README.md= lines 6–13 document the
+clone-and-symlink bootstrap. Both Research concerns satisfied; closing.
 ** Parsing raw XML vs treating it as literal text
 :PROPERTIES:
 :CUSTOM_ID: parsing-raw-xml-vs-plain-text
@@ -217,8 +116,8 @@ was never well-formed XML and never will be. Consequences:
 
    Revisit trigger, not left open-ended: when work begins on using
    typographic markers to identify bibliographic entities in
-   commentary (connects directly to =bibliography/parser= in
-   =agenda.org=), or once real classifier requirements for
+   commentary (connects directly to =citation-resolution= in
+   =doc/forum.org=), or once real classifier requirements for
    =commentary= content exist — whichever comes first. Until then,
    keep =B=/=I=/=SC=/=G=/=SUB= as an explicit "known, deferred,
    escape" category in the same tag-classification registry used for
@@ -233,7 +132,7 @@ was never well-formed XML and never will be. Consequences:
    (the parser runs on it correctly and produces valid, trivially
    empty output), but structurally a different kind of document from
    the other seven, in the same family as =titus.f1.txt='s mismatch.
-   Likely relevant to =bibliography/parser=: if this genuinely is the
+   Likely relevant to =citation-resolution=: if this genuinely is the
    NVS Hamlet bibliography volume, its content — not scattered =CC=
    commentary — may be that task's real source material.
 ** Escaped tag litter in commentary text may signal unrecognized structure
@@ -777,36 +676,6 @@ Awaiting reply; logged here independently of the reply since the
 Edge-3/topic-classifier question above doesn't depend on it. See
 =corpus/access-feasibility= in =agenda.org= for the access side of
 this same inquiry.
-** Housekeeping: eschewing red herrings
-:PROPERTIES:
-:CUSTOM_ID: red_herrings
-:END:
-<2026-07-30 Thu> We spent several days trying increasingly elaborate
-methods to deal with the condition of a comment that starts on one
-page continuing onto another page before realizing there was a simple
-formatting clue (<C>...</C> after the new <CC> section starts).  I
-want to avoid getting led astray like this in the future.  The
-responsibility lies with me: this kind of distraction is a well-known
-short-coming of contemporary AIs.
-
-*What I've done:* I edited the agenda.org file and removed many of the
-todo items that were confused or misleading. (NB: the agenda.org file
-is tracked in git, so we can always recover previous states.)  I also removed the
-structure, so todo items are at the top level. If we actually find it
-useful to categorize them, we should use org mode's built-in tags
-feature.
-
-**** Decision
-[2026-07-30] Added three specific checks to the "Simplicity First"
-section of =CLAUDE.md= covering research and analysis tasks (as
-distinct from the existing code-focused items): source before
-inference, iteration as diagnostic signal, and "first we need
-to..." as a warning sign. Added a "Shared Failure Modes" section to
-=.claude/collaboration-protocol.org= noting the mutual dynamic —
-Cliff's appetite for theoretical elaboration and Claude Chat's
-fluency in it can reinforce each other — and flagging the implicit
-=CLIFF.md= as a thread to return to. =DISPOSITION: adopt=
-
 ** Two-stage parsing pipeline
 :PROPERTIES:
 :CUSTOM_ID: pipeline/two-stage
@@ -867,6 +736,7 @@ Refactor chunks into dataclasses.
 *** Stage 2
 :PROPERTIES:
 :CUSTOM_ID: pipeline/two-stage-stage-two
+:DISPOSITION: completed
 :END:
 
 *Stage 2* (to be built): work through the chunk list to extract
@@ -919,6 +789,10 @@ These move into =parsers.py= alongside =ChunkConsolidator= (or a new
 =annotators.py= if the file grows unwieldy).
 
 **** Decision
+[2026-08-04] =ChunkConsolidator= implemented per the algorithm above
+and verified against the full corpus; all eight plays produce clean
+=Annotation= output. See =pipeline/chunk-consolidator= in =agenda.org=
+for implementation notes. Closing.
 
 ** Periodic forum review (2026-08-01)
 :PROPERTIES:
@@ -985,3 +859,12 @@ branch is paused pending a fresh Decision, not merged, so the
 Review-gated pattern doesn't apply yet.
 
 **** Decision
+[2026-08-04] Items actioned: =external/raw-corpus-dependency= closed
+(both research concerns confirmed resolved in repo); =pipeline/two-
+stage= Stage 2 Decision recorded (=ChunkConsolidator= complete);
+=bibliography/parser= cross-references in =parsing-raw-xml-vs-plain-
+text= corrected to =citation-resolution=; =process/collaboration-
+protocol-v2=, =architecture/ingestion-model-classifier-split=, and
+=red_herrings= archived (=org-archive-subtree= by Cliff in Emacs).
+=nvs/commentary-tag-litter-signals-structure= flagged for resumption
+— new pipeline is live, per the 2026-08-01 Decision to revisit.
