@@ -202,6 +202,30 @@ seven files parse as well-formed XML and round-trip through
 See =src/hypervariorum/nvs/parsers.py=, =tests/test_parsers.py=,
 =feature/nvs-silent-continuation-across-pagebreaks=.
 
+Update [2026-08-04]: Cliff found a real miss in
+=raw/shake.var.macb.txt=, copied locally after retiring the =raw/=
+symlink — the =5-12. Banquo . . . Fleance]= annotation's commentary
+(=...History knows noth-=) fails to merge with its continuation
+(=ing of Banquo...=) two pages later. Root cause: this continuation
+occurs in the Preface, before act/scene running-head tracking starts,
+so =_is_silent_continuation='s =chunk.act is None or chunk.scene is
+None= guard (added to exclude "front-matter essay prose") wrongly
+excluded it too. Checked every other =act=/=scene=-=None= candidate
+that guard was filtering, across all seven buildable files, by tracing
+each against the raw text — all of them are also genuine continuations,
+several inside the main commentary body where a malformed running head
+had reset act/scene to =None=, not pre-Act-1 essay material at all. The
+guard was an unverified assumption from the original research, not a
+real requirement. Removed it — =_is_silent_continuation= now requires
+only a previous open annotation and an unrecognized leading lemma (not
+comma-list). =pdm run pytest= green (54 tests, one test rewritten to
+assert the corrected Banquo-shaped behavior). Re-verified end-to-end:
+annotation counts drop further on all seven files (e.g. =macb=
+1278→1275, =lear= 1121→1116), the Banquo annotation's commentary now
+reads correctly across the page break, all files remain well-formed
+and round-trip through =load_annotations()=. See
+=feature/nvs-silent-continuation-front-matter-fix=.
+
 * TODO Corpus access feasibility
 :PROPERTIES:
 :CUSTOM_ID: corpus/access-feasibility

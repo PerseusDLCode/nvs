@@ -670,6 +670,20 @@ per-file "genuine candidate" counts almost exactly. See
 full before/after table and
 =feature/nvs-silent-continuation-across-pagebreaks=. Closing.
 
+[2026-08-04, addendum] Reopened briefly: Cliff found a real miss in
+=raw/shake.var.macb.txt= (=5-12. Banquo . . . Fleance]=, "History
+knows noth-"/"ing of Banquo" split across a page break) — caused by
+the =act=/=scene=-=None= exclusion added to keep front-matter essay
+prose from being merged. That exclusion turned out to be an unverified
+assumption: traced every other =act=/=scene=-=None= candidate across
+all seven files and found all of them are also genuine continuations
+(some inside the main commentary body, where a malformed running head
+had reset act/scene to =None=, not pre-Act-1 material at all). Removed
+the guard; re-verified end-to-end on all seven files. See
+=agenda.org='s =nvs/silent-continuation-across-pagebreaks= for the
+counts and =feature/nvs-silent-continuation-front-matter-fix=.
+Re-closing.
+
 ** Citation Resolution
 :PROPERTIES:
 :CUSTOM_ID: citation-resolution
