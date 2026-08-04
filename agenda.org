@@ -248,9 +248,19 @@ annotations — stops exactly at the marked boundary, no APPENDIX/
 front-matter leakage, act/scene tracked correctly throughout. See
 =feature/pipeline-retire-parsing=.
 
-Still open, not part of this task: marking up the other seven
-=shake.var.*.txt= files, and committing the =lear.txt= marker edit in
-the external =NVS_Shakespeare= fork (currently uncommitted there).
+Update [2026-08-04]: all seven remaining =shake.var.*.txt= files are
+now marked up and committed in the external =NVS_Shakespeare= fork
+(=1529e57=). Verified =make out/shake.var.%.annot.xml= end-to-end for
+all seven — clean, no warnings, act/scene coverage in line with
+=lear=. One issue found and fixed in the same pass: =shake.var.rj.txt='s
+=STOP= marker originally landed ~3000 lines too late, inside a First
+Quarto facsimile reprint appended after the real commentary (different
+running-head convention, no act/scene markers, ~60
+"not a properly formed running head" warnings, though it turned out
+to contain no =<CC>= blocks so annotation output itself was
+unaffected). Corrected (=53c8982=) to land right before the reprint's
+own editorial preface; re-verified clean, zero warnings. Nothing left
+open here.
 
 * DONE Refactor Chunk to a dataclass
 CLOSED: [2026-08-01 Sat]
