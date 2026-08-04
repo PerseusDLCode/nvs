@@ -148,6 +148,14 @@ part doesn't match the comma-list lemma pattern (excludes that separate
 gap), treat the whole chunk as a silent continuation: append its text
 to the last open annotation rather than starting a new one.
 
+Mirror the <C> path's behavior for the case where a
+silent-continuation chunk also contains new annotation openers after
+the leading non-lemma prose. The <C> implementation already handles
+this (merge the leading part, then process remaining <P> sections
+normally) — the nettles/cuckoo-flowers case proved it's real. Silent
+continuations could have the same structure, and the fix should handle
+it the same way rather than assuming the whole chunk is prose.
+
 *Not yet started — needs Cliff's sign-off before implementation*,
 given Finding 2's scale (this will visibly shrink every file's
 annotation count by 15-30%, not fix two isolated cases). Test against
