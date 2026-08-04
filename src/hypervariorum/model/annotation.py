@@ -24,12 +24,17 @@ def load_annotations(source: str | Path | IO[str]) -> list[Annotation]:
     return [_annotation_from_element(elem) for elem in root.findall("annotation")]
 
 
+def _text_content(elem: ET.Element, tag: str) -> str:
+    child = elem.find(tag)
+    return "".join(child.itertext()) if child is not None else ""
+
+
 def _annotation_from_element(elem: ET.Element) -> Annotation:
     def _int_or_none(name: str) -> int | None:
         v = elem.get(name)
         return int(v) if v is not None else None
 
-    commentary_raw = elem.findtext("commentary") or ""
+    commentary_raw = _text_content(elem, "commentary")
     commentary = "\n".join(
         line.strip() for line in commentary_raw.strip("\n").splitlines()
     ).strip()
@@ -40,6 +45,6 @@ def _annotation_from_element(elem: ET.Element) -> Annotation:
         line=_int_or_none("line"),
         line_from=_int_or_none("line-from"),
         line_to=_int_or_none("line-to"),
-        lemma=(elem.findtext("lemma") or "").strip(),
+        lemma=_text_content(elem, "lemma").strip(),
         commentary=commentary,
     )
