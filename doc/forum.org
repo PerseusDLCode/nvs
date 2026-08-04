@@ -493,6 +493,170 @@ round-trips through =load_annotations()=). See
 for implementation notes and =feature/nvs-inline-xml-conversion=.
 Closing.
 
+** Silent page-turn continuations in Lear (and possibly rj)
+:PROPERTIES:
+:CUSTOM_ID: nvs/silent-continuation-across-pagebreaks
+:ASSIGNEES: Cliff, Claude Chat
+:SOURCE: chat/2026-08-04
+:DEPENDS: nvs/commentary-tag-litter-signals-structure, pipeline/two-stage-stage-two
+:END:
+
+Making the inline markup readable (=nvs/inline-xml-conversion=)
+revealed a class of continuation error in the Lear output. The
+=Albany= annotation (=2. Albany]=) starts on page 3 and continues
+silently onto page 4; =4. division]= similarly spans pages 4–5.
+Unlike the =<C>...</C>=-marked continuations handled by
+=ChunkConsolidator=, these carry no marker at all: the commentary
+text simply resumes at the next =<CC>= block after the page break.
+
+*** Research
+[2026-08-04] Two distinct but compounding problems:
+
+*Problem 1: encoding error in the raw transcription.* The
+continuation text at line 179 of =shake.var.lear.txt= is encoded as:
+
+#+begin_example
+<CC><P>denomination
+#+end_example
+
+The =<P>= is an error. In the printed edition this line is not
+indented and carries no line number — the visual signals that
+distinguish a new annotation from continuation prose. The correct
+encoding would be =<CC>denomination=. This error causes
+=split_annotation_chunks= to treat the continuation as a new
+annotation boundary within the chunk, and causes =ChunkConsolidator=
+to fail to merge it with the preceding annotation across the chunk
+boundary.
+
+*Problem 2: silent cross-chunk continuation, independent of the
+encoding error.* Even without the erroneous =<P>=, a cross-chunk
+continuation arriving as =<CC>denomination= has no =<C>...</C>=
+marker for =ChunkConsolidator= to detect. The current algorithm has
+no path for silent continuations at all.
+
+*Proposed fix — the digit predicate.* Cliff's =M-x occur= survey of
+=<P>= in =shake.var.lear.txt= shows the rule holds uniformly: every
+=<P>= that genuinely opens a new annotation is immediately followed
+by a digit (the line number anchoring the lemma). A =<P>= not
+followed by a digit is always continuation prose. The same predicate
+applies at the chunk head: a =<CC>= block whose first non-whitespace
+content (after any erroneous leading =<P>=) is not a digit is
+continuation, not a new annotation.
+
+This handles both problems: =split_annotation_chunks= stops
+splitting on bare =<P>= (only splits on =<P>\s*\d+=); and
+=ChunkConsolidator= gains a third path — after the =<C>= marker
+check — that treats a chunk with no digit-led opening as a silent
+continuation and appends it to the last open annotation.
+
+*Cross-volume question, not yet resolved.* The digit predicate is
+verified only for Lear. The volumes with explicit =<C>= markers
+(ham, oth, ac, macb, coriol) presumably have correct =<P>= usage,
+but "presumably" is not confirmed. Of particular interest: =rj= had
+zero =<C>= markers in the earlier survey, like Lear — if Romeo &
+Juliet used the same silent-continuation convention, it will have
+the same encoding pattern.
+
+The empirical question: inside =<CC>= spans across all eight
+=shake.var.*= files, does a =<P>= not followed by a digit occur only
+as continuation prose, never as a new-annotation opener? A single
+grep answers this before any code is written.
+
+*** Decision
+[2026-08-04] Research task first: confirm the digit predicate
+cross-volume before touching =split_annotation_chunks= or
+=ChunkConsolidator=. If the predicate holds universally, fix both
+stages in one pass. If it fails in specific volumes, scope the fix
+explicitly. See =nvs/silent-continuation-across-pagebreaks= in
+=agenda.org=.
+
+*** Research (addendum, cross-volume digit-predicate check)
+[2026-08-04] Ran the Step 1 research using the actual parser
+(=RawtoChunks= + =split_annotation_chunks= + =parse_lemma=, unmodified)
+against all eight =shake.var.*.txt= files. Two findings, both diverging
+from what the two illustrative examples (Albany, division) suggested.
+
+*Finding 1: the digit predicate as literally stated is false.*
+=split_annotation_chunks='s existing regex already splits on two
+alternatives — digit-led (=\d+...=) *or* bracket-led (=<B>.*?\]=) — and
+real, unambiguous new-annotation openers use the bracket form with no
+leading digit at all. Confirmed directly in =raw/shake.var.lear.txt=:
+=<P><B>The Tragedy,</B> &c.]=, =<P><B>darker]</B>=, =<P><B>Scene.
+III.]</B>=, =<P><B>Gentleman]</B>= — 14 such cases in Lear alone. The
+originally proposed Step 2 ("only split on =<P>= followed by a digit")
+would remove the bracket branch and silently merge these legitimate,
+distinct annotations into whichever preceded them — a regression, not
+a fix. =split_annotation_chunks= needs no change; its existing
+two-branch predicate is already correct.
+
+*Finding 2: the real phenomenon is far bigger than 2 examples.*
+Measured every non-=<C>=-marked chunk whose first split-part has no
+recognizable lemma at all (the actual signature of a silent
+continuation), after excluding two confounds (below):
+
+| File   | Chunks | Front-matter | Comma-list lemma gap | Genuine candidates | % of chunks |
+|--------+-------:+--------------:+----------------------:+--------------------:+-------------:|
+| ac     |    378 |             6 |                    17 |                 183 |         48%  |
+| coriol |    581 |             5 |                    23 |                 289 |         50%  |
+| ham    |    456 |            16 |                    10 |                 188 |         41%  |
+| ham2   |      0 |             0 |                     0 |                   0 |          —   |
+| lear   |    308 |             5 |                    11 |                 128 |         42%  |
+| macb   |    346 |             3 |                    14 |                 189 |         55%  |
+| oth    |    336 |            17 |                     8 |                 114 |         34%  |
+| rj     |    296 |            10 |                     1 |                 151 |         51%  |
+
+Verified against raw text directly (not just parser output) by
+comparing the tail of the preceding chunk to the head of each
+candidate: confirmed genuine mid-sentence and even mid-word continuity
+across the page break, e.g. in =shake.var.ham.txt=, preceding chunk
+ends ="...hides the poet, and yet approxi-"=, candidate chunk begins
+="mates the reader..."= — one hyphenated word (=approximates=) split by
+the page break, no marker at all. Same pattern confirmed in =ac=,
+=macb=, =oth=, =rj=.
+
+Cross-checked against current =ChunkConsolidator.consolidate()=
+output: these silent continuations currently become spurious
+empty-lemma =Annotation= records —
+
+| File | Total annotations | Empty-lemma (spurious) |
+|------+--------------------:+-------------------------:|
+| ac     | 1359 | 328 |
+| coriol | 1649 | 481 |
+| ham    | 2102 | 271 |
+| lear   | 1249 | 195 |
+| macb   | 1467 | 266 |
+| oth    | 1410 | 200 |
+| rj     |  904 | 172 |
+
+So this is not the rare edge case the two illustrative examples
+implied — it's on the order of 15-30% of each file's "annotations."
+Fixing it will materially shrink every file's annotation count and
+merge a lot of currently-fragmented commentary back into its real
+parent annotation. Worth Cliff seeing the real scale before
+implementation, not after.
+
+*Two confounds excluded from the counts above, and from any fix:*
+1. /Front-matter chunks/ (=act=None=, =scene=None=): pre-Act-1
+   introductory essay material with no lemma/commentary structure at
+   all — not really annotations in the same sense, not a
+   continuation-across-pagebreak issue. Out of scope for this task.
+2. /Comma-list lemma format gap/: lemmas like =5, 6. <B>...= or
+   =19, 20. <B>...= (comma-separated line lists) aren't recognized by
+   either =split_annotation_chunks='s lookahead or =parse_lemma='s
+   three patterns — a real, separate, much smaller gap (1-23
+   occurrences per file), unrelated to page-turn continuation. Worth
+   its own future task, not conflated with this one.
+
+*Recommendation:* do not implement the originally spec'd Step 2 at
+all (Finding 1 shows it would regress correct behavior). Step 3
+(=ChunkConsolidator= gains a path to treat an unrecognized chunk-initial
+part as continuation of the last open annotation) is still the right
+shape, but must explicitly exclude front-matter and comma-list-lemma
+chunks so it doesn't misfire on them, and should wait for Cliff to
+confirm the scale (15-30% annotation-count reduction per file) is
+expected/wanted before it's implemented. See revised Steps in
+=agenda.org='s =nvs/silent-continuation-across-pagebreaks=.
+
 ** Citation Resolution
 :PROPERTIES:
 :CUSTOM_ID: citation-resolution

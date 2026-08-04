@@ -107,6 +107,60 @@ identical before/after, so the earlier "1250" figure in
 =pipeline/retire-parsing= was a stale count, not a regression here.
 See =feature/nvs-inline-xml-conversion=.
 
+* TODO Fix silent page-turn continuations
+:PROPERTIES:
+:CUSTOM_ID: nvs/silent-continuation-across-pagebreaks
+:DEPENDS: pipeline/chunk-consolidator
+:END:
+See [[file:doc/forum.org::#nvs/silent-continuation-across-pagebreaks][#nvs/silent-continuation-across-pagebreaks]] for full diagnosis.
+
+*Step 1 — Research (done [2026-08-04]):* Ran the digit-predicate check
+cross-volume using the actual parser (not the raw grep originally
+proposed). See the Research addendum under
+=nvs/silent-continuation-across-pagebreaks= in =doc/forum.org= for full
+tables/evidence. Two findings that revise Steps 2-3 below:
+
+1. The digit predicate as originally stated is false — bracket-form
+   lemmas (=<B>...]=) with no leading digit are common, real,
+   legitimate new-annotation openers, already handled correctly by
+   =split_annotation_chunks='s existing two-branch regex. *Step 2 below
+   is dropped* — implementing it as originally written would regress
+   that existing correct behavior.
+2. The genuine silent-continuation phenomenon is real (confirmed via
+   direct raw-text tracing, e.g. a hyphenated word split across a page
+   break with no marker) but far larger than the two illustrative
+   examples suggested: 34-55% of chunks per file, corresponding to
+   15-30% of each file's currently-extracted annotations being spurious
+   empty-lemma fragments that should be merged into their true parent
+   annotation. Two confounds must be excluded from any fix: front-matter
+   chunks (=act=/=scene= =None=, pre-Act-1 essay material — not
+   annotations at all) and a separate, smaller comma-list lemma format
+   gap (=5, 6. <B>...=, unrelated to continuation).
+
+*Step 2 (revised, was: fix =split_annotation_chunks=):* Dropped per
+Finding 1 above. No change needed here.
+
+*Step 3 (revised) — Fix =ChunkConsolidator=:* Add a third path after
+the =<C>...</C>= marker check. If a non-=<C>=-marked chunk's first
+split-part has no recognizable lemma (neither digit- nor bracket-led)
+*and* the chunk has =act=/=scene= set (excludes front-matter) *and* the
+part doesn't match the comma-list lemma pattern (excludes that separate
+gap), treat the whole chunk as a silent continuation: append its text
+to the last open annotation rather than starting a new one.
+
+*Not yet started — needs Cliff's sign-off before implementation*,
+given Finding 2's scale (this will visibly shrink every file's
+annotation count by 15-30%, not fix two isolated cases). Test against
+real Lear data once approved:
+- =2. Albany]= (starts p.3, continues p.4): should produce one
+  annotation, not two.
+- =4. division]= (starts p.4, continues p.5): same.
+
+Verify end-to-end: =make out/shake.var.lear.annot.xml=; confirm
+that the annotation count changes (spuriously split annotations
+merge), and that the merged annotations contain the full commentary
+text including the carried-over prose.
+
 * TODO Corpus access feasibility
 :PROPERTIES:
 :CUSTOM_ID: corpus/access-feasibility
