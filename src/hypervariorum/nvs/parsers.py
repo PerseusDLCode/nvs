@@ -252,10 +252,8 @@ class ChunkConsolidator:
     def _is_silent_continuation(self, chunk: Chunk) -> bool:
         """True if chunk has no <C> marker but its content silently continues
         the last open annotation across a page break: no digit- or bracket-led
-        lemma at the start, act/scene present (excludes front matter), and not
-        the separate comma-list lemma format (e.g. "5, 6. ...")."""
-        if chunk.act is None or chunk.scene is None:
-            return False
+        lemma at the start, a previous annotation to attach to, and not the
+        separate comma-list lemma format (e.g. "5, 6. ...")."""
         if not self.annotations:
             return False
         first = self._leading_part(chunk)

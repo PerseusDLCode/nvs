@@ -443,22 +443,23 @@ def test_consolidate_silent_continuation_with_new_annotations_after_merge():
     assert cuckoo.commentary == "more about cuckoo-flowers specifically"
 
 
-def test_consolidate_front_matter_chunk_not_treated_as_silent_continuation():
-    # act/scene both None (pre-Act-1 essay material) must never be merged
-    # into a preceding annotation, even if its content has no recognizable lemma.
-    chunk1 = Chunk(act="1", scene="1", page_number=1,
-                   content="<P>1. [Foo] some commentary")
-    chunk2 = Chunk(act=None, scene=None, page_number=2,
-                   content="unrelated front-matter prose with no lemma marker at all")
+def test_consolidate_silent_continuation_merges_even_without_act_scene():
+    # The Banquo/"History knows noth-ing of Banquo" case from
+    # shake.var.macb.txt: the continuation occurs in front matter (Preface),
+    # before act/scene running-head tracking has started, but it's still a
+    # genuine annotation continuation and must be merged, not orphaned.
+    chunk1 = Chunk(act=None, scene=None, page_number=None,
+                   content="<P>5-12. <B>Banquo . . . Fleance]</B> Chalmers: History knows noth-")
+    chunk2 = Chunk(act=None, scene=None, page_number=4,
+                   content="ing of Banquo, the thane of Lochaber, nor of Fleance his son.")
 
     consolidator = ChunkConsolidator([chunk1, chunk2])
     consolidator.consolidate()
 
-    assert len(consolidator.annotations) == 2
-    assert consolidator.annotations[0].lemma == "1. [Foo"
-    assert consolidator.annotations[1].lemma == ""
-    assert consolidator.annotations[1].commentary == (
-        "unrelated front-matter prose with no lemma marker at all"
+    assert len(consolidator.annotations) == 1
+    assert consolidator.annotations[0].commentary == (
+        "Chalmers: History knows noth- ing of Banquo, the thane of Lochaber, "
+        "nor of Fleance his son."
     )
 
 
