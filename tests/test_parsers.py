@@ -397,6 +397,103 @@ def test_consolidate_continuation_with_no_open_annotation_falls_through(caplog):
     assert consolidator.annotations[0].commentary == "orphan continuation text."
 
 
+# --- silent (unmarked) page-turn continuations ---
+
+def test_consolidate_silent_continuation_merges_into_previous_annotation():
+    # The Albany/denomination case from shake.var.lear.txt: no <C> marker,
+    # the continuation prose simply resumes at the top of the next chunk.
+    chunk1 = Chunk(act="1", scene="1", page_number=3,
+                   content="<P>2. <B>Albany]</B> Wright: Holinshed gives the fol-")
+    chunk2 = Chunk(act="1", scene="1", page_number=4,
+                   content="lowing account of the origin of this name.")
+
+    consolidator = ChunkConsolidator([chunk1, chunk2])
+    consolidator.consolidate()
+
+    assert len(consolidator.annotations) == 1
+    assert consolidator.annotations[0].lemma == "2. <B>Albany</B>"
+    assert consolidator.annotations[0].commentary == (
+        "Wright: Holinshed gives the fol- lowing account of the origin of this name."
+    )
+
+
+def test_consolidate_silent_continuation_with_new_annotations_after_merge():
+    # Mirrors the <C>-marked nettles/cuckoo-flowers case: the leading prose
+    # continues the open annotation, then new lemmas follow in the same chunk.
+    chunk1 = Chunk(act="1", scene="4", page_number=259,
+                   content="<P>4. [nettles, cuckoo-flowers] commentary about early annotation")
+    chunk2 = Chunk(
+        act="1", scene="4", page_number=260,
+        content=(
+            "continued text about nettles."
+            "<P>4. nettles] more about nettles specifically"
+            "<P>4. cuckoo-flowers] more about cuckoo-flowers specifically"
+        ),
+    )
+
+    consolidator = ChunkConsolidator([chunk1, chunk2])
+    consolidator.consolidate()
+
+    assert len(consolidator.annotations) == 3
+    merged, nettles, cuckoo = consolidator.annotations
+    assert merged.commentary == "commentary about early annotation continued text about nettles."
+    assert nettles.lemma == "4. nettles"
+    assert nettles.commentary == "more about nettles specifically"
+    assert cuckoo.lemma == "4. cuckoo-flowers"
+    assert cuckoo.commentary == "more about cuckoo-flowers specifically"
+
+
+def test_consolidate_front_matter_chunk_not_treated_as_silent_continuation():
+    # act/scene both None (pre-Act-1 essay material) must never be merged
+    # into a preceding annotation, even if its content has no recognizable lemma.
+    chunk1 = Chunk(act="1", scene="1", page_number=1,
+                   content="<P>1. [Foo] some commentary")
+    chunk2 = Chunk(act=None, scene=None, page_number=2,
+                   content="unrelated front-matter prose with no lemma marker at all")
+
+    consolidator = ChunkConsolidator([chunk1, chunk2])
+    consolidator.consolidate()
+
+    assert len(consolidator.annotations) == 2
+    assert consolidator.annotations[0].lemma == "1. [Foo"
+    assert consolidator.annotations[1].lemma == ""
+    assert consolidator.annotations[1].commentary == (
+        "unrelated front-matter prose with no lemma marker at all"
+    )
+
+
+def test_consolidate_comma_list_lemma_not_treated_as_silent_continuation():
+    # "5, 6. ..." is a real (if currently unparsed) lemma format, not
+    # continuation prose -- must not be merged into the preceding annotation.
+    chunk1 = Chunk(act="1", scene="1", page_number=1,
+                   content="<P>1. [Foo] some commentary")
+    chunk2 = Chunk(act="1", scene="1", page_number=2,
+                   content="5, 6. <B>Some Phrase</B>] commentary on a line-list lemma")
+
+    consolidator = ChunkConsolidator([chunk1, chunk2])
+    consolidator.consolidate()
+
+    assert len(consolidator.annotations) == 2
+    assert consolidator.annotations[0].lemma == "1. [Foo"
+    assert consolidator.annotations[0].commentary == "some commentary"
+    assert consolidator.annotations[1].lemma == ""
+
+
+def test_consolidate_silent_continuation_with_no_open_annotation_unaffected():
+    # No previous annotation to attach to -- must not attempt to treat this
+    # as a silent continuation; falls through to normal processing.
+    chunk = Chunk(act="1", scene="1", page_number=1,
+                  content="orphan prose with no lemma marker and no predecessor")
+    consolidator = ChunkConsolidator([chunk])
+    consolidator.consolidate()
+
+    assert len(consolidator.annotations) == 1
+    assert consolidator.annotations[0].lemma == ""
+    assert consolidator.annotations[0].commentary == (
+        "orphan prose with no lemma marker and no predecessor"
+    )
+
+
 def test_serialize_round_trips_through_load_annotations(tmp_path):
     src = (
         "<!-- START -->\n"

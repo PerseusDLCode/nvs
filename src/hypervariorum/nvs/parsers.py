@@ -184,6 +184,7 @@ def _int_or_none(value: str | None) -> int | None:
 
 
 _CONTINUATION_LINE_RE = re.compile(r"^\s*<C>.*?</C>\s*$", re.MULTILINE)
+_COMMA_LIST_LEMMA_RE = re.compile(r"^\d+(?:,\s*\d+)+\.")
 
 _INLINE_TAG_RE = re.compile(r"<(B|I|SC|SUB|G)>(.*?)</(?:B|I|SC|SUB|G)>", re.DOTALL)
 _INLINE_TAG_REND = {
@@ -232,8 +233,49 @@ class ChunkConsolidator:
         for chunk in self.input_list:
             if self.is_continuation(chunk):
                 self._consolidate_continuation(chunk)
+            elif self._is_silent_continuation(chunk):
+                self._consolidate_silent_continuation(chunk)
             else:
                 self._consolidate_parts(chunk, split_annotation_chunks(chunk.content))
+
+    def _leading_part(self, chunk: Chunk) -> str | None:
+        """Returns the first non-empty split-part of chunk.content, with any
+        unrecognized leading <P> stripped, or None if the chunk has no content."""
+        parts = [p.strip() for p in split_annotation_chunks(chunk.content) if p.strip()]
+        if not parts:
+            return None
+        first = parts[0]
+        if first.startswith("<P>"):
+            first = first[len("<P>"):].strip()
+        return first
+
+    def _is_silent_continuation(self, chunk: Chunk) -> bool:
+        """True if chunk has no <C> marker but its content silently continues
+        the last open annotation across a page break: no digit- or bracket-led
+        lemma at the start, act/scene present (excludes front matter), and not
+        the separate comma-list lemma format (e.g. "5, 6. ...")."""
+        if chunk.act is None or chunk.scene is None:
+            return False
+        if not self.annotations:
+            return False
+        first = self._leading_part(chunk)
+        if first is None:
+            return False
+        lemma, _ = parse_lemma(first)
+        if lemma:
+            return False
+        return not _COMMA_LIST_LEMMA_RE.match(first)
+
+    def _consolidate_silent_continuation(self, chunk: Chunk) -> None:
+        parts = [p.strip() for p in split_annotation_chunks(chunk.content) if p.strip()]
+        first = parts[0]
+        if first.startswith("<P>"):
+            first = first[len("<P>"):].strip()
+        prev = self.annotations[-1]
+        self.annotations[-1] = replace(
+            prev, commentary=(prev.commentary.rstrip() + " " + first).strip()
+        )
+        self._consolidate_parts(chunk, parts[1:])
 
     def _consolidate_continuation(self, chunk: Chunk) -> None:
         match = _CONTINUATION_LINE_RE.search(chunk.content)
