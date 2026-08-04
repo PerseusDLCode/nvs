@@ -37,6 +37,49 @@ exists in the forum from this pass — not just "I looked it over."
 Depends on the forum review above: the report should be written
 from a reviewed record, not an unreviewed one.
 
+* TODO Convert inline NVS markup to real XML elements
+:PROPERTIES:
+:CUSTOM_ID: nvs/inline-xml-conversion
+:END:
+See [[file:doc/forum.org::#nvs/inline-xml-conversion][#nvs/inline-xml-conversion]] for design rationale and tag-mapping
+decisions.
+
+Add a function =parse_inline_markup(text: str, parent: _Element) -> None=
+to =src/hypervariorum/nvs/parsers.py=. It should:
+
+1. Scan =text= for the five known inline tags (=B=, =I=, =SC=, =SUB=,
+   =G=) using =re.split= or =re.finditer= over the pattern
+   =<(B|I|SC|SUB|G)>(.*?)</(B|I|SC|SUB|G)>= with =re.DOTALL=.
+   These tags do not nest in the corpus.
+2. For each matched tag, append any preceding text as a text node or
+   tail on the previous element, then append a =<hi rend="...">= child
+   with the appropriate =rend= value:
+   =B=→=bold=, =I=→=italic=, =SC=→=smallcaps=, =SUB=→=subscript=,
+   =G=→=greek=.
+3. Leave everything else — entities (=&lquo;=, =&mdash;=, etc.),
+   punctuation, unrecognized tags — as plain text. Do not attempt
+   to parse the raw content as XML.
+
+Replace the two places in =ChunkConsolidator= where =.text= is
+currently assigned to =<lemma>= and =<commentary>= elements with
+calls to =parse_inline_markup=.
+
+Tests to write:
+- A bare =<SC>= tag becomes =<hi rend="smallcaps">= with correct
+  text content and no surrounding text lost.
+- Mixed content: text + tag + text (e.g. =foo <B>bar</B> baz=)
+  produces correct text/tail distribution across elements.
+- Entities (=&lquo;=, =&mdash;=) survive as literal text, not
+  dropped or mangled.
+- An unrecognized tag (e.g. =<BQ>=) passes through as plain text.
+- A real lemma with =<B>= markup (e.g. =2. <B>Albany</B>=).
+- A real commentary fragment with =<SC>= (the Walker citation
+  already in the test fixtures: =<SC>Walker</SC> (<I>Crit.</I> i, 13)=).
+
+Verify end-to-end: =make out/shake.var.lear.annot.xml= and spot-check
+that =<SC>Walker</SC>= appears as =<hi rend="smallcaps">Walker</hi>=
+and that the file is well-formed XML.
+
 * TODO Corpus access feasibility
 :PROPERTIES:
 :CUSTOM_ID: corpus/access-feasibility

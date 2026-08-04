@@ -428,6 +428,64 @@ or nearest-neighbor.
 parsing of the <CC> chunks.  We are now re-implementing that code and
 will re-visit the problem of continuation markers next.
 
+[2026-08-04] =ChunkConsolidator= resolves the continuation-marker
+problem without lemma comparison; the paused branch
+=feature/nvs-parser-continuation-marker-disambiguation= is superseded
+and should be abandoned. The residual inline-tag litter (=<B>=, =<I>=,
+=<SC>=, etc.) surviving as escaped text in =<lemma>= and
+=<commentary>= is addressed by =nvs/inline-xml-conversion= below,
+which also fires the revisit trigger from =parsing-raw-xml-vs-plain-
+text= point 3. Closing.
+
+** Convert inline NVS markup to real XML elements
+:PROPERTIES:
+:CUSTOM_ID: nvs/inline-xml-conversion
+:ASSIGNEES: Claude Code, Cliff
+:SOURCE: chat/2026-08-04
+:DEPENDS: nvs/commentary-tag-litter-signals-structure, parsing-raw-xml-vs-plain-text
+:END:
+
+The =<lemma>= and =<commentary>= elements in =annot.xml= currently
+store NVS inline tags as escaped text (=&lt;SC&gt;Walker&lt;/SC&gt;=
+etc.), because =ChunkConsolidator= builds them via lxml's =.text=
+assignment, which auto-escapes. This makes the output harder to read
+and makes =<SC>= — the citation-name marker the =citation-resolution=
+thread is built around — invisible to XPath and to any downstream
+processing.
+
+*** Research
+[2026-08-04] Five inline tag types occur inside =<lemma>= and
+=<commentary>= content (established in prior corpus survey):
+
+| NVS tag | Likely meaning | Target encoding         |
+|---------+----------------+-------------------------|
+| =<B>=   | bold           | =<hi rend="bold">=      |
+| =<I>=   | italic         | =<hi rend="italic">=    |
+| =<SC>=  | small caps     | =<hi rend="smallcaps">= |
+| =<SUB>= | subscript      | =<hi rend="subscript">= |
+| =<G>=   | Greek (likely) | =<hi rend="greek">=     |
+
+=SC= mapping is conservative: it may serve purposes other than
+citation names, and mapping to =<name>= would be interpretive at
+this stage. =G= similarly mapped to =rend="greek"= rather than
+=<foreign xml:lang="grc">= until its use is verified across the
+corpus. All five map uniformly to =<hi rend="...">=, which is
+TEI-compatible and reversible.
+
+Implementation constraint: the raw NVS text contains HTML-like
+entities (=&lquo;=, =&rquo;=, =&mdash;=, =&amp;=, etc.) that are
+not standard XML entities. Attempting to parse the raw content as
+XML will fail on these. The right approach is a regex-based scan
+that lifts the five known inline tags into real lxml child elements
+while leaving everything else — entities, punctuation, unrecognized
+tags — as text, without attempting a full XML parse.
+
+*** Decision
+[2026-08-04] Adopt the =<hi rend="...">=  mapping above for all five
+tag types. Use a regex-based inline parser rather than an XML parse
+of raw content. See =nvs/inline-xml-conversion= in =agenda.org= for
+the implementation spec.
+
 ** Citation Resolution
 :PROPERTIES:
 :CUSTOM_ID: citation-resolution
