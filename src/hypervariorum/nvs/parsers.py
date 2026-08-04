@@ -4,6 +4,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 
 from lxml import etree
+from lxml.etree import _Element
 
 from hypervariorum.model.annotation import Annotation
 
@@ -184,6 +185,38 @@ def _int_or_none(value: str | None) -> int | None:
 
 _CONTINUATION_LINE_RE = re.compile(r"^\s*<C>.*?</C>\s*$", re.MULTILINE)
 
+_INLINE_TAG_RE = re.compile(r"<(B|I|SC|SUB|G)>(.*?)</(?:B|I|SC|SUB|G)>", re.DOTALL)
+_INLINE_TAG_REND = {
+    "B": "bold",
+    "I": "italic",
+    "SC": "smallcaps",
+    "SUB": "subscript",
+    "G": "greek",
+}
+
+
+def parse_inline_markup(text: str, parent: _Element) -> None:
+    """Lifts B/I/SC/SUB/G inline tags in text into <hi rend="..."> children of parent."""
+    pos = 0
+    last_child = None
+    for m in _INLINE_TAG_RE.finditer(text):
+        preceding = text[pos:m.start()]
+        if preceding:
+            if last_child is None:
+                parent.text = (parent.text or "") + preceding
+            else:
+                last_child.tail = (last_child.tail or "") + preceding
+        hi = etree.SubElement(parent, "hi", rend=_INLINE_TAG_REND[m.group(1)])
+        hi.text = m.group(2)
+        last_child = hi
+        pos = m.end()
+    remaining = text[pos:]
+    if remaining:
+        if last_child is None:
+            parent.text = (parent.text or "") + remaining
+        else:
+            last_child.tail = (last_child.tail or "") + remaining
+
 
 class ChunkConsolidator:
     """Consolidates a list of Chunks into a list of Annotations."""
@@ -256,8 +289,8 @@ class ChunkConsolidator:
             if annotation.line_to is not None:
                 attrib["line-to"] = str(annotation.line_to)
             elem = etree.SubElement(root, "annotation", attrib=attrib)
-            etree.SubElement(elem, "lemma").text = annotation.lemma
-            etree.SubElement(elem, "commentary").text = annotation.commentary
+            parse_inline_markup(annotation.lemma, etree.SubElement(elem, "lemma"))
+            parse_inline_markup(annotation.commentary, etree.SubElement(elem, "commentary"))
         xml_bytes = etree.tostring(root, xml_declaration=True, encoding="utf-8", pretty_print=True)
         out.write(xml_bytes.decode("utf-8"))
 

@@ -89,6 +89,20 @@ def test_load_annotations_empty_document():
     assert load_annotations(io.StringIO(xml)) == []
 
 
+def test_load_annotations_lemma_and_commentary_include_hi_children_text():
+    xml = (
+        '<?xml version="1.0"?><annotations>'
+        '<annotation act="1" scene="2" line="2">'
+        '<lemma>2. <hi rend="bold">Albany]</hi></lemma>'
+        '<commentary><hi rend="smallcaps">Walker</hi> (<hi rend="italic">Crit.</hi> i, 13) would read these</commentary>'
+        "</annotation></annotations>"
+    )
+    annotations = load_annotations(io.StringIO(xml))
+    a = annotations[0]
+    assert a.lemma == "2. Albany]"
+    assert a.commentary == "Walker (Crit. i, 13) would read these"
+
+
 def test_load_annotations_accepts_path_and_file_object(tmp_path):
     xml = (
         '<?xml version="1.0"?><annotations>'

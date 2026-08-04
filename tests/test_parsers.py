@@ -1,10 +1,13 @@
 import io
 
+from lxml import etree
+
 from hypervariorum.model.annotation import load_annotations
 from hypervariorum.nvs.parsers import (
     Chunk,
     ChunkConsolidator,
     RawtoChunks,
+    parse_inline_markup,
     parse_lemma,
     roman_to_int,
     split_annotation_chunks,
@@ -219,6 +222,77 @@ def test_split_annotation_chunks_splits_on_p_boundaries():
     assert chunks == ["", "1. [Foo] first", "2. [Bar] second"]
 
 
+# --- parse_inline_markup ---
+
+def test_parse_inline_markup_bare_tag_becomes_hi_element():
+    parent = etree.Element("lemma")
+    parse_inline_markup("<SC>Walker</SC>", parent)
+
+    assert len(parent) == 1
+    hi = parent[0]
+    assert hi.tag == "hi"
+    assert hi.get("rend") == "smallcaps"
+    assert hi.text == "Walker"
+    assert not parent.text
+    assert not hi.tail
+
+
+def test_parse_inline_markup_mixed_content_distributes_text_and_tail():
+    parent = etree.Element("commentary")
+    parse_inline_markup("foo <B>bar</B> baz", parent)
+
+    assert parent.text == "foo "
+    assert len(parent) == 1
+    hi = parent[0]
+    assert hi.get("rend") == "bold"
+    assert hi.text == "bar"
+    assert hi.tail == " baz"
+
+
+def test_parse_inline_markup_entities_survive_as_literal_text():
+    parent = etree.Element("commentary")
+    text = "‘Tender-hefted’ — no tags here"
+    parse_inline_markup(text, parent)
+
+    assert parent.text == text
+    assert len(parent) == 0
+
+
+def test_parse_inline_markup_unrecognized_tag_passes_through():
+    parent = etree.Element("commentary")
+    parse_inline_markup("<BQ>quoted</BQ>", parent)
+
+    assert parent.text == "<BQ>quoted</BQ>"
+    assert len(parent) == 0
+
+
+def test_parse_inline_markup_real_lemma_with_bold():
+    # raw/shake.var.lear.txt: "2. <B>Albany]</B> ..."
+    parent = etree.Element("lemma")
+    parse_inline_markup("2. <B>Albany]</B>", parent)
+
+    assert parent.text == "2. "
+    hi = parent[0]
+    assert hi.get("rend") == "bold"
+    assert hi.text == "Albany]"
+    assert not hi.tail
+
+
+def test_parse_inline_markup_real_commentary_with_smallcaps():
+    # raw/shake.var.lear.txt: "<SC>Walker</SC> (<I>Crit.</I> i, 13) ..."
+    parent = etree.Element("commentary")
+    parse_inline_markup("<SC>Walker</SC> (<I>Crit.</I> i, 13)", parent)
+
+    assert len(parent) == 2
+    walker, crit = parent
+    assert walker.get("rend") == "smallcaps"
+    assert walker.text == "Walker"
+    assert walker.tail == " ("
+    assert crit.get("rend") == "italic"
+    assert crit.text == "Crit."
+    assert crit.tail == " i, 13)"
+
+
 # --- ChunkConsolidator ---
 
 def test_consolidate_normal_chunk_produces_annotations():
@@ -348,3 +422,32 @@ def test_serialize_round_trips_through_load_annotations(tmp_path):
     assert a.line == 1
     assert a.lemma == "1. [Foo"
     assert "some commentary" in a.commentary
+
+
+def test_serialize_lifts_inline_tags_into_hi_elements(tmp_path):
+    src = (
+        "<!-- START -->\n"
+        "<HE>4 <I>KING LEAR</I> [<SC>act i, sc.</SC> i.</HE>\n"
+        "<CC><P>1-6. <SC>Walker</SC> (<I>Crit.</I> i, 13) would read these</CC>\n"
+        "<!-- STOP -->\n"
+    )
+    parser = RawtoChunks(_write(tmp_path, src))
+    parser.parse()
+
+    consolidator = ChunkConsolidator(parser.chunks)
+    consolidator.consolidate()
+
+    out = io.StringIO()
+    consolidator.serialize(out)
+    written = out.getvalue()
+
+    assert "&lt;SC&gt;" not in written
+    root = etree.fromstring(written.encode("utf-8"))
+    hi_elements = root.findall(".//commentary/hi")
+    assert any(h.get("rend") == "smallcaps" and h.text == "Walker" for h in hi_elements)
+
+    out.seek(0)
+    annotations = load_annotations(out)
+    assert len(annotations) == 1
+    assert "Walker" in annotations[0].commentary
+    assert "would read these" in annotations[0].commentary
