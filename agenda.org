@@ -107,7 +107,8 @@ identical before/after, so the earlier "1250" figure in
 =pipeline/retire-parsing= was a stale count, not a regression here.
 See =feature/nvs-inline-xml-conversion=.
 
-* TODO Fix silent page-turn continuations
+* DONE Fix silent page-turn continuations
+CLOSED: [2026-08-04 Tue]
 :PROPERTIES:
 :CUSTOM_ID: nvs/silent-continuation-across-pagebreaks
 :DEPENDS: pipeline/chunk-consolidator
@@ -156,18 +157,50 @@ normally) — the nettles/cuckoo-flowers case proved it's real. Silent
 continuations could have the same structure, and the fix should handle
 it the same way rather than assuming the whole chunk is prose.
 
-*Not yet started — needs Cliff's sign-off before implementation*,
-given Finding 2's scale (this will visibly shrink every file's
-annotation count by 15-30%, not fix two isolated cases). Test against
-real Lear data once approved:
-- =2. Albany]= (starts p.3, continues p.4): should produce one
-  annotation, not two.
-- =4. division]= (starts p.4, continues p.5): same.
+Implemented per the revised Step 3 spec on
+=feature/nvs-silent-continuation-across-pagebreaks=:
+=ChunkConsolidator= gained =_is_silent_continuation()= and
+=_consolidate_silent_continuation()=, checked in =consolidate()= as a
+third path after the =<C>=-marker check. =_is_silent_continuation()=
+requires =act=/=scene= both set, a previous open annotation to attach
+to, an empty =parse_lemma()= result on the chunk's first split-part,
+and no match against the comma-list lemma pattern — exactly the three
+exclusions the research called for. =_consolidate_silent_continuation()=
+mirrors =_consolidate_continuation()='s structure: merges the leading
+part into the last annotation's commentary, then runs any remaining
+=<P>= sections through =_consolidate_parts= as new annotations (the
+mirroring behavior Cliff added to the spec, covering the
+nettles/cuckoo-flowers-shaped case for silent continuations too).
 
-Verify end-to-end: =make out/shake.var.lear.annot.xml=; confirm
-that the annotation count changes (spuriously split annotations
-merge), and that the merged annotations contain the full commentary
-text including the carried-over prose.
+Tests added to =tests/test_parsers.py=: merge into previous annotation
+(the Albany/=denomination= case), new annotations after the merge
+(mirrored nettles/cuckoo-flowers), front-matter chunks correctly
+excluded, comma-list-lemma chunks correctly excluded, and the
+no-open-annotation fallthrough. =pdm run pytest= green (54 tests).
+
+Verified end-to-end against the real corpus, all seven buildable
+files (=ham2= has no marked-up =<CC>= content and was already
+unbuildable before this change — unrelated, pre-existing):
+
+| File   | Annotations before | Annotations after | Reduction |
+|--------+---------------------+--------------------+-----------|
+| ac     |                1359 |               1176 |       183 |
+| coriol |                1649 |               1360 |       289 |
+| ham    |                2102 |               1915 |       187 |
+| lear   |                1249 |               1121 |       128 |
+| macb   |                1467 |               1278 |       189 |
+| oth    |                1410 |               1296 |       114 |
+| rj     |                 904 |                753 |       151 |
+
+Reductions match the forum research's per-file "genuine candidate"
+counts almost exactly (off by 1 only for =ham=), strong confirmation
+the fix targets precisely the intended cases and nothing else. All
+seven files parse as well-formed XML and round-trip through
+=load_annotations()=. The two cited failure cases now merge correctly:
+=2. Albany= carries its full commentary across the page break
+(=...gives the fol-\nlowing account...=), and =4. division= likewise.
+See =src/hypervariorum/nvs/parsers.py=, =tests/test_parsers.py=,
+=feature/nvs-silent-continuation-across-pagebreaks=.
 
 * TODO Corpus access feasibility
 :PROPERTIES:

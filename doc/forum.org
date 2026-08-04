@@ -657,6 +657,19 @@ confirm the scale (15-30% annotation-count reduction per file) is
 expected/wanted before it's implemented. See revised Steps in
 =agenda.org='s =nvs/silent-continuation-across-pagebreaks=.
 
+*** Decision
+[2026-08-04] Cliff signed off on the revised scope, adding one
+refinement: silent-continuation chunks should mirror the =<C>=-marked
+path's handling of new annotation openers appearing after the leading
+continuation prose, not just the plain-merge case. Implemented and
+verified against all seven buildable =shake.var.*= files (=ham2= has
+no marked-up commentary, unrelated pre-existing gap) — annotation
+counts drop by 114-289 per file, matching the Research addendum's
+per-file "genuine candidate" counts almost exactly. See
+=agenda.org='s =nvs/silent-continuation-across-pagebreaks= for the
+full before/after table and
+=feature/nvs-silent-continuation-across-pagebreaks=. Closing.
+
 ** Citation Resolution
 :PROPERTIES:
 :CUSTOM_ID: citation-resolution
