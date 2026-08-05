@@ -1,0 +1,101 @@
+#+TITLE: Hypervariorum: Progress Report and Next Steps
+#+DATE: 2026-08-05
+#+AUTHOR: Clifford Wulfman
+#+OPTIONS: toc:nil num:nil
+
+The first phase of the Hypervariorum project — converting the NVS
+variorum transcriptions into structured, machine-readable annotations
+— is now complete. All eight plays in the corpus are processed through
+a two-stage pipeline that extracts commentary blocks from the raw
+transcriptions and consolidates them into well-formed XML. Each
+annotation carries act, scene, and line metadata; the NVS inline
+typography (smallcaps for cited scholars, italic for titles and foreign
+terms) is represented as real XML elements, making the citation
+apparatus navigable by XPath for the first time.
+
+Here is a sample annotation:
+
+#+begin_src xml
+    <annotation act="2" scene="4" line="168">
+      <lemma>168. <hi rend="bold">tender-hefted</hi></lemma>
+      <commentary><hi rend="smallcaps">Steevens</hi>: <hi rend="italic">Hefted</hi> seems to mean the same as <hi rend="italic">heaved.</hi>
+  ‘Tender-hefted,’ <hi rend="italic">i. e.</hi> whose bosom is agitated by tender passions. Sh. uses ‘hefts’
+  for <hi rend="italic">heavings</hi> in <hi rend="italic">Wint. Tale</hi>, II, i, 45. The Qq, however, read, ‘tender-hested
+  nature,’ which may mean a nature which is governed by gentle dispositions. ‘Hest’
+  is an old word, signifying command. <hi rend="smallcaps">Davies</hi>: I suppose the expression was in-
+  tended to signify <hi rend="italic">smooth</hi>, or <hi rend="italic">soft-handled</hi>, consequently put here for <hi rend="italic">gentleness of dis-
+  position.</hi> <hi rend="smallcaps">Knight</hi>: We doubt Steevens's explanation. <hi rend="italic">Heft,—haft</hi>,—is that which
+  is <hi rend="italic">haved,—held;</hi> and thus, ‘thy tender-hefted nature’ may be thy nature which may
+  be held by tenderness. <hi rend="smallcaps">White</hi>: Although I fail to see the appropriateness of any
+  sense that may be extracted from either text of the Ff or Qq, I shrink from adopting
+  the very specious reading of the earlier editors: tender-<hi rend="italic">hearted.</hi> <hi rend="smallcaps">Edinburgh Re-
+  view</hi> (July, 1869, p. 106): ‘Heft’ is a well-known older English word for handle,
+  that which holds or contains, and ‘tender-hefted’ is simply delicately-housed, dain-
+  tily-bodied, finely-sheathed. ‘Heft’ was in this way applied proverbially to the body,
+  and Howel has a phrase quoted by Halliwell: <hi rend="italic">loose in the heft</hi>, to designate an ill
+  habit of body, a person of dissipated ways. <hi rend="smallcaps">Schmidt</hi> (<hi rend="italic">Lex.</hi>) quotes this extract,
+  and adds: But is <hi rend="italic">haft</hi> or <hi rend="italic">heft, i. e.</hi> handle, indeed that which holds or contains, or
+  not rather that by which a thing is held? <hi rend="italic">Loose in the handle</hi>, applied to a person,
+  could not possibly mean any thing else than what <hi rend="italic">loose in the heft</hi> is said to have
+  designated. Perhaps ‘tender-hefted,’ <hi rend="italic">i. e.</hi> tender-handled, is equivalent to tender,
+  gentle, to touch or to approach; of an easy and winning address, affable. <hi rend="smallcaps">Wright</hi>:
+  A heft or haft is a handle, and a nature tender-hefted is one which is set in a tender
+  handle or delicate bodily frame. Regan was less masculine than Goneril. Cotgrave
+  has, ‘Emmanché: m. ée: f. Helued; set into a haft, or handle. Lasche emmanché.
+  Lazie, idle, slothfull, weake, feeble, loose ioynted, faint-hearted.’ <hi rend="italic">Prompt. Parv.</hi>
+  ‘Heftyde, manubriatus.’</commentary>
+    </annotation>
+#+end_src
+
+The process entailed only one significant challenge: comments that
+spanned several pages were inconsistently marked in the raw
+transcriptions, requiring some sophisticated parsing.  After
+investigation and correction, final annotation counts range from
+approximately 750 (/Romeo and Juliet/) to approximately 1,900 (/Hamlet/),
+with a combined total across the seven commentary volumes of roughly
+8,900 annotations.
+
+With trustworthy annotation boundaries established, work has turned to
+citation resolution — linking the smallcaps-tagged scholar names in
+Furness's critical commentary to the sources they denote. A pilot study
+on the approximately 71 bare-colon citations in /King Lear/ resolved
+roughly 90% through bibliographic means: direct matches in Furness's
+own bibliography, identification of historically excluded editors
+(Johnson, Steevens, Malone), and cross-reference with standard
+variorum sources. The remaining cases — approximately 83 instances
+across the volume — require full-text search to disambiguate, the
+clearest example being the several nineteenth-century scholars who
+published under the name "Davies."
+
+More significant than the unresolved cases, however, is what the pilot
+revealed about citation structure. Furness's citations are not
+formally typed: a bare name may introduce a source, a cross-reference,
+a co-citation, or an editorial voice, and syntactic role is not
+recoverable from surface patterns alone. The note on /tender-hefted/
+(II.iv.168), for example, contains a naturally occurring two-level
+citation — Furness quoting Knight disputing Steevens — embedded in
+continuous prose without formal delimiters. This is the finding most
+directly relevant to the Schmidt Sciences framing: reliable citation
+extraction from this material requires reading comprehension, not
+pattern matching.
+
+David's reply to our inquiry about the Institutional Books dataset is
+encouraging. He recommends beginning with a targeted bibliography —
+a high-recall collection of Furness-cited works — rather than indexing
+IB1 in its entirety, and notes that periodical sources such as the
+/Edinburgh Review/ may be better retrieved from the Internet Archive,
+which indexes individual issues more reliably than IB1 does. For the
+83 unresolved citations, he suggests agentic search as an immediate
+tactic to obtain high-confidence resolutions before formal indexing
+infrastructure is in place. We intend to begin that work now.
+
+For larger-scale work, David recommends Anserini (built on Lucene),
+which supports both keyword and dense-vector retrieval, exposed as an
+MCP server or local search skill. Building and querying embedding
+indexes over a corpus the size of IB1 benefits substantially from GPU
+resources, and the same infrastructure would support the AI-assisted
+edge classification that is the project's longer-term research goal —
+argument-relation tagging between annotations (rebuts, extends,
+silently absorbs, and so forth). We would welcome Peter's guidance on
+what is feasible within Tufts' HPC environment, and would be glad to
+discuss the specific resource requirements when the time comes.
