@@ -684,6 +684,56 @@ the guard; re-verified end-to-end on all seven files. See
 counts and =feature/nvs-silent-continuation-front-matter-fix=.
 Re-closing.
 
+** Whole-line comments have no headword lemma
+:PROPERTIES:
+:CUSTOM_ID: nvs/whole-line-comments
+:ASSIGNEES: Cliff, Claude Code
+:SOURCE: chat/2026-08-05
+:DISPOSITION: document
+:END:
+
+Cliff noticed =raw/shake.var.macb.txt= line 1079
+(=<P>2. Holinshed was Theobald's authority...=) comments on line 2 of
+I.ii as a whole, not a specific word/phrase — Furness gives only a
+line number, no bracketed/bold headword. Asked how the algorithm
+should be revised; "quite a few of these" are visible in
+=out/shake.var.macb.annot.xml=.
+
+*** Research
+[2026-08-05] Not a data-loss bug. =parse_lemma='s =pattern_c=
+(=^(\d+(?:[-–]\d+)?\.)\s+=) already matches a bare digit-period with
+no bracket, and has since this function was copied from =parsing.py=
+— =test_parse_lemma_plain_numbered= already covers this shape. The
+resulting =Annotation= correctly carries =act=/=scene=/=line=
+(or =line-from=/=line-to= for ranges) and the full commentary text.
+Widespread, not rare: 54 such annotations in =macb=, 53 in =lear=
+(roughly 5% of each file's total).
+
+What's real is a representation gap, not a parsing bug: =lemma= is
+used everywhere else in the codebase as "headword text, empty if
+none," but for whole-line comments it instead holds the bare locus
+string (=2.=, =60-76.=) — a restatement of the =line=/=line-from=/
+=line-to= attributes in string form, not a headword. Verified this
+string always exactly reproduces the locus attributes, so downstream
+code can detect "no real headword" via =lemma= matching
+=^\d+(?:[-–]\d+)?\.$=.
+
+Not a trivial fix: =ChunkConsolidator._is_silent_continuation()=
+(=nvs/silent-continuation-across-pagebreaks=) uses "=parse_lemma=
+returned non-empty" as its signal for "this chunk opens a new
+annotation, don't merge it." That only works today because
+=parse_lemma= returns a non-empty string for bare-locus cases —
+blanking =lemma= to ="= would make every one of these annotations
+look like continuation prose to that check and get wrongly merged.
+
+*** Decision
+[2026-08-05] Cliff: leave =lemma= as the bare locus string. No code
+behavior change — documented the =^\d+(?:[-–]\d+)?\.$= convention (and
+its dependency in =_is_silent_continuation=) as comments in
+=src/hypervariorum/nvs/parsers.py= instead of changing anything.
+Revisit if/when a downstream consumer (e.g. citation-resolution) needs
+a cleaner distinction than the regex check.
+
 ** Citation Resolution
 :PROPERTIES:
 :CUSTOM_ID: citation-resolution

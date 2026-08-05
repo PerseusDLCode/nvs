@@ -157,6 +157,11 @@ def parse_lemma(chunk: str) -> tuple[str, str]:
         lemma = _normalize_bracket_lemma(pattern_b.group(1))
         commentary = chunk[len(pattern_b.group(0)):].strip()
     elif pattern_c:
+        # No bracket/bold headword follows the line number -- a genuine
+        # whole-line comment (Furness sometimes annotates a whole line, not
+        # a specific word/phrase in it), not a fallback failure. lemma ends
+        # up equal to the bare locus string (e.g. "2.", "60-76."); this is
+        # intentional, not a bug -- see doc/forum.org::#nvs/whole-line-comments.
         lemma = pattern_c.group(1).strip()
         commentary = chunk[len(pattern_c.group(1)):].strip()
 
@@ -253,7 +258,12 @@ class ChunkConsolidator:
         """True if chunk has no <C> marker but its content silently continues
         the last open annotation across a page break: no digit- or bracket-led
         lemma at the start, a previous annotation to attach to, and not the
-        separate comma-list lemma format (e.g. "5, 6. ...")."""
+        separate comma-list lemma format (e.g. "5, 6. ...").
+
+        Relies on parse_lemma returning a non-empty lemma for whole-line
+        comments (bare "2.", "60-76." locus with no headword) so they aren't
+        mistaken for continuation prose -- see the pattern_c comment in
+        parse_lemma and doc/forum.org::#nvs/whole-line-comments."""
         if not self.annotations:
             return False
         first = self._leading_part(chunk)
