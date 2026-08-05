@@ -265,7 +265,42 @@ Next steps:
    the project.
 
    <2026-07-21 Tue 17:13> I have sent an inquiry to David Smith for
-   guidance on 1 and 3.  Meanwhile, see [fn:1]. 
+   guidance on 1 and 3.  Meanwhile, see [fn:1].
+
+   <2026-08-05 Wed> David responded to my inquiry; here is his reply:
+
+   #+begin_quote
+   I'm sorry for the slow reply since this would be SO COOL! This is
+   what I've really wanted to do for Gibbon, as described in the
+   proposal, but starting with mostly English sources would be a good
+   idea. I'd be very happy to talk more.
+
+   Starting with the bibliographic work makes sense, since I don't
+   think you want to build an index of all of IB1, at least at this
+   stage. And even if you did index all of IB1, you'd probably be
+   missing a few works, so doing some bibliographic work up front
+   would be helpful. For instance, if the Edinburgh Review, mentioned
+   in the paragraph above, isn't inthe IB1 or doesn't have enough
+   metadata in IB1 to identify individual issues, it might be easier
+   to grab it from the Internet Archive, which does.
+
+   In other words, if you could assemble a set of relevant books that
+   has high recall for Furness citations, you can then index that
+   collection. Do you think that's realistic?
+
+   At this stage, you could try using agentic search as a lazy index
+   to get some high-confidence resolutions.
+
+   Once you're ready to index, I'd suggest something like Anserini,
+   which supports both keyword and embedding searches:
+   https://github.com/castorini/anserini
+
+   or Lucene, which it's built on: https://lucene.apache.org/
+
+   You could put this index behind an MCP API, but if you're running
+   this locally, it'd probably be easier to just give Claude a skill
+   to search the index.
+   #+end_quote
 
 * DONE debug parsing raw file into chunks
 CLOSED: [2026-08-01 Sat]
