@@ -302,6 +302,33 @@ Next steps:
    to search the index.
    #+end_quote
 
+Updated next steps (supersede the three above):
+1. /Now/: agentic search (web + IA) is viable for the 83-item tier
+   3-5 batch without a formal index. Edinburgh Review: use Internet
+   Archive directly — IB1 may not cover individual periodical issues.
+2. /Medium term/: assemble a targeted bibliography — a high-recall
+   set of Furness-cited works — before building a formal index.
+   Contact Greg Leppert or Catherine Brobston at IDI for access
+   questions (per Alison Babeu).
+3. /Long term/: formal Anserini index (keyword + embedding) over the
+   targeted corpus, exposed as a local Claude skill or MCP API.
+   Separate task when scale demands it; not a prerequisite for #1.
+
+This task is no longer a hard blocker; citation-resolution work can
+proceed in stages. See [[file:doc/forum.org::#citation-resolution][#citation-resolution]] addendum.
+
+* TODO Fix comma-list lemma format gap
+:PROPERTIES:
+:CUSTOM_ID: nvs/comma-list-lemma
+:DEPENDS: nvs/silent-continuation-across-pagebreaks
+:END:
+Surfaced during =nvs/silent-continuation-across-pagebreaks= research:
+lemmas of the form =5, 6. <B>...= (comma-separated line lists) are not
+recognized by =split_annotation_chunks='s lookahead or =parse_lemma='s
+three patterns. Scale: 1–23 occurrences per file (see Research
+addendum table in [[file:doc/forum.org::#nvs/silent-continuation-across-pagebreaks][#nvs/silent-continuation-across-pagebreaks]]). Low
+priority; leave until after citation-resolution work is underway.
+
 * DONE debug parsing raw file into chunks
 CLOSED: [2026-08-01 Sat]
 :PROPERTIES:

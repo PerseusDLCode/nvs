@@ -835,6 +835,31 @@ what resolve =Wright=/=Moberly=/=Hudson= bare citations. If bibliography
 parsing becomes its own task again, it should be re-scoped from that
 starting point, not from the original spec.
 
+**** Research (addendum, David Smith's reply)
+[2026-08-05] David Smith replied (Aug 1) to Cliff's July 20 inquiry.
+Key points:
+
+1. /Build a targeted bibliography first./ Assemble a high-recall set
+   of Furness-cited works rather than indexing all of IB1. IB1 may
+   not cover all needed works; periodical issues (e.g. the Edinburgh
+   Review) may have insufficient metadata in IB1 — Internet Archive
+   is better for those.
+
+2. /Agentic search as a lazy index — viable now./ At this stage, use
+   agentic web/IA search to get high-confidence resolutions on
+   accessible cases without waiting for formal indexing
+   infrastructure. Does not require building the Anserini index first.
+
+3. /Formal indexing path for scale./ When volume demands it: Anserini
+   (keyword + embedding search, built on Lucene), exposed via an MCP
+   API or a local Claude skill. This is the longer-term architecture.
+
+4. Willing to talk further.
+
+[2026-08-05] =corpus/access-feasibility= updated accordingly; no
+longer a hard blocker. Agentic search can begin on the 83-item tier
+3-5 batch. Edinburgh Review: prefer Internet Archive over IB1.
+
 ** Edge 3 design precedent: IDI's LC topic classifier
 :PROPERTIES:
 :CUSTOM_ID: edge3/topic-classifier-precedent
