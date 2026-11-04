@@ -129,3 +129,8 @@ raw_bits/
 # pdm_check is a flag for make; do not committed
 pdm_check
 
+# Reference material received privately (Julia Flanders's eNVS schema and
+# guidelines, from the MLA New Variorum encoding work). Not ours to publish
+# until she says so; see doc/forum.org #reference/envs-schema.
+reference/
+

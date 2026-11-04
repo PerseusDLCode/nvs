@@ -1199,3 +1199,39 @@ protocol-v2=, =architecture/ingestion-model-classifier-split=, and
 =red_herrings= archived (=org-archive-subtree= by Cliff in Emacs).
 =nvs/commentary-tag-litter-signals-structure= flagged for resumption
 — new pipeline is live, per the 2026-08-01 Decision to revisit.
+
+** Reference: the MLA eNVS schema (from Julia Flanders)
+:PROPERTIES:
+:CUSTOM_ID: reference/envs-schema
+:ASSIGNEES: Cliff
+:SOURCE: chat/2026-11-04
+:DISPOSITION: document
+:END:
+
+Julia Flanders sent Cliff the schema from her work with the MLA on TEI
+encodings of the New Variorum. It is kept, untracked, at
+=reference/envs-schema/= (=reference/= is gitignored):
+
+- =nvs.xml= -- the ODD, "NVS Editions" (author "Ridgeback"; begun
+  2009, last change v2.9, 2017-07-03; the changelog notes "Final changes
+  req'd for Lear", 2012). Its publicationStmt reads "For use by whoever
+  wants it."
+- =nvs.rng= -- the compiled RELAX NG.
+- =eNVS_Guidelines.pdf= -- the encoding guidelines.
+
+Moved here 2026-11-04 from the uncommitted =shakespeare-editions=
+scratch repo, which is being retired; it never belonged with the Globe
+work.
+
+*** Research
+[2026-11-04] Not used yet. Two things to settle before it is:
+
+1. /Publication./ This repository is public on GitHub. The ODD's own
+   statement is permissive, but the Guidelines PDF has not been checked
+   for a licence, and the material came privately. Ask Julia before
+   committing any of it.
+2. /When it becomes useful./ When =nvs-annotations= fixes its data
+   model, compare the ChunkConsolidator output with how the MLA
+   modelled the same commentary (lemmas, notes, the Lear
+   apparatus): a cheap check on our choices, and a basis for
+   interoperability later.
